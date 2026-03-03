@@ -38,7 +38,7 @@ const BillForm = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: session.user.email,
-          type: "Bill Payment",
+          type: "bill_payment",
           amount: amount,
           currency: "BDT",
           status: "completed",
