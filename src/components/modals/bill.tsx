@@ -19,7 +19,7 @@ const BillForm = () => {
   ];
 
   const handlePayBill = async () => {
-    // ভ্যালিডেশন
+    // validation
     if (!consumerId || !amount) {
       Swal.fire("Error", "Please fill all fields", "error");
       return;
@@ -33,7 +33,7 @@ const BillForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/transactions", { // আপনার API রুট অনুযায়ী পাথ দিন
+      const response = await fetch("/api/transactions", { // api
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -57,7 +57,7 @@ const BillForm = () => {
           text: `${selectedType} bill of ৳${amount} paid successfully.`,
           confirmButtonColor: "#1E50FF",
         });
-        // ফর্ম রিসেট
+        // form reset
         setConsumerId("");
         setAmount("");
       } else {
