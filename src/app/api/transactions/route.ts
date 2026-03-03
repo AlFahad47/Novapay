@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     const normalizedType = type.toLowerCase().trim().replace(/\s+/g, '_');
 
     // খরচের লিস্ট যেখানে টাকা বিয়োগ হবে
-    const expenseTypes = ["withdraw", "send_money", "bill_payment", "cash_out", "pay_bill"];
+    const expenseTypes = ["withdraw", "send_money", "bill_payment", "cash_out", "pay_bill","mobile_recharge"];
     
     const isExpense = expenseTypes.includes(normalizedType);
 

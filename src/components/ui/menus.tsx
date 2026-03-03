@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import BillForm from "../modals/bill";
+import RechargeForm from "../modals/mobilerecharge";
 
 
 type MenuItem = {
@@ -97,13 +98,16 @@ const QuickActions: React.FC = () => {
     }
 
     // Modal logic for specific items
-    if (item.name === "Pay Bill") {
-      setActiveModal("Pay Bill");
-      setIsModalOpen(true);
-    } else {
-      router.push(item.route);
-    }
-  };
+   if (item.name === "Pay Bill") {
+    setActiveModal("Pay Bill");
+    setIsModalOpen(true);
+  } else if (item.name === "Mobile Recharge") {
+    setActiveModal("Mobile Recharge");
+    setIsModalOpen(true);
+  } else {
+    router.push(item.route);
+  }
+};
 
   const getItemStyles = (index: number) => {
     let diff = (index - activeIndex + total) % total;
@@ -164,24 +168,29 @@ const QuickActions: React.FC = () => {
           <button onClick={handleNext} className="z-30 p-4 text-gray-400 hover:text-blue-600 hidden sm:block"><ArrowRight size={32} /></button>
         </div>
 
-        {/* MODAL OVERLAY */}
-        {isModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-[#121928] w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-              <div className="flex items-center justify-between p-6 border-b dark:border-gray-800">
-                <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                  <FaReceipt className="text-blue-500" /> {activeModal}
-                </h3>
-                <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
-                  <X size={20} className="text-gray-500" />
-                </button>
-              </div>
-              <div className="p-6">
-                {activeModal === "Pay Bill" && <BillForm />}
-              </div>
-            </div>
-          </div>
-        )}
+        
+       {/* MODAL OVERLAY */}
+{isModalOpen && (
+  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-[#121928] w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="flex items-center justify-between p-6 border-b dark:border-gray-800">
+        <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+         
+          {activeModal === "Pay Bill" ? <FaReceipt className="text-blue-500" /> : <FaMobileAlt className="text-blue-500" />} 
+          {activeModal}
+        </h3>
+        <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+          <X size={20} className="text-gray-500" />
+        </button>
+      </div>
+      <div className="p-6">
+       
+        {activeModal === "Pay Bill" && <BillForm />}
+        {activeModal === "Mobile Recharge" && <RechargeForm />} 
+      </div>
+    </div>
+  </div>
+)}
       </div>
     </section>
   );
