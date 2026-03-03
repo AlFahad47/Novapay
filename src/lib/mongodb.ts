@@ -1,4 +1,7 @@
 import { MongoClient } from "mongodb";
+import dns from "node:dns/promises";
+
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
@@ -11,7 +14,7 @@ let client;
 let clientPromise: Promise<MongoClient>;
 
 if (process.env.NODE_ENV === "development") {
-  let globalWithMongo = global as typeof globalThis & {
+  const globalWithMongo = global as typeof globalThis & {
     _mongoClientPromise?: Promise<MongoClient>;
   };
 
