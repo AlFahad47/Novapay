@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react"; // useEffect যোগ করা হয়েছে
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Send, User, Banknote, Loader2, Info } from "lucide-react";
 import Swal from "sweetalert2";
@@ -10,11 +10,11 @@ export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void })
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   
-  // কারেন্সি ডাটা রাখার জন্য নতুন স্টেট
+  
   const [userCurrency, setUserCurrency] = useState("BDT");
   const [currencySymbol, setCurrencySymbol] = useState("৳");
 
-  // ডাটাবেস থেকে ইউজারের কারেন্সি লোড করার ইফেক্ট
+  
   useEffect(() => {
     const fetchUserCurrency = async () => {
       if (session?.user?.email) {
@@ -55,7 +55,7 @@ export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void })
           email: session?.user?.email,
           type: "send_money",
           amount: Number(amount),
-          currency: userCurrency, // সঠিক কারেন্সি পাঠানো হচ্ছে
+          currency: userCurrency, 
           receiver: receiverEmail.toLowerCase().trim(),
           description: `Sent to ${receiverEmail}`,
         }),
@@ -122,7 +122,7 @@ export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void })
               onChange={(e) => setAmount(e.target.value)}
             />
             <div className="absolute inset-y-0 right-4 flex items-center font-bold text-gray-400">
-              {userCurrency} {/* ডাটাবেস থেকে আসা কারেন্সি (USD/BDT) */}
+              {userCurrency} 
             </div>
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void })
             onClick={() => setAmount(val.toString())}
             className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-blue-600 hover:text-white transition-all whitespace-nowrap"
           >
-            +{currencySymbol}{val} {/* ডাইনামিক সিম্বল ($/৳) */}
+            +{currencySymbol}{val} 
           </button>
         ))}
       </div>

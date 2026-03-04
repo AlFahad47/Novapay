@@ -14,7 +14,8 @@ import BillForm from "../modals/bill";
 import RechargeForm from "../modals/mobilerecharge";
 import SendMoneyForm from "../modals/sendmoney";
 import RequestMoneyForm from "../modals/RequestMoney";
-
+import CashOutForm from "../modals/CashOutForm";
+import AddMoneyForm from "../modals/AddMoneyForm"
 type MenuItem = {
   name: string;
   icon: IconType;
@@ -114,7 +115,7 @@ const QuickActionsContent = () => {
       return;
     }
 
-    if (["Pay Bill", "Mobile Recharge", "Send Money", "Request Money"].includes(item.name)) {
+    if (["Pay Bill", "Mobile Recharge", "Send Money", "Request Money","Cash Out", "Add Money"].includes(item.name)) {
       setActiveModal(item.name);
       setIsModalOpen(true);
     } else {
@@ -196,6 +197,8 @@ const QuickActionsContent = () => {
                 {activeModal === "Mobile Recharge" && <RechargeForm />} 
                 {activeModal === "Send Money" && <SendMoneyForm />} 
                 {activeModal === "Request Money" && <RequestMoneyForm />} 
+                {activeModal === "Cash Out" && <CashOutForm />} 
+                {activeModal === "Add Money" && <AddMoneyForm />} 
               </div>
             </div>
           </div>
