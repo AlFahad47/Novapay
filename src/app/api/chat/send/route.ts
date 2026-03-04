@@ -36,19 +36,14 @@ export async function POST(req: NextRequest) {
   await db.collection("messages").insertOne(message);
 
   // 5. Trigger Pusher — this pushes the message to all browsers subscribed to this channel
-  console.log("🔍 Triggering Pusher on channel:", channelId, "| senderId:", session.user.id);
-  try {
-    await pusherServer.trigger(channelId, "new-message", {
-      senderId: session.user.id,
-      senderName: session.user.name,
-      senderImage: session.user.image,
-      text,
-      timestamp: message.timestamp,
-      read: false,
-    });
-    return NextResponse.json({ success: true, pusher: "ok" });
-  } catch (err) {
-    console.error("❌ Pusher trigger failed:", err);
-    return NextResponse.json({ success: true, pusher: "failed", error: String(err) });
-  }
+  await pusherServer.trigger(channelId, "new-message", {
+    senderId: session.user.id,
+    senderName: session.user.name,
+    senderImage: session.user.image,
+    text,
+    timestamp: message.timestamp,
+    read: false,
+  });
+
+  return NextResponse.json({ success: true });
 }

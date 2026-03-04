@@ -51,8 +51,6 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
 
   // ─── Step 2: Subscribe to Pusher channel for real-time new messages ────────
   useEffect(() => {
-    // Subscribe to the channel (e.g. "support-abc123")
-    console.log("🔌 Subscribing to Pusher channel:", channelId);
     const channel = pusherClient.subscribe(channelId);
 
     // Listen for the "new-message" event — triggered by /api/chat/send
