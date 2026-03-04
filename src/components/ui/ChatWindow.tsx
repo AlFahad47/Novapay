@@ -77,18 +77,28 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
   const sendMessage = async () => {
     if (!inputText.trim() || sending) return;
 
+    const text = inputText.trim();
     setSending(true);
+    setInputText("");
+
+    // Optimistic update — show the message instantly for the sender
+    // without waiting for Pusher to deliver it back
+    const optimisticMessage: Message = {
+      senderId: currentUser.id,
+      senderName: currentUser.name,
+      senderImage: currentUser.image,
+      text,
+      timestamp: new Date(),
+      read: true,
+    };
+    setMessages((prev) => [...prev, optimisticMessage]);
+
     await fetch("/api/chat/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        channelId,
-        type,
-        text: inputText.trim(),
-      }),
+      body: JSON.stringify({ channelId, type, text }),
     });
 
-    setInputText("");
     setSending(false);
   };
 
