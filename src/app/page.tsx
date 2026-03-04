@@ -4,6 +4,7 @@
   import HowItWorksPage from "@/components/ui/HowItWorks";
   import KeyFeatures from "@/components/ui/KeyFeatures";
   import Menus from "@/components/ui/menus";
+import TopReviews from "@/components/ui/Topreviews";
 
   export default function Home() {
     return (
@@ -27,10 +28,13 @@
         <section id="how">
           <HowItWorksPage />
         </section>
+          
+          <section id="reviews">  <TopReviews /></section>
+      
 
         <section id="demo">
-          <ProjectDemo />
-        </section>
+  <ProjectDemo />
+</section>
       </main>
     );
   }

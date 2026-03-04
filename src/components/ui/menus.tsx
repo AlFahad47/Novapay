@@ -181,7 +181,7 @@ const QuickActionsContent = () => {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#4DA1FF]/10 border border-[#4DA1FF]/20 text-[#4DA1FF] text-xs font-semibold mb-3">
             <FaBolt size={10} /> Quick Actions
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800 dark:text-white">
+          <h2 className="text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white">
             Everything You Need, <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">One Tap Away</span>
           </h2>
           {/* Dynamic KYC Info - এখন সেন্টার হবে */}

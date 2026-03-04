@@ -64,20 +64,28 @@ useEffect(() => {
   }, [darkMode]);
 
   // Smooth scroll handler
-  const handleScrollLink = (path: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+ const handleScrollLink = (path: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+  // যদি পাথটি hash (#) দিয়ে শুরু হয়
   if (path.startsWith("/#")) {
-    e.preventDefault();
+    const hash = path.replace("/", ""); // উদাহরণ: "#home"
+    
+    // ১. চেক করুন আপনি বর্তমানে হোম পেজে (root path "/") আছেন কি না
+    if (pathname === "/") {
+      const target = document.querySelector(hash);
+      
+      if (target) {
+        // যদি টার্গেট এলিমেন্ট পাওয়া যায়, তবে ডিফল্ট নেভিগেশন বন্ধ করে স্মুথ স্ক্রল করুন
+        e.preventDefault();
+        target.scrollIntoView({ behavior: "smooth" });
 
-    const hash = path.replace("/", "");
-    const target = document.querySelector(hash);
-
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
-
-      // URL update + active update
-      window.history.pushState(null, "", hash);
-      setActiveHash(hash);
-    }
+        // URL এবং Active state আপডেট
+        window.history.pushState(null, "", hash);
+        setActiveHash(hash);
+      }
+    } 
+    // ২. যদি আপনি হোম পেজে না থাকেন (যেমন: /login এ আছেন), 
+    // তবে e.preventDefault() কল হবে না। 
+    // ফলে ব্রাউজার স্বাভাবিকভাবে "/" এ যাবে এবং সাথে হ্যাশ (#) নিয়ে যাবে।
   }
 };
 
@@ -93,9 +101,11 @@ useEffect(() => {
     : [
         { name: "Home", path: "/#home" },
         { name: "Quick Action", path: "/#menus" },
+        { name: "Offer", path: "/#offers" },
         { name: "Features", path: "/#features" },
         { name: "How It Works", path: "/#how" },
-        { name: "Offer", path: "/#offers" },
+        { name: "Reviews", path: "/#reviews" },
+        
       ];
 
 

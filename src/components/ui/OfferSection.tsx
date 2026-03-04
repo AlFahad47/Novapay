@@ -33,10 +33,10 @@ export default function OfferSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-[#0061ff] via-[#0095ff] to-[#00d4ff] dark:from-white dark:via-[#93C5FD] dark:to-[#0061ff] bg-clip-text text-transparent">
-            What We Offer
+          <h2 className="text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white">
+            What We <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">Offer</span> 
           </h2>
-          <p className="mt-4 text-gray-500 dark:text-gray-400 text-base md:text-lg max-w-xl mx-auto">
+          <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm mx-auto">
             Everything you need to manage your money — simple, fast, and secure.
           </p>
         </motion.div>

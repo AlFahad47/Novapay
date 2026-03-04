@@ -89,15 +89,10 @@ export default function HowItWorksPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9 }}
           className="
-            text-4xl md:text-6xl
-            font-extrabold
-            bg-gradient-to-r
-            from-[#0061ff] via-[#0095ff] to-[#00d4ff]
-            dark:from-white dark:via-[#93C5FD] dark:to-[#0061ff]
-            bg-clip-text text-transparent
+            text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white
           "
         >
-          How NovaPay Works
+          How NovaPay<span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent"> Works</span> 
         </motion.h1>
 
         <motion.p
