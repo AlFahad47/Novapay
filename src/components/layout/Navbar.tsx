@@ -65,27 +65,25 @@ useEffect(() => {
 
   // Smooth scroll handler
  const handleScrollLink = (path: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-  // যদি পাথটি hash (#) দিয়ে শুরু হয়
+ 
   if (path.startsWith("/#")) {
-    const hash = path.replace("/", ""); // উদাহরণ: "#home"
+    const hash = path.replace("/", ""); 
     
-    // ১. চেক করুন আপনি বর্তমানে হোম পেজে (root path "/") আছেন কি না
+   
     if (pathname === "/") {
       const target = document.querySelector(hash);
       
       if (target) {
-        // যদি টার্গেট এলিমেন্ট পাওয়া যায়, তবে ডিফল্ট নেভিগেশন বন্ধ করে স্মুথ স্ক্রল করুন
+       
         e.preventDefault();
         target.scrollIntoView({ behavior: "smooth" });
 
-        // URL এবং Active state আপডেট
+        
         window.history.pushState(null, "", hash);
         setActiveHash(hash);
       }
     } 
-    // ২. যদি আপনি হোম পেজে না থাকেন (যেমন: /login এ আছেন), 
-    // তবে e.preventDefault() কল হবে না। 
-    // ফলে ব্রাউজার স্বাভাবিকভাবে "/" এ যাবে এবং সাথে হ্যাশ (#) নিয়ে যাবে।
+   
   }
 };
 

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 "use client";
 import React from "react";
 
@@ -50,12 +49,3 @@ const Loader: React.FC = () => {
 };
 
 export default Loader;
-=======
-export default function Loader() {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-900">
-      <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-}
->>>>>>> 4fc72801558ccb7add5fa9db15c3bf7e9b02ad53
