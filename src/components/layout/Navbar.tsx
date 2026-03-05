@@ -16,9 +16,23 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [activeHash, setActiveHash] = useState("");
+  const [unreadTotal, setUnreadTotal] = useState(0);
   const pathname = usePathname();
 
   const user = session?.user;
+
+  // Fetch total unread messages for badge on Chat link and Bell
+  useEffect(() => {
+    if (!user) return;
+    const fetchUnread = () => {
+      fetch("/api/chat/unread-count")
+        .then((r) => r.json())
+        .then((data) => setUnreadTotal(data.total ?? 0));
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
 
 useEffect(() => {
   const updateHash = () => {
@@ -124,6 +138,12 @@ useEffect(() => {
                 }`}
               >
                 <span className="relative text-[1rem] z-10 text-[#3b82f6] dark:text-white">{link.name}</span>
+                {/* Unread badge on Chat link */}
+                {link.name === "Chat" && unreadTotal > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-0.5 z-20">
+                    {unreadTotal > 99 ? "99+" : unreadTotal}
+                  </span>
+                )}
                 {isActive && (
                   <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#3b82f6] rounded-full shadow-[0_0_10px_3px_rgba(59,130,246,0.8)]"></span>
                 )}

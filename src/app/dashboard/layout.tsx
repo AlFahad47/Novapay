@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -51,6 +51,22 @@ export default function DashboardLayout({
     if (item.userOnly) return !isAdmin;
     return true;
   });
+
+  const [unreadSupport, setUnreadSupport] = useState(0);
+
+  // Fetch unread support message count
+  useEffect(() => {
+    if (!session?.user) return;
+    const fetchUnread = () => {
+      fetch("/api/chat/unread-count")
+        .then((r) => r.json())
+        .then((data) => setUnreadSupport(data.support ?? 0));
+    };
+    fetchUnread();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [session]);
 
   const getPageTitle = () => {
     const parts = pathname.split("/").filter(Boolean);
@@ -130,7 +146,13 @@ export default function DashboardLayout({
                 }`}
               >
                 <item.icon size={18} className="text-blue-400" />
-                {!collapsed && <span>{item.label}</span>}
+                {!collapsed && <span className="flex-1">{item.label}</span>}
+                {/* Unread badge on Support link */}
+                {item.label === "Support" && unreadSupport > 0 && (
+                  <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                    {unreadSupport > 99 ? "99+" : unreadSupport}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -170,12 +192,13 @@ export default function DashboardLayout({
           </h2>
 
           <div className="flex items-center gap-5">
-            <button className="relative">
+            <button className="relative" onClick={() => window.location.href = isAdmin ? "/dashboard/support" : "/chat/support"}>
               <Bell className="w-5 h-5 text-blue-400" />
-              <span
-                className="absolute -top-1 -right-1 
-                w-2 h-2 bg-[#00b4ff] rounded-full"
-              />
+              {unreadSupport > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-0.5">
+                  {unreadSupport > 99 ? "99+" : unreadSupport}
+                </span>
+              )}
             </button>
             <div className="w-9 h-9 relative">
               <Image

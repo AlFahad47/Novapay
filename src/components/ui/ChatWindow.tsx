@@ -47,6 +47,13 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
       setLoading(false);
     };
     fetchHistory();
+
+    // Mark all messages in this channel as read when the chat is opened
+    fetch("/api/chat/mark-read", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ channelId }),
+    });
   }, [channelId]);
 
   // ─── Step 2: Subscribe to Pusher channel for real-time new messages ────────
