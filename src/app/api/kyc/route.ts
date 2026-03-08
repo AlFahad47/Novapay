@@ -55,11 +55,14 @@ export async function POST(request: Request) {
         // If they exist, keep the original values (existingUser?.field)
         balance: existingUser?.balance ?? 0,
         history: existingUser?.history ?? [],
-        wallet: existingUser?.wallet ?? {
-          totalIncome: 0,
-          totalExpense: 0,
-          status: "active"
-        },
+       wallet: existingUser?.wallet ?? {
+  totalPhysicalIncome: 0,
+  totalPhysicalExpense: 0,
+  lastTransactionDate: new Date(),
+  status: "active"
+},
+// This ensures history is always an array
+wallethistory: existingUser?.wallethistory ?? [],
         microsaving: existingUser?.microsaving ?? {
           savingsBalance: 0,
           goals: []

@@ -33,7 +33,7 @@ const quickActions: MenuItem[] = [
   { name: "Pay Bill",            icon: FaReceipt,        route: "/pay-bill",         requiresAuth: false },
   { name: "Transaction History", icon: FaHistory,        route: "/dashboard/transactions", requiresAuth: true  },
   { name: "Wallet",              icon: FaPiggyBank,      route: "/wallet",           requiresAuth: true  },
-  { name: "Cards & Banks",       icon: FaCreditCard,     route: "/cards-banks",      requiresAuth: true  },
+  { name: "Cards & Banks",       icon: FaCreditCard,     route: "/cardsbank",      requiresAuth: true  },
   { name: "Subscriptions",       icon: FaSyncAlt,        route: "/subscriptions",    requiresAuth: false },
 ];
 

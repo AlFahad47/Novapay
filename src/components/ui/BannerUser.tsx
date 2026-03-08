@@ -175,7 +175,9 @@ const processPayment = async (data: any) => {
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <Link href="/dashboard"><motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="group relative flex items-center gap-2 px-7 py-3.5 rounded-full overflow-hidden border border-[#4DA1FF]/20 shadow-lg"><div className="absolute inset-0 bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF]" /><LayoutDashboard size={16} className="relative text-white" /><span className="relative text-white text-sm font-semibold tracking-wide">Dashboard</span><ArrowUpRight size={15} className="relative text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" /></motion.button></Link>
-            <motion.button whileHover={{ scale: 1.04 }} className="flex items-center gap-2 px-7 py-3.5 rounded-full border border-[#4DA1FF]/25 bg-white/70 dark:bg-white/[0.04] backdrop-blur-md text-[#1E50FF] dark:text-[#4DA1FF]"><Send size={15} /><span className="text-sm font-semibold">Quick Send</span></motion.button>
+            <Link href='/wallet'>
+            <motion.button whileHover={{ scale: 1.04 }} className="flex items-center gap-2 px-7 py-3.5 rounded-full border border-[#4DA1FF]/25 bg-white/70 dark:bg-white/[0.04] backdrop-blur-md text-[#1E50FF] dark:text-[#4DA1FF]"><Wallet size={15} /><span className="text-sm font-semibold cursor-pointer">Wallet Account</span></motion.button>
+            </Link>
           </div>
           <div className="flex flex-wrap gap-3">
             {stats.map((stat, i) => (
