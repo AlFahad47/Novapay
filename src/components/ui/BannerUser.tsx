@@ -40,12 +40,12 @@ const BannerUser: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // ডাটা ফেচিং লজিক
+  
   useEffect(() => {
     const fetchAllData = async () => {
       if (session?.user?.email) {
         try {
-          // ১. ইউজার প্রোফাইল আপডেট
+         
           const userRes = await fetch(`/api/user/update?email=${session.user.email}`);
           const userData = await userRes.json();
           setDbUser(userData);
@@ -54,10 +54,10 @@ const BannerUser: React.FC = () => {
           if (userData?.kycStatus !== "approved" && userData?.kycStatus !== "pending") {
           setShowOnboarding(true);
         } else {
-          setShowOnboarding(false); // ফর্ম জমা দিলে আর দেখাবে না
+          setShowOnboarding(false); 
         }
 
-          // ২. নোটিফিকেশন চেক (আপনার ডাটাবেজ ফিল্ড 'to' অনুযায়ী)
+          
           const notifRes = await fetch(`/api/notifications?email=${session.user.email}`);
           const notifData = await notifRes.json();
           
@@ -81,7 +81,7 @@ const BannerUser: React.FC = () => {
     return () => clearInterval(interval);
   }, [session]);
 
-  console.log(dbUser)
+  
 
   const firstName = dbUser?.name?.split(" ")[0] || session?.user?.name?.split(" ")[0] || "User";
   const currencySymbol = dbUser?.currency === "BDT" ? "৳" : "$";
@@ -134,14 +134,14 @@ const processPayment = async (data: any) => {
         amount: Number(data.amount),
         receiver: (data.from || data.senderEmail).toLowerCase().trim(),
         description: `Payment for request: ${data.note || 'No note'}`,
-        requestId: data._id, // ডাটাবেজ থেকে ডিলিট করার জন্য আইডি
+        requestId: data._id, 
       }),
     });
 
     const result = await res.json();
     if (result.success) {
       Swal.fire("Success!", "Payment completed and request cleared.", "success");
-      // ইভেন্ট ফায়ার করা যাতে ব্যানার থেকে লাল ডট চলে যায়
+      
       setPendingRequests(0);
       setNotificationData(null);
       window.dispatchEvent(new Event("balanceUpdated"));
@@ -322,16 +322,15 @@ const processPayment = async (data: any) => {
                   </button>
                 
 
-{/* // BannerUser.tsx এর ভেতরে Pay Now বাটনের অংশটি এভাবে পরিবর্তন করুন */}
 
-{/* Later বাটন এর নিচে Pay Now বাটন */}
+
+
 <button 
   onClick={async () => {
-    // পেমেন্ট শুরু করার আগে কনফার্মেশন বা সরাসরি হ্যান্ডেল করা
-    setIsModalOpen(false); // নোটিফিকেশন মডাল বন্ধ করুন
     
-    // পেমেন্ট প্রসেস করার জন্য আপনার handleSend এর মত লজিক এখানে কল হবে
-    // অথবা আপনি চাইলে সরাসরি একটি কনফার্মেশন এলার্ট দেখাতে পারেন
+    setIsModalOpen(false); 
+    
+    
     confirmPayment(notificationData);
   }}
   className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] text-white text-sm font-bold shadow-lg shadow-[#1E50FF]/30 hover:shadow-[#1E50FF]/50 transition-all"

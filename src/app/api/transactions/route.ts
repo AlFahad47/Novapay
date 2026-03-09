@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     // ---------------------------------------------------------
     let recipientUser = null;
 
-// ক্যাশ আউট বাদে অন্য সব ক্ষেত্রে রিসিভার চেক করবে
+// 
 if (receiver) {
  if (
         normalizedType === "cashout" || 
@@ -49,10 +49,10 @@ if (receiver) {
         normalizedType === "bill_payment" 
         
       ) {
-        // ক্যাশ আউট বা মোবাইল রিচার্জ হলে ডাটাবেসে ইউজার খোঁজার দরকার নেই
+        
         console.log(`${normalizedType} to:`, receiver);
       } else {
-    // বাকি সব ফিচারের (Send Money, Request Money ইত্যাদি) জন্য ইউজার চেক করবে
+   
     recipientUser = await usersCollection.findOne({ email: receiver });
     
     if (!recipientUser) {
@@ -69,7 +69,7 @@ if (receiver) {
 
     // cashout logic
 if (normalizedType === "cashout") {
-  // ১. ইনপুট ভ্যালিডেশন: এজেন্ট নাম্বার পাঠানো হয়েছে কিনা চেক করা
+  
   if (!receiver) {
     return NextResponse.json({ message: "Agent number/Phone is required" }, { status: 400 });
   }
@@ -79,7 +79,7 @@ if (normalizedType === "cashout") {
     type: "Cash Out",
     amount: txAmount,
     currency: user.currency || "BDT",
-    receiver: receiver, // ইউজার ফর্ম থেকে যে নাম্বার দিবে সেটাই এখানে সেভ হবে
+    receiver: receiver, 
     description: description || `Cash out to agent: ${receiver}`,
     status: "completed",
     date: new Date()
@@ -89,7 +89,7 @@ if (normalizedType === "cashout") {
     { email: email },
     { 
       $inc: { balance: -txAmount },
-      // $each এবং $position: 0 ব্যবহার করলে লেটেস্ট ট্রানজেকশন সবার উপরে থাকবে
+      
       $push: { history: { $each: [senderTx], $position: 0 } } as any,
       $set: { updatedAt: new Date() }
     }
@@ -111,12 +111,12 @@ if (normalizedType === "cashout") {
 
       
 
-      // **কারেন্সি লজিক ইমপ্লিমেন্টেশন**
+      
       const senderCurrency = user.currency || "BDT";
       const receiverCurrency = recipientUser.currency || "BDT";
       let receiverFinalAmount = txAmount;
 
-      // এক্সচেঞ্জ রেট ক্যালকুলেশন
+      
       if (senderCurrency === "USD" && receiverCurrency === "BDT") {
         receiverFinalAmount = txAmount * EXCHANGE_RATE;
       } else if (senderCurrency === "BDT" && receiverCurrency === "USD") {
@@ -137,7 +137,7 @@ if (normalizedType === "cashout") {
       const receiverTx = {
         transactionId,
         type: "Receive Money",
-        amount: Number(receiverFinalAmount.toFixed(2)), // ২ দশমিক ঘর পর্যন্ত
+        amount: Number(receiverFinalAmount.toFixed(2)), 
         currency: receiverCurrency,
         sender: email,
         description: description || `Received money from ${email}`,
@@ -145,7 +145,7 @@ if (normalizedType === "cashout") {
         date: new Date()
       };
 
-      // Update Sender (ব্যালেন্স কমবে সেন্ডার কারেন্সিতে)
+     
       await usersCollection.updateOne(
         { email: email },
         { 
@@ -155,7 +155,7 @@ if (normalizedType === "cashout") {
         }
       );
 
-      // Update Receiver (ব্যালেন্স বাড়বে রিসিভার কারেন্সিতে)
+     
       await usersCollection.updateOne(
         { email: receiver },
         { 
