@@ -42,7 +42,9 @@ const CardsAndBanks = () => {
     loadData();
   }, [loadData]);
 
-  // --- 2. Link New Bank Logic ---
+  
+
+// --- 2. Link New Bank Logic ---
   const handleLinkBank = async () => {
     const isDark = document.documentElement.classList.contains('dark');
 
@@ -52,8 +54,7 @@ const CardsAndBanks = () => {
         <div class="flex flex-col gap-3">
           <input id="swal-name" class="swal2-input !m-0 !w-full" placeholder="Bank Name">
           <input id="swal-acc" class="swal2-input !m-0 !w-full" placeholder="Account Number">
-         
-        </div>
+          </div>
       `,
       background: isDark ? '#0F172A' : '#FFFFFF',
       color: isDark ? '#F8FAFC' : '#1E293B',
@@ -63,9 +64,11 @@ const CardsAndBanks = () => {
       preConfirm: () => {
         const name = (document.getElementById('swal-name') as HTMLInputElement).value;
         const accNo = (document.getElementById('swal-acc') as HTMLInputElement).value;
-        const balance = (document.getElementById('swal-bal') as HTMLInputElement).value;
+        
         if (!name || !accNo) return Swal.showValidationMessage('Fill required fields');
-        return { name, accNo, balance: parseFloat(balance) || 0 };
+        
+        // We just set balance to 0 manually since we removed the input
+        return { name, accNo, balance: 0 }; 
       }
     });
 
@@ -77,16 +80,23 @@ const CardsAndBanks = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             email: session?.user?.email,
-            newBank: formValues, // Backend pushes this to linkedBanks
-            wallethistory: dbUser?.wallethistory || [],
-            wallet: dbUser?.wallet || {},
-            bankBalance: dbUser?.bankBalance || 0
+            newBank: formValues, 
           })
         });
 
         if (res.ok) {
           await loadData();
-          Swal.fire({ icon: 'success', title: 'Bank Linked', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+          Swal.fire({ 
+            icon: 'success', 
+            title: 'Bank Linked', 
+            toast: true, 
+            position: 'top-end', 
+            timer: 2000, 
+            showConfirmButton: false 
+          });
+        } else {
+          const errData = await res.json();
+          Swal.fire("Error", errData.error || "Failed to link bank", "error");
         }
       } catch (err) {
         Swal.fire("Error", "Action failed", "error");
@@ -115,7 +125,7 @@ const CardsAndBanks = () => {
       return Swal.fire({ title: "Insufficient Bank Balance", icon: "error" });
     }
     if (type === 'deposit_money' && (dbUser?.balance || 0) < numAmount) {
-      return Swal.fire({ title: "Insufficient Vault Balance", icon: "error" });
+      return Swal.fire({ title: "Insufficient NovaPay Balance", icon: "error" });
     }
 
     setIsProcessing(true);
@@ -143,7 +153,7 @@ const CardsAndBanks = () => {
         setAmount("");
         Swal.fire({ 
           icon: 'success', 
-          title: type === 'add_money' ? 'Vault Topped Up!' : 'Deposited to Bank!', 
+          title: type === 'add_money' ? 'NovaPay Topped Up!' : 'Deposited to Bank!', 
           text: `৳${numAmount.toLocaleString()} processed successfully.`,
           confirmButtonColor: '#1E50FF' 
         });
@@ -173,7 +183,7 @@ const CardsAndBanks = () => {
         <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
             <h1 className="text-4xl md:text-5xl font-black">
-              Vault <span className="text-blue-500">৳{(dbUser?.balance || 0).toLocaleString()}</span>
+             NovaPay<span className="text-blue-500">৳{(dbUser?.balance || 0).toLocaleString()}</span>
             </h1>
             <p className="text-slate-400 dark:text-slate-500 font-bold mt-2 text-[10px] uppercase tracking-widest">
               Live Core Banking Active

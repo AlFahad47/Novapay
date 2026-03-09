@@ -19,7 +19,7 @@ export default function MobileRecharge({ onSuccess }: { onSuccess?: () => void }
   const [operator, setOperator] = useState("Grameenphone");
   const [loading, setLoading] = useState(false);
 
-  const handleRecharge = async () => {
+ const handleRecharge = async () => {
     if (!phone || !amount) {
       return Swal.fire("Error", "Please enter phone and amount", "error");
     }
@@ -44,10 +44,25 @@ export default function MobileRecharge({ onSuccess }: { onSuccess?: () => void }
 
       const data = await res.json();
       if (data.success) {
+        // --- ADD POINTS LOGIC START ---
+        try {
+          await fetch("/api/points", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: session?.user?.email,
+              activityType: "MOBILE_RECHARGE", // Matches your backend POINT_CONFIG
+            }),
+          });
+        } catch (pointErr) {
+          console.error("Failed to add points:", pointErr);
+        }
+        // --- ADD POINTS LOGIC END ---
+
         Swal.fire({
           icon: "success",
           title: "Recharge Successful!",
-          text: `৳${amount} sent to ${phone}`,
+          text: `৳${amount} sent to ${phone}. Points added!`,
           showConfirmButton: false,
           timer: 2000
         });

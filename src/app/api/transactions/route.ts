@@ -42,10 +42,16 @@ export async function POST(request: Request) {
 
 // ক্যাশ আউট বাদে অন্য সব ক্ষেত্রে রিসিভার চেক করবে
 if (receiver) {
-  if (normalizedType === "cashout" || normalizedType === "cash_out") {
-    // ক্যাশ আউট হলে ডাটাবেসে ইউজার খোঁজার দরকার নেই, সরাসরি স্কিপ করবে
-    console.log("Cash out to random agent:", receiver);
-  } else {
+ if (
+        normalizedType === "cashout" || 
+        normalizedType === "cash_out" || 
+        normalizedType === "mobile_recharge" ||
+        normalizedType === "bill_payment" 
+        
+      ) {
+        // ক্যাশ আউট বা মোবাইল রিচার্জ হলে ডাটাবেসে ইউজার খোঁজার দরকার নেই
+        console.log(`${normalizedType} to:`, receiver);
+      } else {
     // বাকি সব ফিচারের (Send Money, Request Money ইত্যাদি) জন্য ইউজার চেক করবে
     recipientUser = await usersCollection.findOne({ email: receiver });
     

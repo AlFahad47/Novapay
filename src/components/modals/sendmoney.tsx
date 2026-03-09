@@ -33,7 +33,7 @@ export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void })
     fetchUserCurrency();
   }, [session]);
 
-  const handleSend = async () => {
+const handleSend = async () => {
     if (!receiverEmail || !amount) {
       return Swal.fire("Error", "Please fill in all fields", "error");
     }
@@ -63,6 +63,21 @@ export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void })
 
       const data = await res.json();
       if (data.success) {
+        // --- ADD POINTS LOGIC START ---
+        try {
+          await fetch("/api/points", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: session?.user?.email,
+              activityType: "SEND_MONEY", // Matches your backend POINT_CONFIG
+            }),
+          });
+        } catch (pointErr) {
+          console.error("Failed to add loyalty points:", pointErr);
+        }
+        // --- ADD POINTS LOGIC END ---
+
         Swal.fire({
           icon: "success",
           title: "Transfer Successful!",
@@ -81,7 +96,6 @@ export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void })
       setLoading(false);
     }
   };
-
   return (
     <div className="w-full max-w-md mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl flex items-start gap-3 border border-blue-100 dark:border-blue-900/30">

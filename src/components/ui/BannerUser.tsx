@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import StatusOnboarding from "../../components/StatusOnboarding";
+import { BsCoin } from "react-icons/bs";
+import { FaRankingStar } from "react-icons/fa6";
+import RankDetailsModal from "../modals/RankDetailsModal";
 
 
 const BannerUser: React.FC = () => {
@@ -24,6 +27,7 @@ const BannerUser: React.FC = () => {
   const [pendingRequests, setPendingRequests] = useState<number>(0);
   const [notificationData, setNotificationData] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [isRankModalOpen, setIsRankModalOpen] = useState(false);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -77,14 +81,20 @@ const BannerUser: React.FC = () => {
     return () => clearInterval(interval);
   }, [session]);
 
+  console.log(dbUser)
+
   const firstName = dbUser?.name?.split(" ")[0] || session?.user?.name?.split(" ")[0] || "User";
   const currencySymbol = dbUser?.currency === "BDT" ? "৳" : "$";
   const isApproved = dbUser?.kycStatus === "approved";
 
   const stats = [
     { label: "Balance", value: isApproved ? `${currencySymbol}${dbUser?.balance || "0.00"}` : "Locked", icon: <Wallet size={15} />, color: "text-[#4DA1FF]" },
-    { label: "This Month", value: isApproved ? `${currencySymbol}${dbUser?.monthlyTotal || "0"}` : "N/A", icon: <TrendingUp size={15} />, color: "text-green-400" },
-    { label: "Transactions", value: isApproved ? (dbUser?.transactionCount || "0") : "0", icon: <CreditCard size={15} />, color: "text-purple-400" },
+    { label: "Transactions", value: isApproved ? (dbUser?.history.length || "0") : "0", icon: <CreditCard size={15} />, color: "text-purple-400" },
+
+    { label: "Points", value: isApproved ? `${dbUser?.points || "0"}` : "N/A", icon: <BsCoin size={15} />, color: "text-green-400" },
+
+    { label: "Rank", value: isApproved ? `${dbUser?.rank || "Bronze"}` : "N/A", icon: <FaRankingStar size={15} />, color: "text-green-400", onClick: () => setIsRankModalOpen(true)},
+    
     { label: "Security", value: isApproved ? "Active" : "Pending", icon: <ShieldCheck size={15} />, color: isApproved ? "text-emerald-400" : "text-orange-400" },
   ];
 
@@ -164,10 +174,41 @@ const processPayment = async (data: any) => {
 
       <div className="w-11/12 mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
         <motion.div className="flex-1 flex flex-col items-start gap-6 max-w-xl" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#4DA1FF]/20 bg-[#4DA1FF]/10 backdrop-blur-sm">
+          <div className="flex gap-2">
+
+            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#4DA1FF]/20 bg-[#4DA1FF]/10 backdrop-blur-sm">
+          
             <div className={`w-2 h-2 rounded-full animate-pulse ${isApproved ? 'bg-green-400' : 'bg-orange-400'}`} />
             <span className="text-[#1E50FF] dark:text-[#4DA1FF] text-xs font-bold tracking-widest uppercase">NovaPay · {isApproved ? "Verified Account" : "KYC Pending"}</span>
+            
           </div>
+         <motion.button
+  onClick={() => setIsRankModalOpen(true)}
+  whileHover={{ y: -2 }}
+  whileTap={{ scale: 0.98 }}
+  className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/40 dark:bg-white/[0.03] border border-white/20 dark:border-white/[0.08] backdrop-blur-md shadow-sm hover:shadow-md hover:bg-white/60 dark:hover:bg-white/[0.06] transition-all duration-300"
+>
+  {/* Minimal Icon */}
+  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1E50FF]/10 dark:bg-[#4DA1FF]/10 text-[#1E50FF] dark:text-[#4DA1FF]">
+    <FaRankingStar size={16} />
+  </div>
+
+  {/* Label & Rank */}
+  <div className="flex flex-col items-start leading-tight">
+    <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-[#64748B] dark:text-[#94A3B8]">
+      Tier Status
+    </span>
+    <span className="text-sm font-semibold text-[#0F172A] dark:text-white">
+      {dbUser?.rank || "Bronze"}
+    </span>
+  </div>
+
+  {/* Subtle Arrow */}
+  <ArrowUpRight size={14} className="ml-1 text-[#94A3B8] opacity-50 group-hover:opacity-100 transition-opacity" />
+</motion.button>
+          </div>
+          
+          
           <div>
             <p className="text-[#64748B] dark:text-[#94A3B8] text-base mb-1">{greeting},</p>
             <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold tracking-tight leading-[1.1] text-[#0F172A] dark:text-white">Welcome back, <span className="text-transparent bg-clip-text" style={{ backgroundImage: hedwigGradient }}>{firstName}!</span></h1>
@@ -181,14 +222,16 @@ const processPayment = async (data: any) => {
           </div>
           <div className="flex flex-wrap gap-3">
             {stats.map((stat, i) => (
-              <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.08 }} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#4DA1FF]/15 bg-white/60 dark:bg-white/[0.04] backdrop-blur-sm"><span className={stat.color}>{stat.icon}</span><div><p className="text-[10px] text-[#94A3B8] leading-none">{stat.label}</p><p className="text-xs font-bold text-[#0F172A] dark:text-white mt-0.5">{loading ? "..." : stat.value}</p></div></motion.div>
+              <motion.div key={stat.label} 
+              
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.08 }} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#4DA1FF]/15 bg-white/60 dark:bg-white/[0.04] backdrop-blur-sm"><span className={stat.color}>{stat.icon}</span><div><p className="text-[10px] text-[#94A3B8] leading-none">{stat.label}</p><p className="text-xs font-bold text-[#0F172A] dark:text-white mt-0.5">{loading ? "..." : stat.value}</p></div></motion.div>
             ))}
           </div>
         </motion.div>
 
         {/* RIGHT CARD SECTION */}
         <motion.div className="flex-shrink-0 flex flex-col items-center gap-5" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.15 }}>
-          
+             
           {/* ক্লিকযোগ্য এলার্ট বাটন */}
           <motion.button 
             onClick={() => pendingRequests > 0 && setIsModalOpen(true)}
@@ -196,8 +239,10 @@ const processPayment = async (data: any) => {
             whileTap={{ scale: 0.95 }}
             className={`relative flex items-center gap-2 self-end px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-500 cursor-pointer ${pendingRequests > 0 ? 'bg-red-50 dark:bg-red-500/10 border-red-500 shadow-lg shadow-red-500/20 active:scale-95' : 'bg-white/70 dark:bg-[#0F172A]/70 border-[#4DA1FF]/20'}`}
           >
+         
             <Bell size={13} className={pendingRequests > 0 ? "text-red-500 animate-bounce" : "text-[#4DA1FF]"} />
             <span className={`text-xs font-medium ${pendingRequests > 0 ? 'text-red-600 dark:text-red-400' : 'text-[#0F172A] dark:text-white'}`}>
+              
               {pendingRequests > 0 ? `${pendingRequests} New Request` : "No Alerts"}
             </span>
             {pendingRequests > 0 && (
@@ -298,12 +343,19 @@ const processPayment = async (data: any) => {
             </motion.div>
           </div>
         )}
+         <RankDetailsModal
+  isOpen={isRankModalOpen} 
+  onClose={() => setIsRankModalOpen(false)} 
+  points={dbUser?.points || 0} 
+  currentRank={dbUser?.rank || 'BRONZE'} 
+/>
         {showOnboarding && (
         <StatusOnboarding 
           status={dbUser?.kycStatus} 
           onClose={() => setShowOnboarding(false)} 
         />
       )}
+     
       </AnimatePresence>
     </section>
   );

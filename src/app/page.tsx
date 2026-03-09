@@ -5,6 +5,8 @@
   import KeyFeatures from "@/components/ui/KeyFeatures";
   import Menus from "@/components/ui/menus";
 import TopReviews from "@/components/ui/Topreviews";
+import EliteRewards from './../components/ui/EliteRewards';
+import EliteFeaturesSlider from "@/components/ui/EliteFeaturesSlider";
 
   export default function Home() {
     return (
@@ -16,6 +18,9 @@ import TopReviews from "@/components/ui/Topreviews";
         <section id="menus">
           <Menus />
         </section>
+        <EliteFeaturesSlider/>
+{/* 
+        <EliteRewards/> */}
 
         <section id="offers">
           <OfferSection />

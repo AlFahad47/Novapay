@@ -104,23 +104,41 @@ const WalletAccountPage = () => {
       <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Header */}
-        <nav className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4DA1FF] to-[#1E50FF] flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <LayoutDashboard size={20} className="text-white" />
-            </div>
-            <h1 className="text-xl font-bold tracking-tight">Wallet<span className="text-[#4DA1FF]">.Pro</span></h1>
-          </div>
-          
-          <div className="flex gap-2 bg-white/50 dark:bg-white/5 p-1 rounded-2xl border border-slate-200 dark:border-white/10 backdrop-blur-md">
-            <button onClick={() => setRecordType('income')} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-white/10 hover:bg-slate-50 text-xs font-bold rounded-xl transition-all shadow-sm border border-slate-100 dark:border-white/5">
-              <Plus size={14} className="text-[#4DA1FF]" /> Income
-            </button>
-            <button onClick={() => setRecordType('expense')} className="flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl hover:bg-white/40 transition-all">
-              <ArrowUpRight size={14} className="text-rose-500" /> Expense
-            </button>
-          </div>
-        </nav>
+       <nav className="flex items-center justify-between mb-8">
+  <div className="flex items-center gap-4">
+    {/* Logo Icon */}
+    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4DA1FF] to-[#1E50FF] flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
+      <LayoutDashboard size={20} className="text-white" />
+    </div>
+
+    {/* Text Section */}
+    <div className="flex flex-col">
+      <h1 className="text-xl font-bold tracking-tight leading-none">
+        Wallet<span className="text-[#4DA1FF]">.Pro</span>
+      </h1>
+      <h3 className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mt-1">
+        Track Your Liquid Assets
+      </h3>
+    </div>
+  </div>
+
+  {/* Buttons Section */}
+  <div className="flex gap-2 bg-white/50 dark:bg-white/5 p-1 rounded-2xl border border-slate-200 dark:border-white/10 backdrop-blur-md">
+    <button 
+      onClick={() => setRecordType('income')} 
+      className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-white/10 hover:bg-slate-50 text-xs font-bold rounded-xl transition-all shadow-sm border border-slate-100 dark:border-white/5"
+    >
+      <Plus size={14} className="text-[#4DA1FF]" /> Income
+    </button>
+    
+    <button 
+      onClick={() => setRecordType('expense')} 
+      className="flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl hover:bg-white/40 transition-all"
+    >
+      <ArrowUpRight size={14} className="text-rose-500" /> Expense
+    </button>
+  </div>
+</nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           

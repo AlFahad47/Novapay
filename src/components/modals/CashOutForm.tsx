@@ -7,7 +7,7 @@ const CashOutForm = () => {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
@@ -16,21 +16,46 @@ const CashOutForm = () => {
       email: session?.user?.email,
       type: "cashout",
       amount: formData.get("amount"),
-      receiver: formData.get("agentNumber"), // এজেন্টের নাম্বার বা ইমেইল
+      receiver: formData.get("agentNumber"), 
       description: "Cash out from Novapay",
     };
 
     try {
-      const res = await fetch("/api/transactions", { // আপনার সঠিক API পাথ দিন
+      // 1. Process the main Cash Out Transaction
+      const res = await fetch("/api/transactions", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       const result = await res.json();
+      
       if (res.ok) {
-        Swal.fire("Success", "Cash out successful!", "success");
-        window.location.reload(); // ব্যালেন্স আপডেট দেখানোর জন্য
+        // 2. TRIGGER POINT UPDATE
+        // We run this in its own try-catch to prevent point errors 
+        // from blocking the success message.
+        try {
+          await fetch("/api/points", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: session?.user?.email,
+              activityType: "CASH_OUT", // Matches your backend POINT_CONFIG
+            }),
+          });
+        } catch (pointErr) {
+          console.error("Loyalty points update failed:", pointErr);
+        }
+
+        // 3. Notify User and Refresh
+        await Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Cash out successful! Points have been added to your account.",
+          confirmButtonColor: "#1E50FF",
+        });
+        
+        window.location.reload(); 
       } else {
         Swal.fire("Error", result.message, "error");
       }
@@ -40,7 +65,6 @@ const CashOutForm = () => {
       setLoading(false);
     }
   };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>

@@ -30,6 +30,21 @@ export default function RequestMoneyForm({ onSuccess }: { onSuccess?: () => void
 
       const data = await res.json();
       if (data.success) {
+        // --- ADD POINTS LOGIC START ---
+        try {
+          await fetch("/api/points", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: session?.user?.email,
+              activityType: "REQUEST_MONEY", // Matches your backend POINT_CONFIG
+            }),
+          });
+        } catch (pointErr) {
+          console.error("Failed to add points:", pointErr);
+        }
+        // --- ADD POINTS LOGIC END ---
+
         Swal.fire("Request Sent!", `Requested ৳${amount} from ${targetEmail}`, "success");
         if (onSuccess) onSuccess();
       } else {
