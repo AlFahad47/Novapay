@@ -92,7 +92,7 @@ useEffect(() => {
 
 const [fullUser, setFullUser] = useState<any>(null);
 
-// সরাসরি ডাটাবেস থেকে লেটেস্ট ডাটা ফেচ করার জন্য
+
 useEffect(() => {
   const fetchUserData = async () => {
     if (session?.user?.email) {
@@ -109,7 +109,7 @@ useEffect(() => {
   };
 
   fetchUserData();
-  // যদি চান পয়েন্ট বাড়লে সাথে সাথে আপডেট হোক, তবে এখানে একটি ইন্টারভ্যাল দিতে পারেন
+  
   const interval = setInterval(fetchUserData, 10000); 
   return () => clearInterval(interval);
 }, [session]);
@@ -209,9 +209,9 @@ console.log(fullUser?.rank)
         setIsRankModalOpen(true);
       }}
       className={`absolute -top-2 left-1/2 -translate-x-1/2 z-30 px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md backdrop-blur-sm border  transition-transform duration-300 hover:scale-110 active:scale-95
-      ${fullUser?.rank === 'PLATINUM' ? 'bg-slate-900 border-slate-700 text-white' : 
-        fullUser?.rank === 'GOLD' ? 'bg-amber-400 border-amber-300 text-amber-950' : 
-        fullUser?.rank === 'SILVER' ? 'bg-slate-200 border-slate-300 text-slate-800' : 
+      ${fullUser?.rank === 'Platinum' ? 'bg-slate-900 border-slate-700 text-white' : 
+        fullUser?.rank === 'Gold' ? 'bg-amber-400 border-amber-300 text-amber-950' : 
+        fullUser?.rank === 'Silver' ? 'bg-slate-200 border-slate-300 text-slate-800' : 
         'bg-[#E63946] border-red-400 text-white'}`}
     >
       <span className="flex items-center justify-center">

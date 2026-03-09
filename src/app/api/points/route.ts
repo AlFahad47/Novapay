@@ -4,12 +4,12 @@ import clientPromise from "@/lib/mongodb";
 
 const POINT_CONFIG: Record<string, number> = {
   KYC_APPROVED: 100,
-  SEND_MONEY: 20,
-  ADD_MONEY: 10,
+  SEND_MONEY: 50,
+  ADD_MONEY: 25,
   MOBILE_RECHARGE: 15,
-  CASH_OUT: 10,
-  DEPOSIT: 20,
-  REQUEST_MONEY: 5,
+  CASH_OUT: 25,
+  DEPOSIT: 50,
+  REQUEST_MONEY: 20,
   BILL_PAYMENT: 20
 };
 

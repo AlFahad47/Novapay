@@ -19,8 +19,7 @@ import EliteFeaturesSlider from "@/components/ui/EliteFeaturesSlider";
           <Menus />
         </section>
         <EliteFeaturesSlider/>
-{/* 
-        <EliteRewards/> */}
+
 
         <section id="offers">
           <OfferSection />

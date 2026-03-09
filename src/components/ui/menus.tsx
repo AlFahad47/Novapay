@@ -133,7 +133,7 @@ const QuickActionsContent = () => {
     };
   };
 
-  // KYC Status Message Component (সেন্টার করার জন্য আপডেট করা হয়েছে)
+  
   const renderKycInfo = () => {
     if (!isLoggedIn) return null;
 
