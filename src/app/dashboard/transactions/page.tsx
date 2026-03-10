@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, ArrowDownLeft, Loader2, Download, FileText, Printer } from "lucide-react";
+import { ArrowUpRight, ArrowDownLeft, Loader2, Download, FileText, Printer, Globe, PlusCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -125,36 +125,82 @@ export default function TransactionsPage() {
           {transactions.length > 0 ? (
             <div className="min-w-full divide-y dark:divide-blue-900">
               {transactions.map((tx: any) => {
-                // FIXED LOGIC: Normalize type to handle spaces vs underscores
-                const expenseTypes = ["withdraw", "send_money", "bill_payment", "cash_out", "mobile_recharge", "pay_bill", "subscription"];
                 const normalizedType = tx.type?.toLowerCase().trim().replace(/\s+/g, '_');
-                const isExpense = expenseTypes.includes(normalizedType);
-                
+
+                // International transaction types
+                const isIntlSend    = normalizedType === "international_send";
+                const isIntlReceive = normalizedType === "international_receive";
+                const isTopUp       = normalizedType === "wallet_topup";
+                const isIntl        = isIntlSend || isIntlReceive || isTopUp;
+
+                // Regular expense types
+                const expenseTypes = ["withdraw", "send_money", "bill_payment", "cash_out", "mobile_recharge", "pay_bill", "subscription"];
+                const isExpense = isIntlSend || isTopUp || expenseTypes.includes(normalizedType);
+
+                // Icon
+                const Icon = isTopUp ? PlusCircle : isIntl ? Globe : isExpense ? ArrowUpRight : ArrowDownLeft;
+
+                // Icon background color
+                const iconClass = isIntlReceive
+                  ? "bg-blue-100 text-blue-600 dark:bg-blue-900/20"
+                  : isIntl
+                  ? "bg-purple-100 text-purple-600 dark:bg-purple-900/20"
+                  : isExpense
+                  ? "bg-rose-100 text-rose-600 dark:bg-rose-900/20"
+                  : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/20";
+
+                // Amount + sub-label
+                let amountDisplay = "";
+                let amountColor   = "";
+                let subLabel      = "";
+
+                if (isIntlSend) {
+                  amountDisplay = `-${tx.amountSent} ${tx.fromCurrency}`;
+                  amountColor   = "text-rose-500";
+                  subLabel      = `→ ${tx.amountReceived} ${tx.toCurrency} • Fee: ${tx.fee} ${tx.fromCurrency}`;
+                } else if (isIntlReceive) {
+                  amountDisplay = `+${tx.amountReceived} ${tx.toCurrency}`;
+                  amountColor   = "text-blue-500";
+                  subLabel      = `from ${tx.senderEmail}`;
+                } else if (isTopUp) {
+                  amountDisplay = `+${tx.amountAdded} ${tx.toCurrency}`;
+                  amountColor   = "text-purple-500";
+                  subLabel      = `−${tx.amountDeducted} ${tx.fromCurrency} from main balance`;
+                } else {
+                  amountDisplay = `${isExpense ? "-" : "+"}${tx.amount}`;
+                  amountColor   = isExpense ? "text-rose-500" : "text-emerald-500";
+                  subLabel      = tx.currency || "BDT";
+                }
+
                 return (
                   <div key={tx.transactionId} className="flex items-center justify-between px-6 py-5 hover:bg-gray-50 dark:hover:bg-blue-900/5 transition-colors group">
                     <div className="flex items-center gap-4">
-                      <div className={`p-3 rounded-full transition-transform group-hover:scale-110 ${!isExpense ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/20" : "bg-rose-100 text-rose-600 dark:bg-rose-900/20"}`}>
-                        {!isExpense ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
+                      <div className={`p-3 rounded-full transition-transform group-hover:scale-110 ${iconClass}`}>
+                        <Icon size={20} />
                       </div>
                       <div>
-                        <p className="font-bold text-gray-800 dark:text-gray-100">
-                          {tx.description || tx.type}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-gray-800 dark:text-gray-100">
+                            {tx.description || tx.type}
+                          </p>
+                          {isIntl && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 uppercase tracking-wide">
+                              International
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs text-gray-500 mt-1">
                           {new Date(tx.date).toLocaleDateString()} • {new Date(tx.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-4 md:gap-10 text-right">
                       <div>
-                        <p className={`text-lg font-bold ${!isExpense ? "text-emerald-500" : "text-rose-500"}`}>
-                          {!isExpense ? "+" : "-"}{tx.amount} <span className="text-sm font-normal text-gray-400">{tx.currency || "BDT"}</span>
-                        </p>
-                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Completed</p>
+                        <p className={`text-lg font-bold ${amountColor}`}>{amountDisplay}</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">{subLabel}</p>
                       </div>
-
-                      <button 
+                      <button
                         onClick={() => downloadSingleReceipt(tx)}
                         className="p-2.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500 hover:bg-blue-600 hover:text-white transition-all active:scale-90"
                       >
