@@ -4,6 +4,9 @@
   import HowItWorksPage from "@/components/ui/HowItWorks";
   import KeyFeatures from "@/components/ui/KeyFeatures";
   import Menus from "@/components/ui/menus";
+import TopReviews from "@/components/ui/Topreviews";
+import EliteRewards from './../components/ui/EliteRewards';
+import EliteFeaturesSlider from "@/components/ui/EliteFeaturesSlider";
 
   export default function Home() {
     return (
@@ -15,6 +18,8 @@
         <section id="menus">
           <Menus />
         </section>
+        <EliteFeaturesSlider/>
+
 
         <section id="offers">
           <OfferSection />
@@ -27,10 +32,13 @@
         <section id="how">
           <HowItWorksPage />
         </section>
+          
+          <section id="reviews">  <TopReviews /></section>
+      
 
         <section id="demo">
-          <ProjectDemo />
-        </section>
+  <ProjectDemo />
+</section>
       </main>
     );
   }

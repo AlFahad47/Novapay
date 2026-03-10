@@ -12,7 +12,7 @@ export default function KYCPage() {
   const [kycStatus, setKycStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // ইউজারের বর্তমান স্ট্যাটাস চেক করা
+ 
   useEffect(() => {
     const checkStatus = async () => {
       if (session?.user?.email) {
@@ -76,7 +76,7 @@ export default function KYCPage() {
           />
         )}
 
-        {/* কেস ২: অ্যাপ্রুভড স্ট্যাটাস */}
+        
         {kycStatus === "approved" && (
           <StatusCard 
             title="Account Verified" 

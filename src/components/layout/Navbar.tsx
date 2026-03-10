@@ -8,6 +8,8 @@ import { signOut, useSession } from 'next-auth/react';
 import { FaUser } from 'react-icons/fa';
 import { FaGear } from 'react-icons/fa6';
 import { IoLogOut } from 'react-icons/io5';
+import { Crown, ShieldCheck, Star, Trophy } from "lucide-react"
+import RankDetailsModal from '../modals/RankDetailsModal';
 
 const Navbar: React.FC = () => {
   const { data: session } = useSession();
@@ -16,9 +18,24 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [activeHash, setActiveHash] = useState("");
+  const [unreadTotal, setUnreadTotal] = useState(0);
+ 
   const pathname = usePathname();
 
   const user = session?.user;
+
+  // Fetch total unread messages for badge on Chat link and Bell
+  useEffect(() => {
+    if (!user) return;
+    const fetchUnread = () => {
+      fetch("/api/chat/unread-count")
+        .then((r) => r.json())
+        .then((data) => setUnreadTotal(data.total ?? 0));
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
 
 useEffect(() => {
   const updateHash = () => {
@@ -50,23 +67,55 @@ useEffect(() => {
   }, [darkMode]);
 
   // Smooth scroll handler
-  const handleScrollLink = (path: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+ const handleScrollLink = (path: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+ 
   if (path.startsWith("/#")) {
-    e.preventDefault();
+    const hash = path.replace("/", ""); 
+    
+   
+    if (pathname === "/") {
+      const target = document.querySelector(hash);
+      
+      if (target) {
+       
+        e.preventDefault();
+        target.scrollIntoView({ behavior: "smooth" });
 
-    const hash = path.replace("/", "");
-    const target = document.querySelector(hash);
-
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
-
-      // URL update + active update
-      window.history.pushState(null, "", hash);
-      setActiveHash(hash);
-    }
+        
+        window.history.pushState(null, "", hash);
+        setActiveHash(hash);
+      }
+    } 
+   
   }
 };
 
+const [fullUser, setFullUser] = useState<any>(null);
+
+
+useEffect(() => {
+  const fetchUserData = async () => {
+    if (session?.user?.email) {
+      try {
+        const res = await fetch(`/api/user/update?email=${session.user.email}`);
+        const data = await res.json();
+        if (data && !data.message) {
+          setFullUser(data);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
+  };
+
+  fetchUserData();
+  
+  const interval = setInterval(fetchUserData, 10000); 
+  return () => clearInterval(interval);
+}, [session]);
+
+
+console.log(fullUser?.rank)
   const navLinks = user
     ? [
         { name: "Home", path: "/" },
@@ -79,9 +128,11 @@ useEffect(() => {
     : [
         { name: "Home", path: "/#home" },
         { name: "Quick Action", path: "/#menus" },
+        { name: "Offer", path: "/#offers" },
         { name: "Features", path: "/#features" },
         { name: "How It Works", path: "/#how" },
-        { name: "Offer", path: "/#offers" },
+        { name: "Reviews", path: "/#reviews" },
+        
       ];
 
 
@@ -124,6 +175,12 @@ useEffect(() => {
                 }`}
               >
                 <span className="relative text-[1rem] z-10 text-[#3b82f6] dark:text-white">{link.name}</span>
+                {/* Unread badge on Chat link */}
+                {link.name === "Chat" && unreadTotal > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-0.5 z-20">
+                    {unreadTotal > 99 ? "99+" : unreadTotal}
+                  </span>
+                )}
                 {isActive && (
                   <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#3b82f6] rounded-full shadow-[0_0_10px_3px_rgba(59,130,246,0.8)]"></span>
                 )}
@@ -138,25 +195,71 @@ useEffect(() => {
             {/* Dark Mode Toggle (always visible) */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="pl-5 h-14 w-14 rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+              className="flex items-center justify-center h-14 w-14 rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
             >
               {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-800" />}
             </button>
 
-            {user ? (
-              <div
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 cursor-pointer transition-transform duration-200 hover:scale-105"
-              >
-                <img
-                  alt="User Avatar"
-                  referrerPolicy="no-referrer"
-                  src={user.photoURL || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8oghbsuzggpkknQSSU-Ch_xep_9v3m6EeBQ&s'}
-                  className="w-full h-full object-cover"
-                />
-                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
-              </div>
-            ) : (
+ {user ? (
+  <div className="relative inline-block group">
+    
+    <div 
+      onClick={(e) => {
+        e.stopPropagation(); 
+        setIsRankModalOpen(true);
+      }}
+      className={`absolute -top-2 left-1/2 -translate-x-1/2 z-30 px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md backdrop-blur-sm border  transition-transform duration-300 hover:scale-110 active:scale-95
+      ${fullUser?.rank === 'Platinum' ? 'bg-slate-900 border-slate-700 text-white' : 
+        fullUser?.rank === 'Gold' ? 'bg-amber-400 border-amber-300 text-amber-950' : 
+        fullUser?.rank === 'Silver' ? 'bg-slate-200 border-slate-300 text-slate-800' : 
+        'bg-[#E63946] border-red-400 text-white'}`}
+    >
+      <span className="flex items-center justify-center">
+        {fullUser?.rank === 'PLATINUM' && <Trophy className="w-2.5 h-2.5" />}
+        {fullUser?.rank === 'GOLD' && <Crown className="w-2.5 h-2.5" />}
+        {fullUser?.rank === 'SILVER' && <ShieldCheck className="w-2.5 h-2.5" />}
+        {(!fullUser?.rank || fullUser?.rank === 'BRONZE') && <Star className="w-2.5 h-2.5 fill-current" />}
+      </span>
+
+      <span className="text-[9px] font-black uppercase tracking-tighter leading-none">
+        {fullUser?.rank || 'Bronze'}
+      </span>
+    </div>
+
+    {/* 2. User Avatar Container */}
+    <div
+      onClick={() => setIsProfileOpen(!isProfileOpen)}
+      className={`relative w-12 h-12 rounded-full overflow-hidden border-2 z-10 cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95
+        ${fullUser?.rank === 'PLATINUM' ? 'border-indigo-400 shadow-[0_0_12px_rgba(129,140,248,0.4)]' : 
+          fullUser?.rank === 'GOLD' ? 'border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.4)]' : 
+          fullUser?.rank === 'SILVER' ? 'border-slate-300 shadow-sm' : 
+          'border-gray-300 dark:border-gray-600'}`}
+    >
+      <img
+        alt="User Avatar"
+        referrerPolicy="no-referrer"
+        src={user.photoURL || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8oghbsuzggpkknQSSU-Ch_xep_9v3m6EeBQ&s'}
+        className="w-full h-full object-cover"
+      />
+    </div>
+
+    {/* 3. Online Status Dot */}
+    <span className="absolute bottom-0.5 right-0.5 flex h-3 w-3 z-20">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 border border-white"></span>
+      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500 border-2 border-white"></span>
+    </span>
+
+    {/* 4. Points Indicator - এখানেও মোডাল ট্রিগার যোগ করা হয়েছে */}
+    <div 
+      
+      className="absolute -bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer hover:scale-110 active:scale-95"
+    >
+      <p className="text-[10px] font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap bg-white/80 dark:bg-black/80 px-1.5 rounded-full shadow-sm">
+        {fullUser?.points || 0} Points
+      </p>
+    </div>
+  </div>
+): (
               <Link
                 href="/login"
                 className="group relative flex items-center gap-2 px-6 py-2.5 rounded-full overflow-hidden border border-white/10"
@@ -273,9 +376,12 @@ useEffect(() => {
           </div>
         )}
 
+        
+
       </nav>
     </div>
   );
 };
+
 
 export default Navbar;

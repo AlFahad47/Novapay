@@ -1,27 +1,31 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import {
   FaPaperPlane, FaHandHoldingUsd, FaMoneyBillWave, FaWallet,
   FaMobileAlt, FaReceipt, FaHistory, FaPiggyBank, FaCreditCard,
-  FaSyncAlt, FaBolt, FaLock, FaUnlockAlt,
+  FaSyncAlt, FaBolt, FaLock, FaCheckCircle, FaExclamationTriangle, FaClock
 } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 import BillForm from "../modals/bill";
-
+import RechargeForm from "../modals/mobilerecharge";
+import SendMoneyForm from "../modals/sendmoney";
+import RequestMoneyForm from "../modals/RequestMoney";
+import CashOutForm from "../modals/CashOutForm";
+import AddMoneyForm from "../modals/AddMoneyForm";
 
 type MenuItem = {
   name: string;
   icon: IconType;
   route: string;
   requiresAuth: boolean;
-}
+};
 
 const quickActions: MenuItem[] = [
-  { name: "Send Money",          icon: FaPaperPlane,     route: "/send-money",       requiresAuth: true  },
+  { name: "Send Money",          icon: FaPaperPlane,      route: "/send-money",       requiresAuth: true  },
   { name: "Request Money",       icon: FaHandHoldingUsd, route: "/request-money",    requiresAuth: true  },
   { name: "Cash Out",            icon: FaMoneyBillWave,  route: "/cash-out",         requiresAuth: true  },
   { name: "Add Money",           icon: FaWallet,         route: "/add-money",        requiresAuth: true  },
@@ -29,19 +33,31 @@ const quickActions: MenuItem[] = [
   { name: "Pay Bill",            icon: FaReceipt,        route: "/pay-bill",         requiresAuth: false },
   { name: "Transaction History", icon: FaHistory,        route: "/dashboard/transactions", requiresAuth: true  },
   { name: "Wallet",              icon: FaPiggyBank,      route: "/wallet",           requiresAuth: true  },
-  { name: "Cards & Banks",       icon: FaCreditCard,     route: "/cards-banks",      requiresAuth: true  },
+  { name: "Cards & Banks",       icon: FaCreditCard,     route: "/cardsbank",      requiresAuth: true  },
   { name: "Subscriptions",       icon: FaSyncAlt,        route: "/subscriptions",    requiresAuth: false },
 ];
 
-const QuickActions: React.FC = () => {
+const QuickActionsContent = () => {
   const { data: session, status } = useSession();
   const isLoggedIn = status === "authenticated";
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [kycStatus, setKycStatus] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
+
+  useEffect(() => {
+    const action = searchParams.get("action");
+    if (action === "sendmoney") {
+      setActiveModal("Send Money");
+      setIsModalOpen(true);
+      setActiveIndex(0);
+      const newUrl = window.location.pathname;
+      window.history.replaceState(null, '', newUrl);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -96,9 +112,8 @@ const QuickActions: React.FC = () => {
       return;
     }
 
-    // Modal logic for specific items
-    if (item.name === "Pay Bill") {
-      setActiveModal("Pay Bill");
+    if (["Pay Bill", "Mobile Recharge", "Send Money", "Request Money","Cash Out", "Add Money"].includes(item.name)) {
+      setActiveModal(item.name);
       setIsModalOpen(true);
     } else {
       router.push(item.route);
@@ -118,6 +133,39 @@ const QuickActions: React.FC = () => {
     };
   };
 
+  
+  const renderKycInfo = () => {
+    if (!isLoggedIn) return null;
+
+    if (kycStatus === "approved") {
+      return (
+        <div className="flex items-center justify-center w-full gap-1.5 text-green-500 text-sm font-medium mt-2">
+          <FaCheckCircle size={14} /> Verified Account
+        </div>
+      );
+    }
+
+    if (kycStatus === "pending") {
+      return (
+        <div className="flex items-center justify-center w-full gap-1.5 text-amber-500 text-sm font-medium mt-2 animate-pulse">
+          <FaClock size={14} /> Verification Pending
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex justify-center w-full">
+        <button 
+          onClick={() => router.push("/dashboard/kyc")}
+          className="flex items-center gap-1.5 text-red-500 text-sm font-semibold mt-2 hover:underline decoration-2 underline-offset-4 transition-all"
+        >
+          <FaExclamationTriangle size={14} /> 
+          {kycStatus === "rejected" ? "KYC Rejected - Re-apply now" : "Complete KYC to Unlock All Features"}
+        </button>
+      </div>
+    );
+  };
+
   return (
     <section className="w-full bg-gray-50 dark:bg-[#0A0E17] pb-10 overflow-hidden relative border-y border-gray-200 dark:border-gray-800/60">
       <svg width="0" height="0" className="absolute">
@@ -129,17 +177,17 @@ const QuickActions: React.FC = () => {
       </svg>
 
       <div className="max-w-[1400px] mx-auto px-4 relative flex flex-col items-center">
-        {/* HEADER */}
         <div className="w-full text-center pt-14 pb-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#4DA1FF]/10 border border-[#4DA1FF]/20 text-[#4DA1FF] text-xs font-semibold mb-3">
             <FaBolt size={10} /> Quick Actions
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800 dark:text-white">
+          <h2 className="text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white">
             Everything You Need, <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">One Tap Away</span>
           </h2>
+          {/* Dynamic KYC Info - এখন সেন্টার হবে */}
+          {renderKycInfo()}
         </div>
 
-        {/* CAROUSEL */}
         <div className="relative w-full h-[280px] md:h-[340px] flex items-center justify-between">
           <button onClick={handlePrev} className="z-30 p-4 text-gray-400 hover:text-blue-600 hidden sm:block"><ArrowLeft size={32} /></button>
           
@@ -164,13 +212,13 @@ const QuickActions: React.FC = () => {
           <button onClick={handleNext} className="z-30 p-4 text-gray-400 hover:text-blue-600 hidden sm:block"><ArrowRight size={32} /></button>
         </div>
 
-        {/* MODAL OVERLAY */}
         {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
             <div className="bg-white dark:bg-[#121928] w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
               <div className="flex items-center justify-between p-6 border-b dark:border-gray-800">
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                  <FaReceipt className="text-blue-500" /> {activeModal}
+                  {activeModal === "Pay Bill" ? <FaReceipt className="text-blue-500" /> : <FaPaperPlane className="text-blue-500" />} 
+                  {activeModal}
                 </h3>
                 <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
                   <X size={20} className="text-gray-500" />
@@ -178,12 +226,25 @@ const QuickActions: React.FC = () => {
               </div>
               <div className="p-6">
                 {activeModal === "Pay Bill" && <BillForm />}
+                {activeModal === "Mobile Recharge" && <RechargeForm />} 
+                {activeModal === "Send Money" && <SendMoneyForm />} 
+                {activeModal === "Request Money" && <RequestMoneyForm />} 
+                {activeModal === "Cash Out" && <CashOutForm />} 
+                {activeModal === "Add Money" && <AddMoneyForm />} 
               </div>
             </div>
           </div>
         )}
       </div>
     </section>
+  );
+};
+
+const QuickActions = () => {
+  return (
+    <Suspense fallback={<div>Loading Actions...</div>}>
+      <QuickActionsContent />
+    </Suspense>
   );
 };
 

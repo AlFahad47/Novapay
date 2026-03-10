@@ -18,8 +18,8 @@ const BillForm = () => {
     { name: "TV/DTH", icon: FaTv, color: "text-purple-500" },
   ];
 
-  const handlePayBill = async () => {
-    // ভ্যালিডেশন
+ const handlePayBill = async () => {
+    // validation
     if (!consumerId || !amount) {
       Swal.fire("Error", "Please fill all fields", "error");
       return;
@@ -33,12 +33,13 @@ const BillForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/transactions", { // আপনার API রুট অনুযায়ী পাথ দিন
+      // 1. Process the main Transaction (POST)
+      const response = await fetch("/api/transactions", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: session.user.email,
-          type: "Bill Payment",
+          type: "bill_payment",
           amount: amount,
           currency: "BDT",
           status: "completed",
@@ -51,13 +52,30 @@ const BillForm = () => {
       const data = await response.json();
 
       if (data.success) {
+        // 2. TRIGGER POINT UPDATE (PATCH)
+        // We use a separate try-catch so that if points fail, 
+        // the user still knows their bill was paid.
+        try {
+          await fetch("/api/points", { 
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: session.user.email,
+              activityType: "BILL_PAYMENT", // Matches your POINT_CONFIG key
+            }),
+          });
+        } catch (pointError) {
+          console.error("Point update failed:", pointError);
+        }
+
         Swal.fire({
           icon: "success",
           title: "Payment Successful!",
-          text: `${selectedType} bill of ৳${amount} paid successfully.`,
+          text: `${selectedType} bill of ৳${amount} paid successfully. Points added!`,
           confirmButtonColor: "#1E50FF",
         });
-        // ফর্ম রিসেট
+
+        // Form reset
         setConsumerId("");
         setAmount("");
       } else {

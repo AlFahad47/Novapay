@@ -59,16 +59,12 @@ export default function KeyFeatures() {
         className="relative text-center mb-16"
       >
         <h1
-          className="text-4xl md:text-6xl font-extrabold
-          bg-gradient-to-r
-          from-[#0061ff] via-[#0095ff] to-[#00d4ff]
-          dark:from-white dark:via-[#93C5FD] dark:to-[#0061ff]
-          bg-clip-text text-transparent"
+          className="text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white"
         >
-          Key Features
+          Key <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">Features</span> 
         </h1>
 
-        <p className="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300">
+        <p className="mt-6 text-sm  text-gray-600 dark:text-gray-300">
           Explore powerful features designed to deliver speed, security, and a
           modern financial experience.
         </p>

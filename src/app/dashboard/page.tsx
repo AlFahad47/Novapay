@@ -6,7 +6,9 @@ import {
   DollarSign,
   Activity,
   ArrowUpRight,
+  MessageSquare,
 } from "lucide-react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import React from "react";
 
@@ -14,12 +16,13 @@ type Role = "User" | "Agent" | "Admin";
 
 /* ---------------- ROLE-BASED QUICK ACTIONS ---------------- */
 
-const actionsByRole: Record<Role, { label: string; icon: React.ReactNode }[]> =
+const actionsByRole: Record<Role, { label: string; icon: React.ReactNode; href?: string }[]> =
   {
     User: [
       { label: "Apply for Loan", icon: <DollarSign size={18} /> },
       { label: "Upload Documents", icon: <CreditCard size={18} /> },
       { label: "Track Application", icon: <Activity size={18} /> },
+      { label: "Contact Support", icon: <MessageSquare size={18} />, href: "/chat/support" },
     ],
     Agent: [
       { label: "Verify KYC", icon: <Users size={18} /> },
@@ -114,6 +117,7 @@ export default function DashboardHome() {
               key={action.label}
               label={action.label}
               icon={action.icon}
+              href={action.href}
             />
           ))}
         </div>
@@ -199,20 +203,31 @@ function StatCard({
 function QuickButton({
   label,
   icon,
+  href,
 }: {
   label: string;
   icon: React.ReactNode;
+  href?: string;
 }) {
+  const className = "flex items-center justify-center gap-2 bg-gray-100 dark:bg-blue-900/40 hover:bg-[#0095ff] hover:text-white transition px-5 py-3 rounded-xl font-medium text-gray-700 dark:text-blue-200";
+
+  if (href) {
+    return (
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.2 }}>
+        <Link href={href} className={className}>
+          {icon}
+          {label}
+        </Link>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="flex items-center justify-center gap-2
-      bg-gray-100 dark:bg-blue-900/40
-      hover:bg-[#0095ff] hover:text-white
-      transition px-5 py-3 rounded-xl
-      font-medium text-gray-700 dark:text-blue-200"
+      className={className}
     >
       {icon}
       {label}

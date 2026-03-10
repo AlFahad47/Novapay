@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, role, currency, bank, ...kycData } = body;
+    const { email, role, currency, bank, bankBalance, ...kycData } = body;
 
     if (!email) return NextResponse.json({ message: "Email is required" }, { status: 400 });
 
@@ -46,10 +46,18 @@ export async function POST(request: Request) {
         role: role || existingUser?.role || "User",
         currency: currency || existingUser?.currency || "BDT",
         bank: bank || existingUser?.bank || "Not Linked",
+        bankBalance: bankBalance !== undefined ? bankBalance : (existingUser?.bankBalance ?? 0),
         kycStatus: existingUser?.kycStatus || "pending", 
         kycDetails: {
           ...kycData, 
         },
+
+        // Loyalty System
+        points: existingUser?.points ?? existingUser?.points ?? 0,
+    rank: existingUser?.rank ?? "Bronze",
+    pointsHistory: existingUser?.pointsHistory ?? [],
+
+    
         // If these fields are missing in the database, set defaults. 
         // If they exist, keep the original values (existingUser?.field)
         balance: existingUser?.balance ?? 0,

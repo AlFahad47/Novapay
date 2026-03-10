@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   Users,
@@ -17,20 +18,19 @@ import {
   UserCog,
   ShieldCheckIcon,
   FileCheck,
+  MessageSquare,
 } from "lucide-react";
 
-const sidebarItems = [
+const sidebarItems: { icon: React.ElementType; label: string; path: string; adminOnly?: boolean; userOnly?: boolean }[] = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: UserCog, label: "Admin", path: "/dashboard/admin" },
-  {
-    icon: ShieldCheckIcon,
-    label: "User Request",
-    path: "/dashboard/userRequest",
-  },
+  { icon: ShieldCheckIcon, label: "User Request", path: "/dashboard/userRequest" },
   { icon: Users, label: "Users", path: "/dashboard/users" },
   { icon: CreditCard, label: "Transactions", path: "/dashboard/transactions" },
   { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
   { icon: FileCheck, label: "KYC", path: "/dashboard/kyc" },
+  { icon: MessageSquare, label: "Support", path: "/dashboard/support", adminOnly: true },
+  { icon: MessageSquare, label: "Support", path: "/chat/support", userOnly: true },
   { icon: Settings, label: "Settings", path: "/dashboard/settings" },
 ];
 
@@ -42,10 +42,41 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role?.toLowerCase() === "admin";
+
+  // Show adminOnly items to admins only, userOnly items to non-admins only
+  const visibleItems = sidebarItems.filter(item => {
+    if (item.adminOnly) return isAdmin;
+    if (item.userOnly) return !isAdmin;
+    return true;
+  });
+
+  const [unreadSupport, setUnreadSupport] = useState(0);
+
+  // Fetch unread support message count
+  useEffect(() => {
+    if (!session?.user) return;
+    const fetchUnread = () => {
+      fetch("/api/chat/unread-count")
+        .then((r) => r.json())
+        .then((data) => setUnreadSupport(data.support ?? 0));
+    };
+    fetchUnread();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [session]);
 
   const getPageTitle = () => {
-    const segment = pathname.split("/").filter(Boolean).pop();
+    const parts = pathname.split("/").filter(Boolean);
+    const segment = parts.pop();
     if (!segment || segment === "dashboard") return "Dashboard";
+    // If the segment looks like a MongoDB ObjectId (24 hex chars), use the parent segment name
+    if (/^[a-f0-9]{24}$/i.test(segment)) {
+      const parent = parts.pop();
+      return parent ? parent.replace(/-/g, " ") : "Details";
+    }
     return segment.replace(/-/g, " ");
   };
 
@@ -97,7 +128,7 @@ export default function DashboardLayout({
         </div>
 
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          {sidebarItems.map((item) => {
+          {visibleItems.map((item) => {
             const isActive =
               item.path === "/dashboard"
                 ? pathname === "/dashboard"
@@ -115,7 +146,13 @@ export default function DashboardLayout({
                 }`}
               >
                 <item.icon size={18} className="text-blue-400" />
-                {!collapsed && <span>{item.label}</span>}
+                {!collapsed && <span className="flex-1">{item.label}</span>}
+                {/* Unread badge on Support link */}
+                {item.label === "Support" && unreadSupport > 0 && (
+                  <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                    {unreadSupport > 99 ? "99+" : unreadSupport}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -155,12 +192,13 @@ export default function DashboardLayout({
           </h2>
 
           <div className="flex items-center gap-5">
-            <button className="relative">
+            <button className="relative" onClick={() => window.location.href = isAdmin ? "/dashboard/support" : "/chat/support"}>
               <Bell className="w-5 h-5 text-blue-400" />
-              <span
-                className="absolute -top-1 -right-1 
-                w-2 h-2 bg-[#00b4ff] rounded-full"
-              />
+              {unreadSupport > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-0.5">
+                  {unreadSupport > 99 ? "99+" : unreadSupport}
+                </span>
+              )}
             </button>
             <div className="w-9 h-9 relative">
               <Image

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Play, ThumbsUp, LineChart, ShieldCheck, Star, ArrowUpRight, Wallet, Fingerprint, Wifi, Plus } from 'lucide-react';
+import Link from 'next/link';
 
 const Banner: React.FC = () => {
   // --- STATES ---
@@ -137,19 +138,19 @@ const Banner: React.FC = () => {
         </p>
 
         <div className="anim-fade-up delay-txt-3 flex items-center justify-center gap-4">
-          <button className="group relative flex items-center justify-center gap-2 px-8 py-3.5 rounded-full overflow-hidden border border-white/10 shadow-sm hover:shadow-[0_8px_25px_-5px_rgba(77,161,255,0.25)] transition-all duration-300">
+          <Link href={'/register'} className="group relative flex items-center justify-center gap-2 px-8 py-3.5 rounded-full overflow-hidden border border-white/10 shadow-sm hover:shadow-[0_8px_25px_-5px_rgba(77,161,255,0.25)] transition-all duration-300">
             <div className="absolute inset-0 bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] transition-transform duration-500 ease-out group-hover:scale-[1.05]"></div>
             <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/30 to-transparent opacity-40 rounded-t-full pointer-events-none"></div>
             <span className="relative text-white text-sm font-semibold tracking-wide drop-shadow-sm">Get Started</span>
             <ArrowUpRight size={16} strokeWidth={2.5} className="relative text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
-          </button>
+          </Link>
 
-          <button className="flex items-center justify-center gap-3 px-6 py-3.5 rounded-full border border-[#4DA1FF]/20bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] hover:bg-[#0F172A]/80 backdrop-blur-md transition-all group text-[#64748B] hover:text-[#4DA1FF] shadow-sm">
+          <a href="#demo" className="flex items-center justify-center gap-3 px-6 py-3.5 rounded-full border border-[#4DA1FF]/20bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] hover:bg-[#0F172A]/80 backdrop-blur-md transition-all group text-[#64748B] hover:text-[#4DA1FF] shadow-sm">
             <div className="flex items-center justify-center w-7 h-7 rounded-full bg-black/10 text-[#4DA1FF] group-hover:scale-110  transition-transform">
               <Play size={12} fill="currentColor" />
             </div>
             <span className="text-sm  text-[#4DA1FF] font-semibold">Watch Demo</span>
-          </button>
+          </a>
         </div>
       </div>
 
