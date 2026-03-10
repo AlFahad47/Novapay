@@ -67,6 +67,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Recipient is not KYC verified." }, { status: 403 });
     }
 
+    // Elite check — recipient must have International Pay unlocked
+    const recipientFeatures: string[] = recipient.unlockedFeatures || [];
+    if (!recipientFeatures.includes("International Pay")) {
+      return NextResponse.json({
+        message: "Recipient does not have International Pay enabled. They must unlock it first.",
+      }, { status: 403 });
+    }
+
     // ── 5. Balance Check ─────────────────────────────────────────────
     // Check sender's wallet for fromCurrency
     // wallets = { USD: 100, PHP: 500, ... }
