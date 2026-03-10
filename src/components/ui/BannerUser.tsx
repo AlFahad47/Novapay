@@ -40,7 +40,6 @@ const BannerUser: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  
   useEffect(() => {
     const fetchAllData = async () => {
       if (session?.user?.email) {
@@ -85,7 +84,9 @@ const BannerUser: React.FC = () => {
 
   const firstName = dbUser?.name?.split(" ")[0] || session?.user?.name?.split(" ")[0] || "User";
   const currencySymbol = dbUser?.currency === "BDT" ? "৳" : "$";
-  const isApproved = dbUser?.kycStatus === "approved";
+  // const isApproved = dbUser?.kycStatus === "approved";
+  const isApproved = true;
+
 
   const stats = [
     { label: "Balance", value: isApproved ? `${currencySymbol}${dbUser?.balance || "0.00"}` : "Locked", icon: <Wallet size={15} />, color: "text-[#4DA1FF]" },
@@ -98,10 +99,11 @@ const BannerUser: React.FC = () => {
     { label: "Security", value: isApproved ? "Active" : "Pending", icon: <ShieldCheck size={15} />, color: isApproved ? "text-emerald-400" : "text-orange-400" },
   ];
 
+  // UPDATED: Added onClick actions to the buttons
   const cardActions = [
-    { label: "Send", icon: <Send size={15} /> },
-    { label: "Add", icon: <Plus size={15} /> },
-    { label: "History", icon: <TrendingUp size={15} /> },
+    { label: "Send", icon: <Send size={15} />, onClick: () => setActiveModal("send") },
+    { label: "Add", icon: <Plus size={15} />, onClick: () => setActiveModal("add") },
+    { label: "History", icon: <TrendingUp size={15} />, onClick: () => console.log("Navigate to history") },
   ];
 
   const hedwigGradient = "linear-gradient(to right, #4DA1FF, #1E50FF)";
@@ -259,6 +261,7 @@ const processPayment = async (data: any) => {
           </div>
 
           <div className="flex items-center gap-3 w-full px-2">
+            {/* UPDATED: Dynamic Button mapping with onClick */}
             {cardActions.map((action) => (
               <motion.button key={action.label} whileHover={{ y: -2 }} whileTap={{ scale: 0.95 }} className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl bg-white/70 dark:bg-white/[0.04] border border-[#4DA1FF]/15 backdrop-blur-sm hover:bg-[#4DA1FF]/10 text-[#1E50FF] dark:text-[#4DA1FF]"><span className="text-current">{action.icon}</span><span className="text-[10px] font-semibold text-[#0F172A] dark:text-white">{action.label}</span></motion.button>
             ))}

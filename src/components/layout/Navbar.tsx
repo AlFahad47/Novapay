@@ -195,7 +195,7 @@ console.log(fullUser?.rank)
             {/* Dark Mode Toggle (always visible) */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="pl-5 h-14 w-14 rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+              className="flex items-center justify-center h-14 w-14 rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
             >
               {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-800" />}
             </button>
