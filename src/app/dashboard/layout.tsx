@@ -19,7 +19,6 @@ import {
   ShieldCheckIcon,
   FileCheck,
   MessageSquare,
-  Globe,
 } from "lucide-react";
 
 const sidebarItems: { icon: React.ElementType; label: string; path: string; adminOnly?: boolean; userOnly?: boolean }[] = [
@@ -28,7 +27,6 @@ const sidebarItems: { icon: React.ElementType; label: string; path: string; admi
   { icon: ShieldCheckIcon, label: "User Request", path: "/dashboard/userRequest" },
   { icon: Users, label: "Users", path: "/dashboard/users" },
   { icon: CreditCard, label: "Transactions", path: "/dashboard/transactions" },
-  { icon: Globe, label: "International", path: "/dashboard/international" },
   { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
   { icon: FileCheck, label: "KYC", path: "/dashboard/kyc" },
   { icon: MessageSquare, label: "Support", path: "/dashboard/support", adminOnly: true },

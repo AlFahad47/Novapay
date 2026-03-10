@@ -23,7 +23,7 @@ const eliteActions: EliteMenuItem[] = [
   { 
     name: "International Pay", 
     icon: FaGlobeAmericas, 
-    route: "/international", 
+    route: "/dashboard/international",
     minRank: 'Silver', 
     pointsNeeded: 500,
     description: "Send and receive money globally with real-time conversion."
