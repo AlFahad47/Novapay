@@ -53,9 +53,11 @@ export async function POST(request: Request) {
         },
 
         // Loyalty System
-        points: existingUser?.points ?? existingUser?.points ?? 0,
-    rank: existingUser?.rank ?? "Bronze",
-    pointsHistory: existingUser?.pointsHistory ?? [],
+        points: existingUser?.points ?? 0, 
+    
+    rank: existingUser?.rank || "Bronze", 
+    totalXP: existingUser?.totalXP ?? 0, 
+    updatedAt: new Date(),
 
     
         // If these fields are missing in the database, set defaults. 
@@ -67,10 +69,7 @@ export async function POST(request: Request) {
           totalExpense: 0,
           status: "active"
         },
-        microsaving: existingUser?.microsaving ?? {
-          savingsBalance: 0,
-          goals: []
-        },
+       microsaving: existingUser?.microsaving ?? [],
         updatedAt: new Date()
       },
       $setOnInsert: {

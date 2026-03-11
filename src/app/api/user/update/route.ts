@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 
-// --- GET: User profile fetch korar jonno (Existing code) ---
+// --- GET: User profile fetch ---
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -21,20 +21,20 @@ export async function GET(request: Request) {
   }
 }
 
-// --- POST: Wallet Balance ebong History update korar jonno ---
+// --- POST: Wallet Balance, Goals and History update ---
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { 
       email, 
-      bankBalance,   // Physical Pocket balance
-      wallet,        // Inflow/Outflow stats
-      wallethistory, // Transaction records
-      // --- New Fields for Bank Sync ---
-      bankId,        // The ID of the specific bank (e.g., "8cmwzt3ij")
-      amount,        // The transaction amount
-      actionType,    // "add_money" or "deposit_money"
-      newBank        // For linking new accounts
+      newGoal,
+      bankBalance,
+      wallet,
+      wallethistory,
+      bankId,
+      amount,
+      actionType,
+      newBank 
     } = body;
 
     if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
@@ -43,43 +43,64 @@ export async function POST(request: Request) {
     const db = client.db("novapay_db");
     const usersCollection = db.collection("users");
 
-    // 1. Handle Linking New Bank (If newBank object exists)
+    // --- LOGIC A: New Microsaving Goal Add ---
+    if (newGoal) {
+      const goalWithId = {
+        ...newGoal,
+        id: Math.random().toString(36).substring(2, 11),
+        createdAt: new Date(),
+        savingsBalance: 0, 
+      };
+
+      await usersCollection.updateOne(
+        { email },
+        { 
+          // @ts-ignore
+          $push: { microsaving: goalWithId },
+          $set: { updatedAt: new Date() }
+        },
+        { upsert: true }
+      );
+      return NextResponse.json({ success: true, message: "Smart Goal Created Successfully!" });
+    }
+
+    // --- LOGIC B: Handle Linking New Bank ---
     if (newBank) {
       await usersCollection.updateOne(
         { email },
         { 
+          // @ts-ignore
           $push: { 
             linkedBanks: { 
               ...newBank, 
-              id: Math.random().toString(36).substr(2, 9), 
+              id: Math.random().toString(36).substring(2, 11), 
               addedAt: new Date() 
             } 
-          } as any 
+          } 
         }
       );
       return NextResponse.json({ success: true, message: "Bank Linked Successfully" });
     }
 
-    // 2. Transaction Logic for existing Banks
+    // --- LOGIC C: Transaction Logic for existing User ---
     const existingUser = await usersCollection.findOne({ email });
     if (!existingUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     let novaPayBalance = existingUser.balance ?? 0;
     const numAmount = parseFloat(amount) || 0;
     
-    // Logic to find and calculate the specific bank balance
     const targetBank = existingUser.linkedBanks?.find((b: any) => b.id === bankId);
     let finalBankBalance = targetBank ? (parseFloat(targetBank.balance) || 0) : 0;
 
     if (actionType === "add_money") {
       novaPayBalance += numAmount;
-      finalBankBalance -= numAmount; // Subtract from Bank
+      finalBankBalance -= numAmount;
     } else if (actionType === "deposit_money") {
       novaPayBalance -= numAmount;
-      finalBankBalance += numAmount; // Add to Bank
+      finalBankBalance += numAmount;
     }
 
-    // 3. Database Update with Positional Operator
+    // Database Update
     const updateQuery: any = { email: email };
     if (bankId) updateQuery["linkedBanks.id"] = bankId;
 
@@ -93,7 +114,7 @@ export async function POST(request: Request) {
       }
     };
 
-    // If we have a specific bank, update its balance inside the array
+    // Correctly handle the nested array update
     if (bankId && targetBank) {
       updatePayload.$set["linkedBanks.$.balance"] = finalBankBalance;
     }
@@ -104,9 +125,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User or Bank Record not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, message: "Transaction Recorded Successfully", currentNovaPayBalance: novaPayBalance });
-  } catch (error) {
+    return NextResponse.json({ 
+      success: true, 
+      message: "Transaction Recorded Successfully", 
+      currentNovaPayBalance: novaPayBalance 
+    });
+
+  } catch (error: any) {
     console.error("Database Update Error:", error);
-    return NextResponse.json({ error: "Failed to update database" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Failed to update database", 
+      details: error.message 
+    }, { status: 500 });
   }
 }

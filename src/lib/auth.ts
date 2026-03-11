@@ -76,24 +76,22 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
 
-    async jwt({ token, user }) {
-      // On login, read role from MongoDB (works for both Google and Credentials)
-      if (user) {
-        const client = await clientPromise;
-        const db = client.db("novapay_db");
-        const dbUser = await db.collection("users").findOne({ email: token.email });
-        token.role = dbUser?.role ?? "User";
-        token.id = dbUser?._id.toString() ?? token.sub;
-      }
-      return token;
-    },
+   async jwt({ token, user }) {
 
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub as string;
-        session.user.role = token.role as string;
-      }
-      return session;
-    },
+  if (user) {
+    token.role = (user as any).role;
+    token.id = user.id;
+  }
+  return token;
+},
+
+async session({ session, token }) {
+  if (session.user) {
+    
+    session.user.id = token.id as string;
+    session.user.role = token.role as string;
+  }
+  return session;
+},
   },
 };
