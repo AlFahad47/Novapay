@@ -83,6 +83,7 @@ export default function DashboardLayout({
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadSupport, setUnreadSupport] = useState(0);
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   const isAdmin =
     session?.user?.role?.toLowerCase() === "admin";
@@ -110,6 +111,17 @@ export default function DashboardLayout({
 
     fetchUnread();
     const interval = setInterval(fetchUnread, 30000);
+
+    // Fetch subscription status
+    const fetchSubscription = async () => {
+      if (!session?.user?.email) return;
+      try {
+        const res = await fetch(`/api/subscription/status?email=${session.user.email}`);
+        const data = await res.json();
+        setIsSubscribed(data.subscribed === true);
+      } catch {}
+    };
+    fetchSubscription();
 
     return () => clearInterval(interval);
   }, [session]);
@@ -250,13 +262,18 @@ export default function DashboardLayout({
             </button>
 
             {/* Profile */}
-            <div className="w-9 h-9 relative">
+            <div className="relative w-9 h-9">
               <Image
                 src="/dashboard.jfif"
                 alt="Profile"
                 fill
                 className="rounded-full object-cover border border-blue-300 dark:border-blue-700/50"
               />
+              {isSubscribed && (
+                <span className="absolute -top-2 -right-2 bg-yellow-400 rounded-full p-0.5 shadow">
+                  <Crown size={10} className="text-white" />
+                </span>
+              )}
             </div>
           </div>
         </header>
