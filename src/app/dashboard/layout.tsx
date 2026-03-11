@@ -21,6 +21,7 @@ import {
   ShieldCheckIcon,
   FileCheck,
   MessageSquare,
+  Crown,
 } from "lucide-react";
 
 type SidebarItem = {
@@ -67,6 +68,7 @@ const sidebarItems: SidebarItem[] = [
     userOnly: true,
   },
 
+  { icon: Crown, label: "Subscription", path: "/dashboard/subscription" },
   { icon: Settings, label: "Settings", path: "/dashboard/settings" },
 ];
 
@@ -81,6 +83,8 @@ export default function DashboardLayout({
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadSupport, setUnreadSupport] = useState(0);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
 
   const isAdmin =
     session?.user?.role?.toLowerCase() === "admin";
@@ -108,6 +112,18 @@ export default function DashboardLayout({
 
     fetchUnread();
     const interval = setInterval(fetchUnread, 30000);
+
+    // Fetch subscription status
+    const fetchSubscription = async () => {
+      if (!session?.user?.email) return;
+      try {
+        const res = await fetch(`/api/subscription/status?email=${session.user.email}`);
+        const data = await res.json();
+        setIsSubscribed(data.subscribed === true);
+        setDaysLeft(data.daysLeft ?? null);
+      } catch {}
+    };
+    fetchSubscription();
 
     return () => clearInterval(interval);
   }, [session]);
@@ -248,16 +264,32 @@ export default function DashboardLayout({
             </button>
 
             {/* Profile */}
-            <div className="w-9 h-9 relative">
+            <div className="relative w-9 h-9">
               <Image
                 src="/dashboard.jfif"
                 alt="Profile"
                 fill
                 className="rounded-full object-cover border border-blue-300 dark:border-blue-700/50"
               />
+              {isSubscribed && (
+                <span className="absolute -top-2 -right-2 bg-yellow-400 rounded-full p-0.5 shadow">
+                  <Crown size={10} className="text-white" />
+                </span>
+              )}
             </div>
           </div>
         </header>
+
+        {/* Subscription expiry warning */}
+        {isSubscribed && daysLeft !== null && daysLeft <= 3 && (
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-700 px-6 py-2 flex items-center gap-2 text-sm text-yellow-800 dark:text-yellow-300">
+            <Crown size={14} className="text-yellow-500 shrink-0" />
+            <span>
+              Your Elite subscription expires in <strong>{daysLeft} day{daysLeft !== 1 ? "s" : ""}</strong>.{" "}
+              <Link href="/dashboard/subscription" className="underline font-medium">Renew now</Link>
+            </span>
+          </div>
+        )}
 
         {/* PAGE CONTENT */}
         <main className="flex-1 overflow-y-auto p-6 text-blue-900 dark:text-blue-100/80">

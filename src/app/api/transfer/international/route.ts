@@ -67,11 +67,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Recipient is not KYC verified." }, { status: 403 });
     }
 
-    // Elite check — recipient must have International Pay unlocked
-    const recipientFeatures: string[] = recipient.unlockedFeatures || [];
-    if (!recipientFeatures.includes("International Pay")) {
+    // Elite check — sender must have International Pay (via subscription or unlockedFeatures)
+    const senderSubscribed = sender.subscription?.active && new Date(sender.subscription.expiresAt) > new Date();
+    const senderFeatures: string[] = sender.unlockedFeatures || [];
+    if (!senderSubscribed && !senderFeatures.includes("International Pay")) {
       return NextResponse.json({
-        message: "Recipient does not have International Pay enabled. They must unlock it first.",
+        message: "You need an Elite subscription or International Pay unlocked to send international transfers.",
+      }, { status: 403 });
+    }
+
+    // Elite check — recipient must have International Pay (via subscription or unlockedFeatures)
+    const recipientSubscribed = recipient.subscription?.active && new Date(recipient.subscription.expiresAt) > new Date();
+    const recipientFeatures: string[] = recipient.unlockedFeatures || [];
+    if (!recipientSubscribed && !recipientFeatures.includes("International Pay")) {
+      return NextResponse.json({
+        message: "Recipient does not have International Pay enabled. They must subscribe or unlock it first.",
       }, { status: 403 });
     }
 

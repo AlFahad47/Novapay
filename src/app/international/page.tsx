@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Globe, Wallet, RefreshCw, CheckCircle2, AlertCircle, ArrowLeft, PlusCircle } from "lucide-react";
+import { ArrowRight, Globe, Wallet, RefreshCw, CheckCircle2, AlertCircle, ArrowLeft, PlusCircle, Crown, Lock } from "lucide-react";
 import { CURRENCY_META, SupportedCurrency, TransferPreview } from "@/types/international";
 
 type Step = "form" | "preview" | "success";
@@ -47,21 +47,21 @@ export default function InternationalTransferPage() {
       return;
     }
 
-    // Check unlockedFeatures from DB
-    fetch(`/api/user/update?email=${session.user.email}`)
-      .then((r) => r.json())
-      .then((data) => {
-        const unlocked: string[] = data?.unlockedFeatures || [];
-        if (unlocked.includes("International Pay")) {
+    // Check subscription first, then unlockedFeatures
+    Promise.all([
+      fetch(`/api/subscription/status?email=${session.user.email}`).then((r) => r.json()),
+      fetch(`/api/user/update?email=${session.user.email}`).then((r) => r.json()),
+    ])
+      .then(([subData, userData]) => {
+        const isSubscribed = subData?.subscribed === true;
+        const unlocked: string[] = userData?.unlockedFeatures || [];
+        if (isSubscribed || unlocked.includes("International Pay")) {
           setHasAccess(true);
-          setWallets(data?.wallets ?? {});
-        } else {
-          // Not unlocked → redirect to home
-          router.push("/");
+          setWallets(userData?.wallets ?? {});
         }
         setAccessChecked(true);
       })
-      .catch(() => router.push("/"));
+      .catch(() => setAccessChecked(true));
   }, [session, status, router]);
 
   // ── Step 1: Fetch preview (rate + fee) before confirming ──────────
@@ -154,13 +154,37 @@ export default function InternationalTransferPage() {
     setError("");
   }
 
-  // ── Loading / access check screen ────────────────────────────────
-  if (!accessChecked || !hasAccess) {
+  // ── Loading screen ────────────────────────────────────────────────
+  if (!accessChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#04090f]">
         <div className="flex flex-col items-center gap-4 text-gray-400">
           <RefreshCw size={32} className="animate-spin text-[#0070ff]" />
           <p className="text-sm">Verifying access...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Locked screen ─────────────────────────────────────────────────
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#04090f] px-4">
+        <div className="flex flex-col items-center gap-4 text-center max-w-sm">
+          <div className="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+            <Lock size={28} className="text-blue-400" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-blue-100">Elite Feature</h2>
+          <p className="text-sm text-gray-500 dark:text-blue-400">
+            International Pay is available for Elite subscribers or users who have unlocked this feature.
+          </p>
+          <Link
+            href="/dashboard/subscription"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#0070ff] hover:bg-blue-600 text-white text-sm font-semibold rounded-xl transition-all"
+          >
+            <Crown size={14} className="text-yellow-300" />
+            Get Elite Subscription
+          </Link>
         </div>
       </div>
     );
