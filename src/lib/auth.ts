@@ -26,11 +26,15 @@ export const authOptions: NextAuthOptions = {
         }
 
         const client = await clientPromise;
-        const db = client.db();
+        const db = client.db("novapay_db");
 
         const user = await db.collection("users").findOne({ email: credentials.email });
         if (!user) {
           throw new Error("এই ইমেইল দিয়ে কোনো একাউন্ট পাওয়া যায়নি!");
+        }
+
+        if (!user.password) {
+          throw new Error("This account uses Google sign-in. Please use Google to log in.");
         }
 
         const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
@@ -57,7 +61,7 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "google") {
         try {
           const client = await clientPromise;
-          const db = client.db();
+          const db = client.db("novapay_db");
           const existingUser = await db.collection("users").findOne({ email: user.email });
           if (!existingUser) {
             await db.collection("users").insertOne({

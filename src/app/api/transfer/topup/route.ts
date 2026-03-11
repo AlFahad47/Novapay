@@ -37,9 +37,11 @@ export async function POST(request: Request) {
       // Same currency — no conversion needed, 1:1
       amountDeductedFromBalance = amountRequested;
     } else {
-      // Fetch live rate
+      // Use open.er-api.com — supports BDT and all major currencies, free, no API key
+      // Fetch: how much 1 targetCurrency = X localCurrency
       const rateRes = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/exchange-rate?from=${targetCurrency}&to=${localCurrency}`
+        `https://open.er-api.com/v6/latest/${targetCurrency}`,
+        { next: { revalidate: 600 } } // cache for 10 minutes
       );
 
       if (!rateRes.ok) {
@@ -47,15 +49,13 @@ export async function POST(request: Request) {
       }
 
       const rateData = await rateRes.json();
-      const rate: number = rateData.rates[localCurrency];
+      const rate: number = rateData.rates?.[localCurrency];
 
       if (!rate) {
-        return NextResponse.json({ message: "Exchange rate unavailable." }, { status: 422 });
+        return NextResponse.json({ message: "Exchange rate unavailable for your local currency." }, { status: 422 });
       }
 
-      // How much local currency to deduct for the requested target amount
-      // e.g. user wants 100 USD, rate = 1 USD = 59 PHP
-      // so deduct 100 * 59 = 5900 PHP from balance
+      // e.g. user wants 100 USD, 1 USD = 110 BDT → deduct 100 * 110 = 11000 BDT
       amountDeductedFromBalance = parseFloat((amountRequested * rate).toFixed(4));
     }
 
