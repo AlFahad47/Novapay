@@ -3,13 +3,13 @@ import clientPromise from "@/lib/mongodb";
 
 const POINT_CONFIG: Record<string, number> = {
   KYC_APPROVED: 100,
-  SEND_MONEY: 5000,
-  ADD_MONEY: 25,
-  MOBILE_RECHARGE: 15,
-  CASH_OUT: 25,
+  SEND_MONEY: 100,
+  ADD_MONEY: 100,
+  MOBILE_RECHARGE: 20,
+  CASH_OUT: 50,
   DEPOSIT: 50,
   REQUEST_MONEY: 20,
-  BILL_PAYMENT: 20
+  BILL_PAYMENT: 25
 };
 
 const RANK_LEVELS = {

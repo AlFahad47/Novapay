@@ -90,7 +90,7 @@ export default function SmartSavingGoal() {
       goalName: goalName.trim(),
       targetAmount,
       monthlySavingNeeded,
-      savingDay,
+      savingDay: savingDay,
       currentSaved: 0, 
       progress: 0,
       status: "active",

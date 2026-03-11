@@ -82,7 +82,7 @@ const RankDetailsModal = ({ isOpen, onClose, points, currentRank }: RankModalPro
                 <div className="bg-white dark:bg-slate-900/50 p-5 rounded-[2rem] border border-slate-200 dark:border-slate-800 transition-all hover:shadow-lg">
                   <div className="flex items-center gap-2 text-slate-400 mb-2">
                     <Zap className="w-4 h-4 text-amber-500 fill-current" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Total XP</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest">Total Points</span>
                   </div>
                   <p className="text-3xl font-black text-slate-900 dark:text-white tabular-nums">{points}</p>
                 </div>
@@ -104,7 +104,7 @@ const RankDetailsModal = ({ isOpen, onClose, points, currentRank }: RankModalPro
                   </div>
                   <div className="text-right">
                     <span className="text-lg font-black text-blue-600 dark:text-blue-400">{rankInfo.needed}</span>
-                    <span className="text-[10px] font-bold text-slate-400 ml-1">XP LEFT</span>
+                    <span className="text-[10px] font-bold text-slate-400 ml-1">Points LEFT</span>
                   </div>
                 </div>
                 <div className="h-4 w-full bg-slate-200 dark:bg-slate-800/80 rounded-full p-1 shadow-inner">
@@ -146,7 +146,7 @@ const RankDetailsModal = ({ isOpen, onClose, points, currentRank }: RankModalPro
                           <span className="text-xs font-black uppercase tracking-widest">{name}</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className={`text-[11px] font-bold font-mono ${isCurrent ? 'text-blue-100' : 'text-slate-400'}`}>{value} XP</span>
+                          <span className={`text-[11px] font-bold font-mono ${isCurrent ? 'text-blue-100' : 'text-slate-400'}`}>{value} Points</span>
                           {isUnlocked ? (
                             <CheckCircle2 size={16} className={isCurrent ? "text-white" : "text-green-500"} />
                           ) : (
