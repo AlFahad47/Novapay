@@ -68,7 +68,7 @@ const sidebarItems: SidebarItem[] = [
     userOnly: true,
   },
 
-  { icon: Crown, label: "Subscription", path: "/dashboard/subscription", userOnly: true },
+  { icon: Crown, label: "Subscription", path: "/dashboard/subscription" },
   { icon: Settings, label: "Settings", path: "/dashboard/settings" },
 ];
 

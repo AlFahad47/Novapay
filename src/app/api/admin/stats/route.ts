@@ -56,6 +56,7 @@ export async function GET() {
     });
     const totalSubscribers = await usersCollection.countDocuments({
       "subscription.active": true,
+      "subscription.expiresAt": { $gt: new Date().toISOString() },
     });
 
     const users = await usersCollection.find().toArray();

@@ -42,8 +42,8 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
-    // Find admin account
-    const admin = await users.findOne({ role: "Admin" });
+    // Find admin account (case-insensitive)
+    const admin = await users.findOne({ role: { $regex: /^admin$/i } });
     if (!admin) {
       return NextResponse.json({ message: "Admin account not found." }, { status: 500 });
     }
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     );
 
     await users.updateOne(
-      { role: "Admin" },
+      { role: { $regex: /^admin$/i } },
       {
         $inc: { balance: price },
         $push: {
