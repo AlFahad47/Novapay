@@ -58,6 +58,7 @@ export default function EliteFeaturesSlider() {
   const router = useRouter()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [dbUser, setDbUser] = useState<any>(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
   const [selectedLock, setSelectedLock] = useState<EliteMenuItem | null>(null)
   const [loading, setLoading] = useState(false)
   const { data: session } = useSession();
@@ -80,8 +81,8 @@ export default function EliteFeaturesSlider() {
       return;
     }
 
-    // Logic: Check if feature is already unlocked
-    const isAlreadyUnlocked = unlockedFeatures.includes(item.name);
+    // Subscribed users have all features unlocked
+    const isAlreadyUnlocked = isSubscribed || unlockedFeatures.includes(item.name);
 
     if (isAlreadyUnlocked) {
       router.push(item.route)
@@ -122,10 +123,18 @@ export default function EliteFeaturesSlider() {
     const fetchAllData = async () => {
       if (!session?.user?.email) return;
       try {
-        const userRes = await fetch(`/api/user/update?email=${session.user.email}`);
-        if (!userRes.ok) throw new Error('Failed to fetch');
-        const userData = await userRes.json();
-        setDbUser(userData);
+        const [userRes, subRes] = await Promise.all([
+          fetch(`/api/user/update?email=${session.user.email}`),
+          fetch(`/api/subscription/status?email=${session.user.email}`),
+        ]);
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          setDbUser(userData);
+        }
+        if (subRes.ok) {
+          const subData = await subRes.json();
+          setIsSubscribed(subData.subscribed === true);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -159,7 +168,7 @@ export default function EliteFeaturesSlider() {
         <div ref={scrollRef} className="flex gap-8 overflow-x-auto no-scrollbar pb-10 px-2" style={{ scrollbarWidth: 'none' }}>
           {eliteActions.map((item, index) => {
             const Icon = item.icon
-            const isUnlocked = unlockedFeatures.includes(item.name);
+            const isUnlocked = isSubscribed || unlockedFeatures.includes(item.name);
 
             return (
               <motion.div
@@ -172,7 +181,7 @@ export default function EliteFeaturesSlider() {
                   <span className={`text-[10px] font-bold px-3 py-1 rounded-full shadow-sm ${
                     isUnlocked ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-600'
                   }`}>
-                    {isUnlocked ? "Unlocked" : `${item.pointsNeeded} Coins`}
+                    {isUnlocked ? "Unlocked" : isSubscribed ? "Elite" : `${item.pointsNeeded} Coins`}
                   </span>
                 </div>
 
