@@ -1,6 +1,8 @@
+
+
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   LineChart,
@@ -11,204 +13,183 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { usePathname } from "next/navigation";
+import UserRequestsSection from "@/components/admin/UserRequestsSection";
 
-const stats = [
-  { title: "Total Users", value: "12,540" },
-  { title: "Total Revenue", value: "$45,210" },
-  { title: "Transactions", value: "8,320" },
-  { title: "Pending KYC", value: "124" },
-];
+type Stat = {
+  title: string;
+  value: number;
+};
 
-const data = [
-  { name: "Jan", value: 400 },
-  { name: "Feb", value: 800 },
-  { name: "Mar", value: 650 },
-  { name: "Apr", value: 900 },
-  { name: "May", value: 1200 },
-  { name: "Jun", value: 1100 },
-];
+type Revenue = {
+  name: string;
+  value: number;
+};
 
-function Card({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`
-        relative
-        bg-white dark:bg-[#0c1a2b]
-        border border-blue-200 dark:border-blue-700/50
-        rounded-2xl
-        shadow-lg dark:shadow-blue-900/30
-        hover:shadow-xl dark:hover:shadow-blue-500/20
-        hover:-translate-y-1
-        transition-all duration-500 ease-out
-        before:absolute before:inset-0
-        before:rounded-2xl
-        before:bg-[#0070ff]/10
-        before:opacity-0
-        hover:before:opacity-100
-        before:transition-opacity before:duration-500
-        ${className}
-      `}
-    >
-      <div className="relative z-10">{children}</div>
-    </div>
-  );
-}
-
-function CardContent({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return <div className={className}>{children}</div>;
-}
+type Transaction = {
+  id: string;
+  user: string;
+  amount: number;
+  status: string;
+  date: string;
+};
 
 export default function Admin() {
-  const pathname = usePathname();
+  const [stats, setStats] = useState<Stat[]>([]);
+  const [revenue, setRevenue] = useState<Revenue[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/admin/stats");
+
+        if (!res.ok) {
+          setError("You are not authorized to view this page.");
+          setStats([]);
+          setRevenue([]);
+          setTransactions([]);
+          return;
+        }
+
+        const data = await res.json();
+
+        setStats(Array.isArray(data.stats) ? data.stats : []);
+        setRevenue(Array.isArray(data.revenue) ? data.revenue : []);
+        setTransactions(
+          Array.isArray(data.transactions) ? data.transactions : []
+        );
+      } catch (err) {
+        console.error("Admin fetch error:", err);
+        setError("Something went wrong while loading admin data.");
+        setStats([]);
+        setRevenue([]);
+        setTransactions([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-blue-600">
+        Loading Admin Dashboard...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center text-red-500">
+        <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
+        <p className="text-sm">{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="h-screen relative overflow-hidden bg-gray-50 dark:bg-[#04090f] text-gray-800 dark:text-blue-100 flex transition-colors duration-500">
-      <div className="flex-1 overflow-y-auto">
-        <main className="p-8 grid gap-8">
-          {/* Stats */}
-          <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {stats.map((stat, i) => (
+    <div className="min-h-screen bg-gray-50 dark:bg-[#04090f] text-gray-800 dark:text-blue-100 transition-colors duration-500">
+      <main className="p-8 grid gap-8 max-w-7xl mx-auto">
+
+        {/* STATS */}
+        <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          {stats.length > 0 ? (
+            stats.map((stat, i) => (
               <motion.div
                 key={stat.title}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
+                className="bg-white dark:bg-[#0c1a2b] p-6 rounded-2xl shadow"
               >
-                <Card className="hover:scale-[1.02] transition">
-                  <CardContent className="p-6">
-                    <p className="text-gray-500 dark:text-blue-100/60 text-sm">
-                      {stat.title}
-                    </p>
-                    <h3 className="text-3xl font-bold mt-2 text-blue-600 dark:text-blue-400">
-                      {stat.value}
-                    </h3>
-                  </CardContent>
-                </Card>
+                <p className="text-sm text-gray-500 dark:text-blue-100/60">
+                  {stat.title}
+                </p>
+                <h3 className="text-3xl font-bold mt-2 text-blue-600 dark:text-blue-400">
+                  {Number(stat.value || 0).toLocaleString()}
+                </h3>
               </motion.div>
-            ))}
-          </section>
+            ))
+          ) : (
+            <p>No stats available.</p>
+          )}
+        </section>
 
-          {/* Charts */}
-          <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <Card className="h-80 xl:col-span-2">
-              <CardContent className="p-6">
-                <h4 className="text-lg font-semibold mb-4 text-gray-800 dark:text-blue-300">
-                  Revenue Analytics
-                </h4>
+        {/* CHART */}
+        <section className="bg-white dark:bg-[#0c1a2b] p-6 rounded-2xl shadow">
+          <h4 className="text-lg font-semibold mb-4 text-gray-800 dark:text-blue-300">
+            Revenue Analytics
+          </h4>
 
-                <div className="h-[240px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={data}>
-                      <CartesianGrid
-                        stroke="rgba(0,157,255,0.08)"
-                        strokeDasharray="3 3"
-                      />
-                      <XAxis
-                        dataKey="name"
-                        tick={{ fill: "#64748b" }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <YAxis
-                        tick={{ fill: "#64748b" }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "#0c1a2b",
-                          border: "1px solid rgba(0,157,255,0.2)",
-                          borderRadius: "8px",
-                        }}
-                        labelStyle={{ color: "#0095ff" }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="value"
-                        stroke="#0095ff"
-                        strokeWidth={3}
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="h-[300px]">
+            {revenue.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenue}>
+                  <CartesianGrid stroke="rgba(0,157,255,0.08)" strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#0095ff"
+                    strokeWidth={3}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <p>No revenue data available.</p>
+            )}
+          </div>
+        </section>
 
-            <Card className="h-80">
-              <CardContent className="p-6">
-                <h4 className="text-lg font-semibold mb-4 text-gray-800 dark:text-blue-300">
-                  User Distribution
-                </h4>
-                <div className="h-full flex items-center justify-center text-gray-400 dark:text-blue-200/60">
-                  Pie Chart
-                </div>
-              </CardContent>
-            </Card>
-          </section>
+        {/* TRANSACTIONS */}
+        <section className="bg-white dark:bg-[#0c1a2b] p-6 rounded-2xl shadow">
+          <h4 className="text-lg font-semibold mb-4 text-gray-800 dark:text-blue-300">
+            Recent Transactions
+          </h4>
 
-          {/* Table */}
-          <section>
-            <Card>
-              <CardContent className="p-6">
-                <h4 className="text-lg font-semibold mb-4 text-gray-800 dark:text-blue-300">
-                  Recent Transactions
-                </h4>
+          <div className="overflow-x-auto">
+            {transactions.length > 0 ? (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-blue-800">
+                    <th className="text-left py-3">User</th>
+                    <th className="text-left py-3">Amount</th>
+                    <th className="text-left py-3">Status</th>
+                    <th className="text-left py-3">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.map((tx) => (
+                    <tr
+                      key={tx.id}
+                      className="border-b border-gray-200 dark:border-blue-900"
+                    >
+                      <td className="py-3">{tx.user}</td>
+                      <td className="py-3">${Number(tx.amount || 0)}</td>
+                      <td className="py-3">{tx.status}</td>
+                      <td className="py-3">{tx.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No recent transactions.</p>
+            )}
+          </div>
+        </section>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead className="text-gray-500 dark:text-blue-100/60 border-b border-gray-200 dark:border-blue-800">
-                      <tr>
-                        <th className="text-left py-3">User</th>
-                        <th className="text-left py-3">Amount</th>
-                        <th className="text-left py-3">Status</th>
-                        <th className="text-left py-3">Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[1, 2, 3, 4].map((row) => (
-                        <tr
-                          key={row}
-                          className="border-b border-gray-200 dark:border-blue-900 hover:bg-gray-100 dark:hover:bg-blue-900/30 transition"
-                        >
-                          <td className="py-3 text-gray-700 dark:text-blue-100">
-                            User {row}
-                          </td>
-                          <td className="py-3 text-gray-700 dark:text-blue-100">
-                            $120.00
-                          </td>
-                          <td className="py-3">
-                            <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-600 dark:bg-[#0070ff]/20 dark:text-[#00b4ff]">
-                              Success
-                            </span>
-                          </td>
-                          <td className="py-3 text-gray-500 dark:text-blue-200/70">
-                            Today
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </section>
-        </main>
-      </div>
+        {/* KYC SECTION */}
+        <section className="bg-white dark:bg-[#0c1a2b] p-6 rounded-2xl shadow">
+          <UserRequestsSection />
+        </section>
+
+      </main>
     </div>
   );
 }
