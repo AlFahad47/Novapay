@@ -117,7 +117,7 @@ const handleSend = async () => {
         Swal.fire({
           icon: "success",
           title: "Transfer Successful!",
-          text: `${currencySymbol}${amount} has been sent to ${receiverEmail}`,
+          text: `${currencySymbol}${amount} has been sent to ${receiverEmail} and you've earned reward points`,
           confirmButtonColor: "#2563eb",
         });
         

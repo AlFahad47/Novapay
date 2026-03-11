@@ -91,7 +91,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         }).catch(err => console.error("Points system unreachable:", err));
         // -------------------------------------
 
-        Swal.fire("Success", "Money added to NovaPay successfully!", "success");
+        Swal.fire("Success", "Money added successfully and you've earned reward points.", "success");
         setAmount(""); 
         setSelectedBankId("");
         

@@ -45,7 +45,7 @@ export default function RequestMoneyForm({ onSuccess }: { onSuccess?: () => void
         }
         // --- ADD POINTS LOGIC END ---
 
-        Swal.fire("Request Sent!", `Requested ৳${amount} from ${targetEmail}`, "success");
+        Swal.fire("Request Sent!", `Requested ৳${amount} from ${targetEmail} and you've earned reward points`, "success");
         if (onSuccess) onSuccess();
       } else {
         Swal.fire("Error", data.message, "error");
