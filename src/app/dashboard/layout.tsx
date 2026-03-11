@@ -84,6 +84,7 @@ export default function DashboardLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadSupport, setUnreadSupport] = useState(0);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
 
   const isAdmin =
     session?.user?.role?.toLowerCase() === "admin";
@@ -119,6 +120,7 @@ export default function DashboardLayout({
         const res = await fetch(`/api/subscription/status?email=${session.user.email}`);
         const data = await res.json();
         setIsSubscribed(data.subscribed === true);
+        setDaysLeft(data.daysLeft ?? null);
       } catch {}
     };
     fetchSubscription();
@@ -277,6 +279,17 @@ export default function DashboardLayout({
             </div>
           </div>
         </header>
+
+        {/* Subscription expiry warning */}
+        {isSubscribed && daysLeft !== null && daysLeft <= 3 && (
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-700 px-6 py-2 flex items-center gap-2 text-sm text-yellow-800 dark:text-yellow-300">
+            <Crown size={14} className="text-yellow-500 shrink-0" />
+            <span>
+              Your Elite subscription expires in <strong>{daysLeft} day{daysLeft !== 1 ? "s" : ""}</strong>.{" "}
+              <Link href="/dashboard/subscription" className="underline font-medium">Renew now</Link>
+            </span>
+          </div>
+        )}
 
         {/* PAGE CONTENT */}
         <main className="flex-1 overflow-y-auto p-6 text-blue-900 dark:text-blue-100/80">
