@@ -54,11 +54,15 @@ export async function GET() {
     const pendingKYC = await usersCollection.countDocuments({
       kycStatus: "Pending",
     });
+    const totalSubscribers = await usersCollection.countDocuments({
+      "subscription.active": true,
+    });
 
     const users = await usersCollection.find().toArray();
 
     let totalTransactions = 0;
     let totalRevenue = 0;
+    let subscriptionRevenue = 0;
     let recentTransactions: any[] = [];
     const monthlyMap: Record<number, number> = {};
 
@@ -70,6 +74,10 @@ export async function GET() {
       history.forEach((tx: any) => {
         if (tx.status === "completed") {
           totalRevenue += Number(tx.amount || 0);
+
+          if (tx.type === "subscription_income") {
+            subscriptionRevenue += Number(tx.amount || 0);
+          }
 
           if (tx.date) {
             const month = new Date(tx.date).getMonth();
@@ -112,6 +120,8 @@ export async function GET() {
         { title: "Total Revenue", value: totalRevenue },
         { title: "Transactions", value: totalTransactions },
         { title: "Pending KYC", value: pendingKYC },
+        { title: "Subscribers", value: totalSubscribers },
+        { title: "Subscription Revenue", value: subscriptionRevenue },
       ],
       revenue,
       transactions: recentTransactions.slice(0, 5),
