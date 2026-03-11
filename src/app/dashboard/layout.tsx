@@ -21,6 +21,7 @@ import {
   ShieldCheckIcon,
   FileCheck,
   MessageSquare,
+  Crown,
 } from "lucide-react";
 
 type SidebarItem = {
@@ -67,6 +68,7 @@ const sidebarItems: SidebarItem[] = [
     userOnly: true,
   },
 
+  { icon: Crown, label: "Subscription", path: "/dashboard/subscription", userOnly: true },
   { icon: Settings, label: "Settings", path: "/dashboard/settings" },
 ];
 
