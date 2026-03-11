@@ -14,16 +14,23 @@ export async function POST(req: Request) {
     const { cost, featureName } = await req.json();
 
     const client = await clientPromise;
-    const db = client.db();
+    const db = client.db("novapay_db"); // Ensure using the correct DB name
 
     // Find and update in one atomic operation
     const result = await db.collection("users").findOneAndUpdate(
       { email: session.user.email },
       { 
+        // 1. Points kombe (spending balance)
         $inc: { points: -cost }, 
+        // 2. Feature-ti list-e add hobe
         $addToSet: { unlockedFeatures: featureName } 
+        // NOTE: Ekhane 'rank' update korar dorkar nei. 
+        // Rank jeno na bodlay, tai rank related kono code ekhane add kora jabe na.
       },
-      { returnDocument: "after" } // Crucial: returns the user AFTER the change
+      { 
+        returnDocument: "after",
+        projection: { password: 0 } // Security: password chara baki data pathabe
+      }
     );
 
     if (!result) {

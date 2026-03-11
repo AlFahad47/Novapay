@@ -145,7 +145,7 @@ console.log(fullUser?.rank)
         className={`pointer-events-auto relative flex items-center justify-between p-2  rounded-[2rem] transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
           isScrolled 
             ? 'w-full max-w-7xl bg-white/[0.03] backdrop-blur-[24px] border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]' 
-            : 'w-full max-w-5xl bg-[#0f172a]/20 backdrop-blur-xl border border-white/5 shadow-2xl'
+            : 'w-full max-w-5xl bg-[#0f172a]/20 backdrop-blur-xl border border-white/5 shadow-2xl '
         }`}
       >
         {/* Subtle inner glass shine */}
@@ -160,7 +160,7 @@ console.log(fullUser?.rank)
         </div>
 
         {/* Desktop Links (Center) */}
-        <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2 bg-white/[0.02] p-1 rounded-full border border-white/[0.05]">
+        <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2 bg-white/[0.02] p-1 rounded-full border border-white/[0.05] ">
           {navLinks.map((link) => {
             const isActive = link.path.startsWith("/#")
   ? activeHash === link.path.replace("/", "")
@@ -195,7 +195,7 @@ console.log(fullUser?.rank)
             {/* Dark Mode Toggle (always visible) */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="pl-5 h-14 w-14 rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+              className="flex items-center justify-center h-14 w-14 rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
             >
               {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-800" />}
             </button>

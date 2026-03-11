@@ -1,3 +1,6 @@
+
+
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -11,7 +14,6 @@ import {
   CreditCard,
   BarChart3,
   Settings,
-  ShieldCheck,
   Bell,
   ChevronLeft,
   ChevronRight,
@@ -21,16 +23,50 @@ import {
   MessageSquare,
 } from "lucide-react";
 
-const sidebarItems: { icon: React.ElementType; label: string; path: string; adminOnly?: boolean; userOnly?: boolean }[] = [
+type SidebarItem = {
+  icon: React.ElementType;
+  label: string;
+  path: string;
+  adminOnly?: boolean;
+  userOnly?: boolean;
+};
+
+const sidebarItems: SidebarItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: UserCog, label: "Admin", path: "/dashboard/admin" },
-  { icon: ShieldCheckIcon, label: "User Request", path: "/dashboard/userRequest" },
+
+  // ✅ ADMIN ONLY PAGES
+  {
+    icon: UserCog,
+    label: "Admin",
+    path: "/dashboard/admin",
+    adminOnly: true,
+  },
+  // {
+  //   icon: ShieldCheckIcon,
+  //   label: "User Request",
+  //   path: "/dashboard/userRequest",
+  //   adminOnly: true,
+  // },
+
   { icon: Users, label: "Users", path: "/dashboard/users" },
   { icon: CreditCard, label: "Transactions", path: "/dashboard/transactions" },
   { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
   { icon: FileCheck, label: "KYC", path: "/dashboard/kyc" },
-  { icon: MessageSquare, label: "Support", path: "/dashboard/support", adminOnly: true },
-  { icon: MessageSquare, label: "Support", path: "/chat/support", userOnly: true },
+
+  // Support (Dynamic)
+  {
+    icon: MessageSquare,
+    label: "Support",
+    path: "/dashboard/support",
+    adminOnly: true,
+  },
+  {
+    icon: MessageSquare,
+    label: "Support",
+    path: "/chat/support",
+    userOnly: true,
+  },
+
   { icon: Settings, label: "Settings", path: "/dashboard/settings" },
 ];
 
@@ -40,84 +76,87 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
+
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { data: session } = useSession();
-  const isAdmin = session?.user?.role?.toLowerCase() === "admin";
+  const [unreadSupport, setUnreadSupport] = useState(0);
 
-  // Show adminOnly items to admins only, userOnly items to non-admins only
-  const visibleItems = sidebarItems.filter(item => {
+  const isAdmin =
+    session?.user?.role?.toLowerCase() === "admin";
+
+  // ✅ ROLE FILTER
+  const visibleItems = sidebarItems.filter((item) => {
     if (item.adminOnly) return isAdmin;
     if (item.userOnly) return !isAdmin;
     return true;
   });
 
-  const [unreadSupport, setUnreadSupport] = useState(0);
-
-  // Fetch unread support message count
+  // ✅ FETCH UNREAD SUPPORT COUNT
   useEffect(() => {
     if (!session?.user) return;
-    const fetchUnread = () => {
-      fetch("/api/chat/unread-count")
-        .then((r) => r.json())
-        .then((data) => setUnreadSupport(data.support ?? 0));
+
+    const fetchUnread = async () => {
+      try {
+        const res = await fetch("/api/chat/unread-count");
+        const data = await res.json();
+        setUnreadSupport(data.support ?? 0);
+      } catch (error) {
+        console.error("Failed to fetch unread count", error);
+      }
     };
+
     fetchUnread();
-    // Refresh every 30 seconds
     const interval = setInterval(fetchUnread, 30000);
+
     return () => clearInterval(interval);
   }, [session]);
 
+  // ✅ DYNAMIC PAGE TITLE
   const getPageTitle = () => {
     const parts = pathname.split("/").filter(Boolean);
     const segment = parts.pop();
+
     if (!segment || segment === "dashboard") return "Dashboard";
-    // If the segment looks like a MongoDB ObjectId (24 hex chars), use the parent segment name
+
     if (/^[a-f0-9]{24}$/i.test(segment)) {
       const parent = parts.pop();
       return parent ? parent.replace(/-/g, " ") : "Details";
     }
+
     return segment.replace(/-/g, " ");
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "auto";
   }, [mobileOpen]);
 
   return (
-    <div
-      className="flex h-screen overflow-hidden relative 
-      bg-blue-50 dark:bg-[#04090f]"
-    >
-      {/* Sidebar */}
+    <div className="flex h-screen overflow-hidden relative bg-blue-50 dark:bg-[#04090f]">
+      
+      {/* SIDEBAR */}
       <aside
         className={`
-        fixed md:static top-0 left-0 h-full md:h-auto
-        ${collapsed ? "w-20" : "w-64"}
-        bg-white dark:bg-[#0c1a2b]
-        border-r border-blue-200 dark:border-blue-900
-        transition-all duration-300 flex flex-col z-40
-        ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0
-      `}
+          fixed md:static top-0 left-0 h-full
+          ${collapsed ? "w-20" : "w-64"}
+          bg-white dark:bg-[#0c1a2b]
+          border-r border-blue-200 dark:border-blue-900
+          transition-all duration-300 flex flex-col z-40
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0
+        `}
       >
-        <div
-          className="h-16 flex items-center justify-between px-4 
-          border-b border-blue-200 dark:border-blue-900"
-        >
+        {/* Logo */}
+        <div className="h-16 flex items-center justify-between px-4 border-b border-blue-200 dark:border-blue-900">
           {!collapsed && (
-            <h1
-              className="text-lg font-bold 
-              text-[#0070ff] dark:text-[#00b4ff] tracking-wide"
-            >
+            <h1 className="text-lg font-bold text-[#0070ff] dark:text-[#00b4ff] tracking-wide">
               NovaPay
             </h1>
           )}
 
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-1 rounded-md 
-            hover:bg-blue-100 dark:hover:bg-blue-900/40"
+            className="p-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40"
           >
             {collapsed ? (
               <ChevronRight size={18} className="text-blue-400" />
@@ -127,6 +166,7 @@ export default function DashboardLayout({
           </button>
         </div>
 
+        {/* NAVIGATION */}
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {visibleItems.map((item) => {
             const isActive =
@@ -146,8 +186,12 @@ export default function DashboardLayout({
                 }`}
               >
                 <item.icon size={18} className="text-blue-400" />
-                {!collapsed && <span className="flex-1">{item.label}</span>}
-                {/* Unread badge on Support link */}
+
+                {!collapsed && (
+                  <span className="flex-1">{item.label}</span>
+                )}
+
+                {/* 🔴 Unread badge */}
                 {item.label === "Support" && unreadSupport > 0 && (
                   <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
                     {unreadSupport > 99 ? "99+" : unreadSupport}
@@ -159,7 +203,7 @@ export default function DashboardLayout({
         </nav>
       </aside>
 
-      {/* Overlay */}
+      {/* MOBILE OVERLAY */}
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
@@ -167,55 +211,56 @@ export default function DashboardLayout({
         />
       )}
 
-      {/* Main */}
+      {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header
-          className="h-16 
-          bg-white dark:bg-[#0c1a2b]
-          border-b border-blue-200 dark:border-blue-900
-          flex items-center justify-between px-6"
-        >
+        
+        {/* HEADER */}
+        <header className="h-16 bg-white dark:bg-[#0c1a2b] border-b border-blue-200 dark:border-blue-900 flex items-center justify-between px-6">
+          
           <button
             onClick={() => setMobileOpen(true)}
-            className="md:hidden p-2 
-            text-blue-500 dark:text-blue-400 
-            rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40"
+            className="md:hidden p-2 text-blue-500 dark:text-blue-400 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40"
           >
             ☰
           </button>
 
-          <h2
-            className="text-lg font-semibold capitalize 
-            text-blue-800 dark:text-blue-200"
-          >
+          <h2 className="text-lg font-semibold capitalize text-blue-800 dark:text-blue-200">
             {getPageTitle()}
           </h2>
 
           <div className="flex items-center gap-5">
-            <button className="relative" onClick={() => window.location.href = isAdmin ? "/dashboard/support" : "/chat/support"}>
+            {/* 🔔 Bell */}
+            <button
+              className="relative"
+              onClick={() =>
+                (window.location.href = isAdmin
+                  ? "/dashboard/support"
+                  : "/chat/support")
+              }
+            >
               <Bell className="w-5 h-5 text-blue-400" />
+
               {unreadSupport > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-0.5">
                   {unreadSupport > 99 ? "99+" : unreadSupport}
                 </span>
               )}
             </button>
+
+            {/* Profile */}
             <div className="w-9 h-9 relative">
               <Image
                 src="/dashboard.jfif"
                 alt="Profile"
                 fill
-                className="rounded-full object-cover 
-                border border-blue-300 dark:border-blue-700/50"
+                className="rounded-full object-cover border border-blue-300 dark:border-blue-700/50"
               />
             </div>
           </div>
         </header>
 
-        <main
-          className="flex-1 overflow-y-auto p-6 
-          text-blue-900 dark:text-blue-100/80"
-        >
+        {/* PAGE CONTENT */}
+        <main className="flex-1 overflow-y-auto p-6 text-blue-900 dark:text-blue-100/80">
           {children}
         </main>
       </div>

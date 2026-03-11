@@ -1,12 +1,17 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Send, User, Banknote, Loader2, Info } from "lucide-react";
+import { Send, User, Banknote, Loader2, Info, XCircle, CheckCircle2 } from "lucide-react";
 import Swal from "sweetalert2";
 
 export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void }) {
   const { data: session } = useSession();
   const [receiverEmail, setReceiverEmail] = useState("");
+
+const [recipientName, setRecipientName] = useState<string | null>(null);
+const [isVerifying, setIsVerifying] = useState(false);
+const [isValidUser, setIsValidUser] = useState<boolean | null>(null);
+
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   
@@ -14,7 +19,38 @@ export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void })
   const [userCurrency, setUserCurrency] = useState("BDT");
   const [currencySymbol, setCurrencySymbol] = useState("৳");
 
-  
+  // Effect for real-time validation
+useEffect(() => {
+  const verifyRecipient = async () => {
+    // valid email and api no abuse
+    if (receiverEmail.includes("@") && receiverEmail.includes(".")) {
+      setIsVerifying(true);
+      try {
+        const res = await fetch(`/api/user/find?email=${receiverEmail.toLowerCase().trim()}`);
+        const data = await res.json();
+
+        if (data.success && data.user) {
+          setRecipientName(data.user.name);
+          setIsValidUser(true);
+        } else {
+          setRecipientName(null);
+          setIsValidUser(false);
+        }
+      } catch (error) {
+        setIsValidUser(false);
+      } finally {
+        setIsVerifying(false);
+      }
+    } else {
+      setRecipientName(null);
+      setIsValidUser(null);
+    }
+  };
+
+  const timeoutId = setTimeout(verifyRecipient, 500); // Debounce 500ms
+  return () => clearTimeout(timeoutId);
+}, [receiverEmail]);
+
   useEffect(() => {
     const fetchUserCurrency = async () => {
       if (session?.user?.email) {
@@ -107,20 +143,56 @@ const handleSend = async () => {
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-500 ml-1">Recipient Email</label>
-          <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
-              <User size={20} />
-            </div>
-            <input
-              type="email"
-              placeholder="user@example.com"
-              className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-800/50 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none transition-all font-medium text-gray-800 dark:text-white"
-              value={receiverEmail}
-              onChange={(e) => setReceiverEmail(e.target.value)}
-            />
-          </div>
+  <div className="flex justify-between items-end ml-1">
+    <label className="text-sm font-semibold text-gray-500">Recipient Email</label>
+    {/* Real-time Name Display */}
+    {recipientName && (
+      <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-lg animate-in fade-in slide-in-from-right-2">
+        Pay to: {recipientName}
+      </span>
+    )}
+  </div>
+
+  <div className="relative group">
+    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+      <User size={20} />
+    </div>
+    
+    <input
+      type="email"
+      placeholder="user@example.com"
+      className={`w-full pl-12 pr-12 py-4 bg-gray-50 dark:bg-gray-800/50 border-2 rounded-2xl outline-none transition-all font-medium text-gray-800 dark:text-white
+        ${isValidUser === true ? "border-emerald-500/50 bg-emerald-50/10" : 
+          isValidUser === false ? "border-red-400/50 bg-red-50/10" : "border-transparent focus:border-blue-500"}`}
+      value={receiverEmail}
+      onChange={(e) => setReceiverEmail(e.target.value)}
+    />
+
+    {/* Right Side Status Icons */}
+    <div className="absolute inset-y-0 right-4 flex items-center">
+      {isVerifying ? (
+        <Loader2 className="animate-spin text-blue-500" size={18} />
+      ) : isValidUser === true ? (
+        <div className="flex items-center justify-center w-6 h-6 bg-emerald-500 rounded-full animate-in zoom-in">
+          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          </svg>
         </div>
+      ) : isValidUser === false ? (
+        <div className="flex items-center justify-center w-6 h-6 bg-red-400 rounded-full animate-in zoom-in">
+          <span className="text-white text-[14px] font-bold">!</span>
+        </div>
+      ) : null}
+    </div>
+  </div>
+
+  {/* Subtle bottom error if user not found */}
+  {isValidUser === false && (
+    <p className="text-[11px] text-red-500 font-medium ml-1 animate-in fade-in">
+      This user is not registered on NovaPay.
+    </p>
+  )}
+</div>
 
         <div className="space-y-2">
           <label className="text-sm font-semibold text-gray-500 ml-1">Transfer Amount</label>
