@@ -18,7 +18,7 @@ export async function POST(req: Request) {
           content: `Balance: ${currency}${balance}, Retention: ${retention}%, History: ${JSON.stringify(history)}`
         }
       ],
-      model: "llama-3.3-70b-versatile", // Eta khub-i fast model
+      model: "llama-3.3-70b-versatile", 
     });
 
     const advice = completion.choices[0]?.message?.content || "Keep tracking your expenses!";
