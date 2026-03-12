@@ -19,6 +19,7 @@ import {
   MessageSquare,
   Menu,
   X,
+  Crown,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -27,6 +28,7 @@ const sidebarItems = [
   { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
   { icon: FileCheck, label: "KYC", path: "/dashboard/kyc" },
   { icon: MessageSquare, label: "Support", path: "/chat/support" },
+  { icon: Crown, label: "Subscription", path: "/dashboard/subscription" },
   { icon: Settings, label: "Settings", path: "/dashboard/settings" },
 ];
 

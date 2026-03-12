@@ -256,7 +256,7 @@ border border-[#1D4E48]/10 dark:border-gray-700"
               Built with Modern Technology
             </h2>
             <p className="text-white/90 leading-relaxed max-w-xl">
-              Lenden is engineered with TypeScript and Next.js to deliver
+              NovaPay is engineered with TypeScript and Next.js to deliver
               reliability, performance, and scalability for future-ready digital
               finance platforms.
             </p>
