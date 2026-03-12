@@ -5,7 +5,7 @@ import { Facebook, Instagram, Youtube, Linkedin, Twitter, Sparkles } from 'lucid
 
 const Footer: React.FC = () => {
   return (
-    <footer className="relative bg-[#F8FAFC] dark:bg-[#04090f] pt-12 mt-20 rounded-t-[2.5rem] md:rounded-t-[4rem] overflow-hidden border-t border-slate-200/50 dark:border-white/[0.06] shadow-[0_-10px_40px_rgba(0,0,0,0.02)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+    <footer className="relative bg-background pt-12 mt-20 rounded-t-[2.5rem] md:rounded-t-[4rem] overflow-hidden border-t border-border shadow-[0_-10px_40px_rgba(0,0,0,0.02)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
 
       <div className="absolute bottom-0 right-0 w-full md:w-1/2 h-64 bg-gradient-to-tl from-[#2C64FF]/10 to-transparent blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-full md:w-1/2 h-64 bg-gradient-to-tr from-[#4DA1FF]/5 to-transparent blur-3xl pointer-events-none"></div>
@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
 
         {/* --- TOP ROW: Logo & Social Icons --- */}
-        <div className="flex flex-col md:flex-row items-center justify-between pb-8 border-b border-slate-200 dark:border-white/[0.06] gap-6">
+        <div className="flex flex-col md:flex-row items-center justify-between pb-8 border-b border-border gap-6">
 
           {/* Left Logo */}
           <div className="flex items-center gap-2">

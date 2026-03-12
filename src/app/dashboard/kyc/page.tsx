@@ -66,7 +66,7 @@ export default function KYCPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-[#04090f] transition-colors duration-500 px-6 py-16">
       <div className="max-w-4xl mx-auto">
         
-        {/* কেস ১: পেন্ডিং স্ট্যাটাস */}
+        {/* Case 1: Pending status */}
         {kycStatus === "pending" && (
           <StatusCard 
             title="Verification Pending" 
@@ -86,7 +86,7 @@ export default function KYCPage() {
           />
         )}
 
-        {/* কেস ৩: ফর্ম ফিলাপ করা (যদি স্ট্যাটাস না থাকে) */}
+        {/* Case 3: Show form when no status exists */}
         {!kycStatus && (
           <>
             <motion.h1 initial={{ opacity: 0, y: -40 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-[#0095ff] to-[#0061ff] bg-clip-text text-transparent">
@@ -140,7 +140,7 @@ export default function KYCPage() {
   );
 }
 
-// --- হেল্পার কম্পোনেন্টসমূহ ---
+// --- Helper components ---
 
 function StatusCard({ title, desc, icon, color }: any) {
   return (

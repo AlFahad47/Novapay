@@ -4,35 +4,40 @@ import clientPromise from "@/lib/mongodb";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password, image } = await req.json();
 
     if (!name || !email || !password) {
-      return NextResponse.json({ message: "সবগুলো ফিল্ড পূরণ করতে হবে!" }, { status: 400 });
+      return NextResponse.json({ message: "All required fields must be filled." }, { status: 400 });
+    }
+
+    if (image && typeof image !== "string") {
+      return NextResponse.json({ message: "Invalid profile image format." }, { status: 400 });
     }
     
     const client = await clientPromise;
-    const db = client.db(); // .env তে দেয়া novapay_db তে কানেক্ট হবে
+    const db = client.db(); // Connects to novapay_db from .env
 
-    // চেক করা যে এই ইমেইলে আগে থেকেই একাউন্ট আছে কি না
+    // Check if an account already exists with this email
     const existingUser = await db.collection("users").findOne({ email });
     if (existingUser) {
-      return NextResponse.json({ message: "এই ইমেইল দিয়ে অলরেডি একাউন্ট খোলা আছে!" }, { status: 400 });
+      return NextResponse.json({ message: "An account with this email already exists." }, { status: 400 });
     }
 
-    // পাসওয়ার্ড হ্যাশ করা (যাতে কেউ ডাটাবেজ হ্যাক করলেও পাসওয়ার্ড না বোঝে)
+    // Hash password for security
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ইউজারের ডাটা সেভ করা
-    const result = await db.collection("users").insertOne({
+    // Save user data
+    await db.collection("users").insertOne({
       name,
       email,
       password: hashedPassword,
+      image: image || null,
       createdAt: new Date(),
     });
 
-    return NextResponse.json({ message: "একাউন্ট সফলভাবে তৈরি হয়েছে!" }, { status: 201 });
+    return NextResponse.json({ message: "Account created successfully." }, { status: 201 });
   } catch (error) {
     console.error("Registration Error:", error);
-    return NextResponse.json({ message: "সার্ভারে কোনো সমস্যা হয়েছে!" }, { status: 500 });
+    return NextResponse.json({ message: "A server error occurred." }, { status: 500 });
   }
 }

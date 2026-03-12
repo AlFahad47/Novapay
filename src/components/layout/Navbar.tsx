@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowUpRight, Menu, X, Sparkles, Sun, Moon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
@@ -11,14 +12,47 @@ import { IoLogOut } from 'react-icons/io5';
 import { Crown, ShieldCheck, Star, Trophy } from "lucide-react"
 import RankDetailsModal from '../modals/RankDetailsModal';
 
+type FullUser = {
+  rank?: string;
+  points?: number;
+};
+
 const Navbar: React.FC = () => {
   const { data: session } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+
+  // React Compiler-safe dark mode using useSyncExternalStore (avoids setState in effect)
+  const darkMode = useSyncExternalStore(
+    (callback) => {
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      mq.addEventListener("change", callback);
+      window.addEventListener("themechange", callback);
+      return () => {
+        mq.removeEventListener("change", callback);
+        window.removeEventListener("themechange", callback);
+      };
+    },
+    () => {
+      const stored = localStorage.getItem("theme");
+      if (stored === "dark") return true;
+      if (stored === "light") return false;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    },
+    () => false // server snapshot — always false, avoids hydration mismatch
+  );
+
+  const toggleDarkMode = () => {
+    const next = !darkMode;
+    localStorage.setItem("theme", next ? "dark" : "light");
+    window.dispatchEvent(new Event("themechange"));
+  };
   const [activeHash, setActiveHash] = useState("");
   const [unreadTotal, setUnreadTotal] = useState(0);
+  const [isRankModalOpen, setIsRankModalOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
  
   const pathname = usePathname();
 
@@ -42,7 +76,7 @@ useEffect(() => {
     setActiveHash(window.location.hash);
   };
 
-  updateHash(); // page load এ run হবে
+  updateHash(); // Run on page load
 
   window.addEventListener("hashchange", updateHash);
 
@@ -57,7 +91,7 @@ useEffect(() => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Dark mode toggle on <html>
+  // Dark mode toggle on <html> — derives from useSyncExternalStore value
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -65,6 +99,23 @@ useEffect(() => {
       document.documentElement.classList.remove("dark");
     }
   }, [darkMode]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(target)) {
+        setIsProfileOpen(false);
+      }
+
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(target)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   // Smooth scroll handler
  const handleScrollLink = (path: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -90,7 +141,8 @@ useEffect(() => {
   }
 };
 
-const [fullUser, setFullUser] = useState<any>(null);
+const [fullUser, setFullUser] = useState<FullUser | null>(null);
+const normalizedRank = (fullUser?.rank || "BRONZE").toUpperCase();
 
 
 useEffect(() => {
@@ -115,7 +167,6 @@ useEffect(() => {
 }, [session]);
 
 
-console.log(fullUser?.rank)
   const navLinks = user
     ? [
         { name: "Home", path: "/" },
@@ -140,19 +191,20 @@ console.log(fullUser?.rank)
 
 
   return (
-    <div className=" sticky top-2 z-50 mb-0.5 left-0 flex justify-center px-4 pointer-events-none  dark:bg-[#040911]">
+    <>
+    <div className="sticky top-2 z-50 mb-0.5 left-0 flex justify-center px-4 pointer-events-none" ref={mobileMenuRef}>
       <nav 
-        className={`pointer-events-auto relative flex items-center justify-between p-2  rounded-[2rem] transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+        className={`pointer-events-auto relative flex items-center justify-between p-2 rounded-4xl transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
           isScrolled 
-            ? 'w-full max-w-7xl bg-white/[0.03] backdrop-blur-[24px] border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]' 
+            ? 'w-full max-w-7xl bg-white/3 backdrop-blur-xl border border-white/8 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]' 
             : 'w-full max-w-5xl bg-[#0f172a]/20 backdrop-blur-xl border border-white/5 shadow-2xl '
         }`}
       >
         {/* Subtle inner glass shine */}
-        <div className="absolute inset-0 rounded-[2rem] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] pointer-events-none"></div>
+        <div className="absolute inset-0 rounded-4xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] pointer-events-none"></div>
 
         {/* Brand / Logo */}
-        <div className="pl-4 md:pl-6 flex-shrink-0 z-20 flex items-center gap-2">
+        <div className="pl-4 md:pl-6 shrink-0 z-20 flex items-center gap-2">
           <Sparkles className="text-[#3b82f6] w-5 h-5" />
           <Link href="/" className="text-[#3b82f6] dark:text-white font-bold text-lg md:text-xl tracking-wide drop-shadow-md">
             NovaPay
@@ -160,7 +212,7 @@ console.log(fullUser?.rank)
         </div>
 
         {/* Desktop Links (Center) */}
-        <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2 bg-white/[0.02] p-1 rounded-full border border-white/[0.05] ">
+        <div className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2 bg-white/2 p-1 rounded-full border border-white/5">
           {navLinks.map((link) => {
             const isActive = link.path.startsWith("/#")
   ? activeHash === link.path.replace("/", "")
@@ -170,14 +222,14 @@ console.log(fullUser?.rank)
                 key={link.name}
                 href={link.path}
                 onClick={!user && link.path.startsWith("/#") ? handleScrollLink(link.path) : undefined}
-                className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-full group  ${
-                  isActive ? 'text-white' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'
+                className={`relative px-3 py-2 text-sm font-medium transition-all duration-300 rounded-full group ${
+                  isActive ? 'text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <span className="relative text-[1rem] z-10 text-[#3b82f6] dark:text-white">{link.name}</span>
+                <span className="relative z-10 text-[0.95rem] text-[#3b82f6] dark:text-white whitespace-nowrap">{link.name}</span>
                 {/* Unread badge on Chat link */}
                 {link.name === "Chat" && unreadTotal > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-0.5 z-20">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-4 h-4 flex items-center justify-center px-0.5 z-20">
                     {unreadTotal > 99 ? "99+" : unreadTotal}
                   </span>
                 )}
@@ -190,18 +242,18 @@ console.log(fullUser?.rank)
         </div>
 
         {/* Desktop Right - Dark Mode + Avatar / Get Started */}
-        <div className="hidden md:flex flex-shrink-0 pr-1 z-20">
+        <div className="hidden md:flex shrink-0 pr-1 z-20">
           <div className="flex items-center gap-3">
             {/* Dark Mode Toggle (always visible) */}
             <button
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={() => toggleDarkMode()}
               className="flex items-center justify-center h-14 w-14 rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
             >
               {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-800" />}
             </button>
 
  {user ? (
-  <div className="relative inline-block group">
+  <div className="relative inline-block group" ref={profileDropdownRef}>
     
     <div 
       onClick={(e) => {
@@ -209,20 +261,20 @@ console.log(fullUser?.rank)
         setIsRankModalOpen(true);
       }}
       className={`absolute -top-2 left-1/2 -translate-x-1/2 z-30 px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md backdrop-blur-sm border  transition-transform duration-300 hover:scale-110 active:scale-95
-      ${fullUser?.rank === 'Platinum' ? 'bg-slate-900 border-slate-700 text-white' : 
-        fullUser?.rank === 'Gold' ? 'bg-amber-400 border-amber-300 text-amber-950' : 
-        fullUser?.rank === 'Silver' ? 'bg-slate-200 border-slate-300 text-slate-800' : 
+      ${normalizedRank === 'PLATINUM' ? 'bg-slate-900 border-slate-700 text-white' : 
+        normalizedRank === 'GOLD' ? 'bg-amber-400 border-amber-300 text-amber-950' : 
+        normalizedRank === 'SILVER' ? 'bg-slate-200 border-slate-300 text-slate-800' : 
         'bg-[#E63946] border-red-400 text-white'}`}
     >
       <span className="flex items-center justify-center">
-        {fullUser?.rank === 'PLATINUM' && <Trophy className="w-2.5 h-2.5" />}
-        {fullUser?.rank === 'GOLD' && <Crown className="w-2.5 h-2.5" />}
-        {fullUser?.rank === 'SILVER' && <ShieldCheck className="w-2.5 h-2.5" />}
-        {(!fullUser?.rank || fullUser?.rank === 'BRONZE') && <Star className="w-2.5 h-2.5 fill-current" />}
+        {normalizedRank === 'PLATINUM' && <Trophy className="w-2.5 h-2.5" />}
+        {normalizedRank === 'GOLD' && <Crown className="w-2.5 h-2.5" />}
+        {normalizedRank === 'SILVER' && <ShieldCheck className="w-2.5 h-2.5" />}
+        {normalizedRank === 'BRONZE' && <Star className="w-2.5 h-2.5 fill-current" />}
       </span>
 
       <span className="text-[9px] font-black uppercase tracking-tighter leading-none">
-        {fullUser?.rank || 'Bronze'}
+        {normalizedRank}
       </span>
     </div>
 
@@ -230,16 +282,18 @@ console.log(fullUser?.rank)
     <div
       onClick={() => setIsProfileOpen(!isProfileOpen)}
       className={`relative w-12 h-12 rounded-full overflow-hidden border-2 z-10 cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95
-        ${fullUser?.rank === 'PLATINUM' ? 'border-indigo-400 shadow-[0_0_12px_rgba(129,140,248,0.4)]' : 
-          fullUser?.rank === 'GOLD' ? 'border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.4)]' : 
-          fullUser?.rank === 'SILVER' ? 'border-slate-300 shadow-sm' : 
+        ${normalizedRank === 'PLATINUM' ? 'border-indigo-400 shadow-[0_0_12px_rgba(129,140,248,0.4)]' : 
+          normalizedRank === 'GOLD' ? 'border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.4)]' : 
+          normalizedRank === 'SILVER' ? 'border-slate-300 shadow-sm' : 
           'border-gray-300 dark:border-gray-600'}`}
     >
-      <img
+      <Image
         alt="User Avatar"
-        referrerPolicy="no-referrer"
-        src={user.photoURL || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8oghbsuzggpkknQSSU-Ch_xep_9v3m6EeBQ&s'}
+        src={user.image || '/user.jfif'}
+        width={48}
+        height={48}
         className="w-full h-full object-cover"
+        unoptimized
       />
     </div>
 
@@ -249,7 +303,7 @@ console.log(fullUser?.rank)
       <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500 border-2 border-white"></span>
     </span>
 
-    {/* 4. Points Indicator - এখানেও মোডাল ট্রিগার যোগ করা হয়েছে */}
+    {/* 4. Points Indicator - modal trigger is enabled here as well */}
     <div 
       
       className="absolute -bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer hover:scale-110 active:scale-95"
@@ -264,8 +318,8 @@ console.log(fullUser?.rank)
                 href="/login"
                 className="group relative flex items-center gap-2 px-6 py-2.5 rounded-full overflow-hidden border border-white/10"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-[#3b82f6] to-[#2563eb] transition-all duration-500 group-hover:scale-110 group-hover:from-[#2563eb] group-hover:to-[#1d4ed8]"></div>
-                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/30 to-transparent opacity-50 rounded-t-full"></div>
+                <div className="absolute inset-0 bg-linear-to-r from-[#3b82f6] to-[#2563eb] transition-all duration-500 group-hover:scale-110 group-hover:from-[#2563eb] group-hover:to-[#1d4ed8]"></div>
+                <div className="absolute top-0 left-0 w-full h-1/2 bg-linear-to-b from-white/30 to-transparent opacity-50 rounded-t-full"></div>
                 <span className="relative text-white text-sm font-semibold tracking-wide drop-shadow-sm">Get Started</span>
                 <ArrowUpRight size={16} strokeWidth={2.5} className="relative text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
               </Link>
@@ -276,7 +330,7 @@ console.log(fullUser?.rank)
           {isProfileOpen && user && (
             <div className="absolute right-0 mt-14 w-52 bg-white dark:bg-[#0D263C] text-gray-900 dark:text-gray-200 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-200">
               <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                <p className="text-sm font-semibold">{user.displayName}</p>
+                <p className="text-sm font-semibold">{user.name}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
               </div>
               <ul className="flex flex-col px-2 py-1 gap-1">
@@ -320,12 +374,11 @@ console.log(fullUser?.rank)
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="absolute top-[120%] left-0 w-full bg-[#0a101f]/80 backdrop-blur-2xl border border-white/10 rounded-[1.5rem] p-5 flex flex-col gap-2 md:hidden">
+          <div className="absolute top-[120%] left-0 w-full bg-[#0a101f]/80 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 flex flex-col gap-2 md:hidden">
             {/* Mobile Dark Mode Toggle */}
             <div className="flex justify-end mb-4">
               <button
-                onClick={() => setDarkMode(!darkMode)}
-                className="pl-5 w-14 rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+                onClick={() => toggleDarkMode()}                className="pl-5 w-14 rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
               >
                 {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-200" />}
               </button>
@@ -339,8 +392,9 @@ console.log(fullUser?.rank)
                   href={link.path}
                   onClick={() => {
                     setIsMobileMenuOpen(false);
-                    if (!user && link.path.startsWith('#')) {
-                      const target = document.querySelector(link.path);
+                    if (!user && link.path.startsWith('/#')) {
+                      const targetSelector = link.path.replace('/', '');
+                      const target = document.querySelector(targetSelector);
                       if (target) target.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
@@ -360,7 +414,7 @@ console.log(fullUser?.rank)
                   setIsMobileMenuOpen(false);
                   signOut({ callbackUrl: "/" });
                 }}
-                className="mt-4 flex justify-center items-center gap-2 bg-gradient-to-r from-[#3b82f6] to-[#2563eb] text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(59,130,246,0.6)]"
+                className="mt-4 flex justify-center items-center gap-2 bg-linear-to-r from-[#3b82f6] to-[#2563eb] text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(59,130,246,0.6)]"
               >
                 Logout <ArrowUpRight size={18} />
               </Link>
@@ -368,7 +422,7 @@ console.log(fullUser?.rank)
               <Link
                 href="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="mt-4 flex justify-center items-center gap-2 bg-gradient-to-r from-[#3b82f6] to-[#2563eb] text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(59,130,246,0.6)]"
+                className="mt-4 flex justify-center items-center gap-2 bg-linear-to-r from-[#3b82f6] to-[#2563eb] text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(59,130,246,0.6)]"
               >
                 Get Started <ArrowUpRight size={18} />
               </Link>
@@ -380,6 +434,13 @@ console.log(fullUser?.rank)
 
       </nav>
     </div>
+    <RankDetailsModal
+      isOpen={isRankModalOpen}
+      onClose={() => setIsRankModalOpen(false)}
+      points={fullUser?.points || 0}
+      currentRank={fullUser?.rank || "BRONZE"}
+    />
+    </>
   );
 };
 

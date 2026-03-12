@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
     const txAmount = Number(amount);
     const normalizedType = type.toLowerCase().trim().replace(/\s+/g, '_');
-    const EXCHANGE_RATE = 120; // ১ ডলার = ১২০ টাকা ধরে
+    const EXCHANGE_RATE = 120; // 1 USD = 120 BDT (assumed)
 
     // expense checking
     const expenseTypes = ["cashout", "send_money", "bill_payment", "pay_bill", "mobile_recharge"];
