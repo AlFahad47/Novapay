@@ -107,7 +107,7 @@ px-4 py-2 rounded-full text-sm font-medium"
             className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl"
           >
             <span className="font-bold text-[#1D4E48] dark:text-[#94ec82]">
-              Lenden
+              NovaPay
             </span>{" "}
             delivers a secure and intelligent digital wallet platform built for
             modern financial management. Experience fast transactions,
@@ -207,7 +207,7 @@ border border-[#1D4E48]/10 dark:border-gray-700"
           transition={{ duration: 0.8 }}
           className="text-3xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-[#1D4E48] via-[#2f7c72] to-[#BDDD7E] dark:from-[#BDDD7E] dark:via-[#9FE870] dark:to-white bg-clip-text text-transparent"
         >
-          Why Professionals Choose Lenden
+          Why Professionals Choose NovaPay
         </motion.h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
