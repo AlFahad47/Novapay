@@ -7,28 +7,28 @@ export async function POST(req: Request) {
     const { email } = await req.json();
 
     if (!email) {
-      return NextResponse.json({ message: "ইমেইল দিতে হবে!" }, { status: 400 });
+      return NextResponse.json({ message: "Email is required!" }, { status: 400 });
     }
 
     const client = await clientPromise;
     const db = client.db();
 
-    // ইউজার আছে কিনা চেক করা
+    // Check whether the user exists
     const user = await db.collection("users").findOne({ email });
     if (!user) {
-      return NextResponse.json({ message: "এই ইমেইল দিয়ে কোনো একাউন্ট পাওয়া যায়নি!" }, { status: 404 });
+      return NextResponse.json({ message: "No account found with this email!" }, { status: 404 });
     }
 
-    // Google দিয়ে লগিন করা ইউজার হলে পাসওয়ার্ড রিসেট করা যাবে না
+    // Password reset is not applicable for users signed in via Google
     if (user.provider === "google") {
-      return NextResponse.json({ message: "আপনি Google দিয়ে লগিন করেছেন, পাসওয়ার্ড রিসেট করার দরকার নেই!" }, { status: 400 });
+      return NextResponse.json({ message: "You signed in with Google, so password reset is not required!" }, { status: 400 });
     }
 
-    // Random 6-digit reset token তৈরি করা
+    // Generate random 6-digit reset token
     const resetToken = crypto.randomInt(100000, 999999).toString();
-    const resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 মিনিট valid
+    const resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000); // Valid for 15 minutes
 
-    // ডাটাবেজে token সেভ করা
+    // Save token to database
     await db.collection("users").updateOne(
       { email },
       {
@@ -39,16 +39,16 @@ export async function POST(req: Request) {
       }
     );
 
-    // NOTE: এখানে আসলে Email পাঠানোর কোড থাকবে, কিন্তু Development-এ শুধু token রিটার্ন করছি
-    // Production-এ Nodemailer/SendGrid/Resend দিয়ে Email পাঠাবেন
+    // NOTE: Email sending logic should be here; in development we only return the token
+    // In production, use Nodemailer/SendGrid/Resend to send the email
     
     return NextResponse.json({ 
-      message: "পাসওয়ার্ড রিসেট কোড পাঠানো হয়েছে! (Development Mode: Check Console)", 
-      resetToken // শুধুমাত্র development এ দেখানোর জন্য
+      message: "Password reset code sent! (Development Mode: Check Console)", 
+      resetToken // For development display only
     }, { status: 200 });
 
   } catch (error) {
     console.error("Forgot Password Error:", error);
-    return NextResponse.json({ message: "সার্ভারে কোনো সমস্যা হয়েছে!" }, { status: 500 });
+    return NextResponse.json({ message: "A server error occurred!" }, { status: 500 });
   }
 }

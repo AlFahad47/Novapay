@@ -384,7 +384,7 @@ const PandaLogin: React.FC = () => {
                 type="button" 
                 onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
                 className="p-2.5 rounded-full border border-slate-200 hover:border-[#2C64FF] hover:bg-[#2C64FF]/5 transition-colors group"
-                title="Google দিয়ে লগইন করুন"
+                title="Sign in with Google"
               >
 
                 <Chrome size={18} className="text-slate-500 group-hover:text-[#2C64FF]" />

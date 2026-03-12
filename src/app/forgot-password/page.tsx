@@ -40,7 +40,7 @@ const ForgotPassword: React.FC = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error("সার্ভারে সমস্যা হয়েছে!");
+      toast.error("A server error occurred!");
     } finally {
       setLoading(false);
     }
@@ -61,15 +61,15 @@ const ForgotPassword: React.FC = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#4DA1FF] to-[#2C64FF] rounded-full mb-4 shadow-lg">
               <Shield className="text-white" size={32} />
             </div>
-            <h1 className="text-3xl font-black text-[#050B14] mb-2">পাসওয়ার্ড ভুলে গেছেন?</h1>
-            <p className="text-slate-600">আপনার ইমেইল দিন, আমরা রিসেট কোড পাঠাব</p>
+            <h1 className="text-3xl font-black text-[#050B14] mb-2">Forgot your password?</h1>
+            <p className="text-slate-600">Enter your email and we will send a reset code</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Input */}
             <div className="relative">
               <label className="block text-sm font-bold text-slate-700 mb-2">
-                ইমেইল অ্যাড্রেস
+                Email Address
               </label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
@@ -93,7 +93,7 @@ const ForgotPassword: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] transition-transform duration-500 ease-out hover:scale-105"></div>
               <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/30 to-transparent opacity-30 rounded-t-xl pointer-events-none"></div>
               <span className="relative z-10 drop-shadow-sm">
-                {loading ? "পাঠানো হচ্ছে..." : "রিসেট কোড পাঠান"}
+                {loading ? "Sending..." : "Send Reset Code"}
               </span>
             </button>
           </form>
@@ -105,7 +105,7 @@ const ForgotPassword: React.FC = () => {
               className="inline-flex items-center gap-2 text-[#2C64FF] font-bold hover:underline transition-all"
             >
               <ArrowLeft size={18} />
-              লগইন পেজে ফিরে যান
+              Back to Login Page
             </Link>
           </div>
         </div>

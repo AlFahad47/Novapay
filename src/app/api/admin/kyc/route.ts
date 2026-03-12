@@ -37,7 +37,7 @@ export async function GET() {
     console.error("GET KYC Error:", error);
     return NextResponse.json(
       { message: "Failed to fetch users" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -53,7 +53,7 @@ export async function PATCH(request: Request) {
     if (!email || !status) {
       return NextResponse.json(
         { message: "Email and status required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -67,25 +67,22 @@ export async function PATCH(request: Request) {
           kycStatus: status,
           updatedAt: new Date(),
         },
-      }
+      },
     );
 
     if (result.matchedCount === 0) {
-      return NextResponse.json(
-        { message: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     return NextResponse.json(
       { success: true, message: "KYC status updated" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("PATCH KYC Error:", error);
     return NextResponse.json(
       { message: "Failed to update KYC" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
