@@ -41,6 +41,7 @@ export default function DashboardLayout({
 
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const[isSubscribed, setSubscribed]=useState(false)
 
   /* ---------------- PROTECT USER DASHBOARD ---------------- */
 
@@ -87,7 +88,7 @@ export default function DashboardLayout({
       <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700">
         {!desktopCollapsed && (
           <h1 className="font-bold text-blue-600 dark:text-blue-400">
-            LENDEN
+            NovaPay
           </h1>
         )}
 

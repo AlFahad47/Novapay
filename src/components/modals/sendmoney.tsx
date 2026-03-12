@@ -145,7 +145,7 @@ const handleSend = async () => {
         <div className="space-y-2">
   <div className="flex justify-between items-end ml-1">
     <label className="text-sm font-semibold text-gray-500">Recipient Email</label>
-    {/* Real-time Name Display */}
+    {/* Real-time Name Show */}
     {recipientName && (
       <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-lg animate-in fade-in slide-in-from-right-2">
         Pay to: {recipientName}

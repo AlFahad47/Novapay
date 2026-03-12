@@ -31,6 +31,6 @@ export const config = {
     '/kyc/:path*',
     '/login',
     '/register',
-    '/micro-savings'
+    '/micro-savings/:path*'
   ],
 };
