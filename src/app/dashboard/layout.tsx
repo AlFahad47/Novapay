@@ -41,6 +41,7 @@ export default function DashboardLayout({
 
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const[isSubscribed, setSubscribed]=useState(false)
 
   /* ---------------- PROTECT USER DASHBOARD ---------------- */
 
