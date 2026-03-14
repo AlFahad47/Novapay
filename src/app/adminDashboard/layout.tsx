@@ -79,7 +79,7 @@ export default function AdminLayout({
       <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700">
         {!desktopCollapsed && (
           <h1 className="font-bold text-blue-600 dark:text-blue-400">
-            LENDEN Admin
+            NovaPay Admin
           </h1>
         )}
 
