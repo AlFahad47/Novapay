@@ -100,30 +100,58 @@ const WalletAccountPage = () => {
   }, [dbUser, aiAdvice, wealthStats, getAIInsight]);
 
   const handleRecord = async () => {
-    const numAmount = parseFloat(amount);
-    if (!amount || isNaN(numAmount) || numAmount <= 0) return;
-    setIsSubmitting(true);
-    try {
-      const currentBankBalance = dbUser?.bankBalance || 0;
-      const newBankBalance = recordType === 'income' ? currentBankBalance + numAmount : currentBankBalance - numAmount;
-      await fetch("/api/user/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: session?.user?.email,
-          bankBalance: newBankBalance,
-          wallet: {
-            ...dbUser?.wallet,
-            totalPhysicalIncome: recordType === 'income' ? (dbUser?.wallet?.totalPhysicalIncome || 0) + numAmount : (dbUser?.wallet?.totalPhysicalIncome || 0),
-            totalPhysicalExpense: recordType === 'expense' ? (dbUser?.wallet?.totalPhysicalExpense || 0) + numAmount : (dbUser?.wallet?.totalPhysicalExpense || 0),
-          },
-          wallethistory: [{ id: Math.random().toString(36).substr(2, 9), type: recordType, amount: numAmount, note: note || `Cash ${recordType}`, date: new Date().toISOString() }, ...history]
-        }),
-      });
-      setRecordType(null); setAmount(""); setNote(""); setAiAdvice(null); fetchUserData();
-      Swal.fire({ title: "Updated", icon: "success", toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
-    } catch (err) { console.error(err); } finally { setIsSubmitting(false); }
-  };
+  const numAmount = parseFloat(amount);
+  
+  // Validation
+  if (!amount || isNaN(numAmount) || numAmount <= 0) {
+    Swal.fire({ title: "Invalid Amount", icon: "warning", toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+    return;
+  }
+  
+  setIsSubmitting(true);
+
+  try {
+    const response = await fetch("/api/user/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: session?.user?.email,
+        type: recordType,      // 'income' or 'expense'
+        amount: numAmount,     // backend ekhon number nibey
+        note: note || `Cash ${recordType}`,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to update");
+    }
+
+    // Success: UI Reset & Refresh
+    setRecordType(null);
+    setAmount("");
+    setNote("");
+    setAiAdvice(null); // Reset AI advice to trigger fresh analysis
+    
+    await fetchUserData(); // Database theke updated data load korbe
+    
+    Swal.fire({ 
+      title: "Recorded!", 
+      icon: "success", 
+      toast: true, 
+      position: 'top-end', 
+      showConfirmButton: false, 
+      timer: 1500 
+    });
+
+  } catch (err: any) {
+    console.error("Update Error:", err);
+    Swal.fire({ title: "Error", text: err.message, icon: "error" });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const currency = dbUser?.currency === "BDT" ? "৳" : "$";
 

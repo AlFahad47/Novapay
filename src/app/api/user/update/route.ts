@@ -29,6 +29,8 @@ export async function POST(request: Request) {
       email, 
       newGoal,
       bankBalance,
+      type,      
+      note,
       wallet,
       wallethistory,
       bankId,
@@ -43,7 +45,45 @@ export async function POST(request: Request) {
     const db = client.db("novapay_db");
     const usersCollection = db.collection("users");
 
-    // --- 1. HANDLE LINKING NEW BANK (REALISTIC) ---
+
+   // 1. LIQUID CASH LOGIC (Income/Expense)
+    if (type === 'income' || type === 'expense') {
+      const numAmount = parseFloat(amount);
+      const isIncome = type === 'income';
+
+      const historyItem = {
+        id: Math.random().toString(36).substring(2, 11),
+        type,
+        amount: numAmount,
+        note: note || `Cash ${type}`,
+        date: new Date(),
+      };
+
+      await usersCollection.updateOne(
+        { email },
+        {
+          $inc: {
+            bankBalance: isIncome ? numAmount : -numAmount,
+            "wallet.totalPhysicalIncome": isIncome ? numAmount : 0,
+            "wallet.totalPhysicalExpense": isIncome ? 0 : numAmount,
+          },
+          $push: {
+            wallethistory: {
+              $each: [historyItem],
+              $position: 0 
+            }
+          },
+          $set: { 
+            "wallet.lastTransactionDate": new Date(),
+            updatedAt: new Date() 
+          }
+        }
+      );
+
+      return NextResponse.json({ success: true, message: "Liquid asset updated" });
+    }
+
+    
     // --- LOGIC A: New Microsaving Goal Add ---
     if (newGoal) {
       const goalWithId = {

@@ -284,6 +284,9 @@ const sidebarItems = [
   { icon: MessageSquare, label: "Support", path: "/chat/support" },
   { icon: Settings, label: "Settings", path: "/dashboard/settings" },
 ];
+ export default function DashboardLayout({
+  children,
+}: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -292,11 +295,16 @@ const sidebarItems = [
 
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+<<<<<<< HEAD
 
   /* ---------------- SUBSCRIPTION LOGIC ---------------- */
   // Accessing subscription data from session (adjust based on your actual user schema)
   const isSubscribed = session?.user?.isSubscribed || false;
   const daysLeft = session?.user?.subscriptionDaysLeft ?? null;
+=======
+  const [isSubscribed, setSubscribed] = useState(false);
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
+>>>>>>> 1a9a139b437ef0dabc8475e5625ad9f4d8ede0db
 
   /* ---------------- PROTECT USER DASHBOARD ---------------- */
 
@@ -305,12 +313,33 @@ const sidebarItems = [
 
     if (!session) {
       router.push("/login");
+      return;
     }
 
-    if (session?.user?.role === "admin") {
+    if (session?.user?.role === "Admin") {
       router.push("/adminDashboard");
     }
   }, [session, status, router]);
+
+  useEffect(() => {
+    const fetchSubscriptionStatus = async () => {
+      if (!session?.user?.email) return;
+
+      try {
+        const res = await fetch(`/api/subscription/status?email=${session.user.email}`);
+        const data = await res.json();
+
+        setSubscribed(data?.subscribed === true);
+        setDaysLeft(typeof data?.daysLeft === "number" ? data.daysLeft : null);
+      } catch (error) {
+        console.error("Subscription status fetch failed:", error);
+        setSubscribed(false);
+        setDaysLeft(null);
+      }
+    };
+
+    fetchSubscriptionStatus();
+  }, [session?.user?.email]);
 
   if (status === "loading") {
     return (

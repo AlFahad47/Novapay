@@ -66,7 +66,7 @@ export default function Page() {
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber)
-    // স্ক্রল করে রিভিউ সেকশনের উপরে নিয়ে যাওয়ার জন্য (Optional)
+    // Scroll back toward the reviews section (optional)
     window.scrollTo({ top: 400, behavior: 'smooth' })
   }
 
