@@ -130,6 +130,7 @@ const Navbar: React.FC = () => {
       ];
 
   return (
+    <>
     <div className="sticky top-2 z-50 mb-0.5 left-0 flex justify-center px-4 pointer-events-none">
       <nav
         className={`pointer-events-auto relative flex items-center justify-between p-2  rounded-[2rem] transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
