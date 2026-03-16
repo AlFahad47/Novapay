@@ -71,7 +71,7 @@ const RankDetailsModal = ({ isOpen, onClose, points, currentRank }: RankModalPro
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-slate-400">
                     <Zap size={12} className="text-amber-500 fill-current" />
-                    <span className="text-[9px] font-black uppercase tracking-tighter">Current Balance</span>
+                    <span className="text-[9px] font-black uppercase tracking-tighter">Current Points</span>
                   </div>
                   <p className="text-3xl font-black text-slate-900 dark:text-white tabular-nums">{points.toLocaleString()}</p>
                 </div>
@@ -87,7 +87,7 @@ const RankDetailsModal = ({ isOpen, onClose, points, currentRank }: RankModalPro
               <div className="px-2">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-[10px] font-bold text-slate-400 uppercase">To {rankInfo.next}</span>
-                  <span className="text-[10px] font-black text-blue-500">{rankInfo.needed} more pts</span>
+                  <span className="text-[10px] font-black text-blue-500">{rankInfo.needed} more points</span>
                 </div>
                 <div className="h-2 w-full bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
                   <motion.div 

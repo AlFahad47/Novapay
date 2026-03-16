@@ -281,6 +281,7 @@ export async function POST(request: Request) {
       receiver,
       description,
       requestId,
+      goalId, 
     } = body;
 
     // 1. Basic validation
@@ -323,6 +324,7 @@ export async function POST(request: Request) {
       "bill_payment",
       "pay_bill",
       "mobile_recharge",
+      "micro_saving_deposit",
     ];
     const isExpense = expenseTypes.includes(normalizedType);
 
@@ -360,7 +362,55 @@ export async function POST(request: Request) {
         );
       }
     }
+// micro-saving
+ // ---------------------------------------------------------
+    // 4. MICRO-SAVING LOGIC
+    // ---------------------------------------------------------
+    if (normalizedType === "micro_saving_deposit") {
+      if (!goalId) {
+        return NextResponse.json({ message: "Goal ID (goalId) is missing from request" }, { status: 400 });
+      }
 
+      const savingTx = {
+        transactionId,
+        type: "Micro-Saving Deposit",
+        amount: txAmount,
+        currency: user.currency || "BDT",
+        date: new Date(),
+        description: description || "Deposit to savings",
+        status: "completed"
+      };
+
+      const updateResult = await usersCollection.updateOne(
+        { 
+          email: email, 
+          "microsaving.id": goalId // 🎯 Matches the 'id' field in your screenshot
+        }, 
+        {
+          $inc: { 
+            balance: -txAmount,
+            "microsaving.$.currentSaved": txAmount // 🎯 Matches 'currentSaved' exactly
+          },
+          $push: { 
+            history: { $each: [savingTx], $position: 0 } 
+          } as any
+        }
+      );
+
+      // matchedCount = found the goal. modifiedCount = actually changed it.
+      if (updateResult.matchedCount === 0) {
+        return NextResponse.json({ message: "Saving goal not found in your account" }, { status: 404 });
+      }
+
+      if (requestId) {
+        await db.collection("notifications").updateOne(
+          { _id: new ObjectId(requestId) },
+          { $set: { status: "completed" } }
+        );
+      }
+
+      return NextResponse.json({ success: true, message: "Savings updated successfully!" });
+    }
     // ---------------------------------------------------------
     // 5. CASHOUT LOGIC
     // ---------------------------------------------------------

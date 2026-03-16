@@ -295,16 +295,11 @@ const sidebarItems = [
 
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-<<<<<<< HEAD
 
   /* ---------------- SUBSCRIPTION LOGIC ---------------- */
   // Accessing subscription data from session (adjust based on your actual user schema)
   const isSubscribed = session?.user?.isSubscribed || false;
   const daysLeft = session?.user?.subscriptionDaysLeft ?? null;
-=======
-  const [isSubscribed, setSubscribed] = useState(false);
-  const [daysLeft, setDaysLeft] = useState<number | null>(null);
->>>>>>> 1a9a139b437ef0dabc8475e5625ad9f4d8ede0db
 
   /* ---------------- PROTECT USER DASHBOARD ---------------- */
 

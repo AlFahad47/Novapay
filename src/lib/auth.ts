@@ -200,7 +200,6 @@ export const authOptions: NextAuthOptions = {
         token.role = (user as any).role || "User";
       }
 
-<<<<<<< HEAD
       // If user logs in with Google, we need to fetch their role from the DB
       // because the Google provider doesn't know about our MongoDB roles.
       if (!token.role || token.role === "User") {
@@ -225,31 +224,5 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-=======
-  if (user) {
-    token.role = (user as any).role;
-    token.id = user.id;
-    token.image = (user as any).image ?? token.image;
-  }
-
-  if (!token.image && token.email) {
-    const client = await clientPromise;
-    const db = client.db("novapay_db");
-    const dbUser = await db.collection("users").findOne({ email: token.email });
-    token.image = dbUser?.image ?? null;
-  }
-  return token;
-},
-
-async session({ session, token }) {
-  if (session.user) {
-    
-    session.user.id = token.id as string;
-    session.user.role = token.role as string;
-    session.user.image = (token.image as string) ?? null;
-  }
-  return session;
-},
->>>>>>> 1a9a139b437ef0dabc8475e5625ad9f4d8ede0db
   },
 };

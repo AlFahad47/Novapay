@@ -27,11 +27,12 @@ const BannerUser: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
-  // Notification state
+  // Notification states
   const [pendingRequests, setPendingRequests] = useState<number>(0);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [notificationData, setNotificationData] = useState<any>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Your original detail modal
+  const [isListModalOpen, setIsListModalOpen] = useState(false); // The new list modal
   const [isRankModalOpen, setIsRankModalOpen] = useState(false);
 
   useEffect(() => {
@@ -62,12 +63,14 @@ const BannerUser: React.FC = () => {
           const notifRes = await fetch(`/api/notifications?email=${session.user.email}`);
           const notifData = await notifRes.json();
 
-          if (notifData.success && notifData.request) {
-            setPendingRequests(1);
-            setNotificationData(notifData.request);
+          if (notifData.success) {
+            // Check if backend returns 'requests' (array) or 'request' (single object)
+            const list = notifData.requests || (notifData.request ? [notifData.request] : []);
+            setNotifications(list);
+            setPendingRequests(list.length);
           } else {
+            setNotifications([]);
             setPendingRequests(0);
-            setNotificationData(null);
           }
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -102,7 +105,6 @@ const BannerUser: React.FC = () => {
 
   const hedwigGradient = "linear-gradient(to right, #4DA1FF, #1E50FF)";
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const confirmPayment = async (data: any) => {
     Swal.fire({
       title: "Confirm Payment",
@@ -118,35 +120,46 @@ const BannerUser: React.FC = () => {
     });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const processPayment = async (data: any) => {
-    try {
-      const res = await fetch("/api/transactions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: session?.user?.email,
-          type: "send_money",
-          amount: Number(data.amount),
-          receiver: (data.from || data.senderEmail).toLowerCase().trim(),
-          description: `Payment for request: ${data.note || "No note"}`,
-          requestId: data._id,
-        }),
-      });
+const processPayment = async (data: any) => {
+  try {
+    // Determine the correct payload based on notification type
+    const isSaving = data.type === "saving_reminder";
+    
+    const payload = {
+      email: session?.user?.email,
+      type: isSaving ? "micro_saving_deposit" : "send_money",
+      amount: Number(data.amount),
+      // For savings, the receiver is the user themselves (or the goal)
+      receiver: isSaving ? session?.user?.email : (data.from || data.senderEmail).toLowerCase().trim(),
+      description: data.note || (isSaving ? "Micro-saving deposit" : "Payment for request"),
+      requestId: data._id,
+     goalId: data.goalId || data.id || null, // Pass the goalId for savings
+    };
 
-      const result = await res.json();
-      if (result.success) {
-        Swal.fire("Success!", "Payment completed and request cleared.", "success");
-        setPendingRequests(0);
-        setNotificationData(null);
-        window.dispatchEvent(new Event("balanceUpdated"));
-      } else {
-        Swal.fire("Error", result.message, "error");
-      }
-    } catch {
-      Swal.fire("Error", "Transaction failed", "error");
+    const res = await fetch("/api/transactions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await res.json();
+    
+    if (result.success) {
+      Swal.fire("Success!", isSaving ? "Savings updated!" : "Payment completed!", "success");
+      
+      // Update UI
+      setNotifications(prev => prev.filter(n => n._id !== data._id));
+      setPendingRequests(prev => prev - 1);
+      
+      // Refresh balance
+      window.dispatchEvent(new Event("balanceUpdated"));
+    } else {
+      Swal.fire("Error", result.message, "error");
     }
-  };
+  } catch (error) {
+    Swal.fire("Error", "Transaction failed", "error");
+  }
+};
 
   return (
     <section className="relative w-full min-h-[88vh] bg-[#f0f7ff] dark:bg-[#050B14] flex flex-col items-center justify-center pt-24 pb-16 overflow-hidden font-sans">
@@ -161,6 +174,8 @@ const BannerUser: React.FC = () => {
           @keyframes shimmerSlide { 100% { transform: translateX(200%); } }
           .shimmer-card { position: relative; overflow: hidden; }
           .shimmer-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent); animation: shimmerSlide 3s infinite; }
+          .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(77, 161, 255, 0.2); border-radius: 10px; }
         `
       }} />
 
@@ -271,7 +286,7 @@ const BannerUser: React.FC = () => {
         >
           {/* Notification bell */}
           <motion.button
-            onClick={() => pendingRequests > 0 && setIsModalOpen(true)}
+            onClick={() => pendingRequests > 0 && setIsListModalOpen(true)}
             whileHover={pendingRequests > 0 ? { scale: 1.05 } : {}}
             whileTap={{ scale: 0.95 }}
             className={`relative flex items-center gap-2 self-end px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-500 cursor-pointer ${
@@ -282,7 +297,7 @@ const BannerUser: React.FC = () => {
           >
             <Bell size={13} className={pendingRequests > 0 ? "text-red-500 animate-bounce" : "text-[#4DA1FF]"} />
             <span className={`text-xs font-medium ${pendingRequests > 0 ? "text-red-600 dark:text-red-400" : "text-[#0F172A] dark:text-white"}`}>
-              {pendingRequests > 0 ? `${pendingRequests} New Request` : "No Alerts"}
+              {pendingRequests > 0 ? `${pendingRequests} New Alerts` : "No Alerts"}
             </span>
             {pendingRequests > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] text-white font-bold animate-pulse">!</span>
@@ -340,8 +355,62 @@ const BannerUser: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* NOTIFICATION MODAL */}
+      {/* --- NOTIFICATION LIST MODAL --- */}
       <AnimatePresence>
+        {isListModalOpen && (
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setIsListModalOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-sm bg-white dark:bg-[#0F172A] rounded-[2.5rem] shadow-2xl border border-[#4DA1FF]/20 flex flex-col max-h-[70vh] overflow-hidden"
+            >
+              <div className="p-6 border-b border-[#4DA1FF]/10 flex justify-between items-center">
+                <h3 className="text-lg font-bold text-[#0F172A] dark:text-white">Recent Alerts</h3>
+                <button onClick={() => setIsListModalOpen(false)} className="p-2 text-gray-500 hover:rotate-90 transition-transform"><X size={18} /></button>
+              </div>
+
+              <div className="overflow-y-auto p-4 space-y-3 custom-scrollbar">
+                {notifications.map((item, index) => (
+                  <div key={item._id || index} className="p-4 rounded-2xl bg-[#f8faff] dark:bg-white/5 border border-[#4DA1FF]/10 flex flex-col gap-3">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-[#4DA1FF]/10 flex items-center justify-center">
+                          <UserCircle2 size={16} className="text-[#4DA1FF]" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">Request From</p>
+                          <p className="text-xs font-bold dark:text-white truncate max-w-[120px]">{item.from || item.senderEmail}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">Amount</p>
+                        <p className="text-sm font-black text-[#1E50FF] dark:text-[#4DA1FF]">{currencySymbol}{item.amount}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setNotificationData(item);
+                        setIsListModalOpen(false);
+                        setIsModalOpen(true);
+                      }}
+                      className="w-full py-2.5 rounded-xl bg-linear-to-r from-[#4DA1FF] to-[#1E50FF] text-white text-[10px] font-bold shadow-lg shadow-[#1E50FF]/20"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* --- ORIGINAL NOTIFICATION DETAIL MODAL --- */}
         {isModalOpen && notificationData && (
           <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
             <motion.div
@@ -371,7 +440,7 @@ const BannerUser: React.FC = () => {
                   <span className="font-bold text-[#1E50FF] dark:text-[#4DA1FF]">
                     {notificationData.from || notificationData.senderEmail}
                   </span>{" "}
-                  is requesting funds from you.
+                  is requesting money from you.
                 </p>
 
                 <div className="w-full bg-[#f8faff] dark:bg-white/5 border border-[#4DA1FF]/10 rounded-2xl p-5 my-6">

@@ -531,7 +531,7 @@ export default function AdminLayout({
             </Link>
           ))}
           <button
-            onClick={() => signOut()}
+            onClick={() => signOut({ callbackUrl: "/" })}
             className="flex items-center gap-3 p-3 w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl mt-10"
           >
             <LogOut size={20} />{" "}
