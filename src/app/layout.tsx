@@ -7,6 +7,7 @@ import NavbarWrapper from "@/components/layout/NavbarWrapper";
 import Footer from "@/components/layout/Footer";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
+import Navbar from "@/components/layout/Navbar";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
