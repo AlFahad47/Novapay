@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google"; // বা তোমার যে ফন্ট আছে
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
-import { Toaster } from "react-hot-toast"; // ১. এই লাইনটি ইমপোর্ট করো
-import Navbar from "@/components/layout/Navbar";
+import { Toaster } from "react-hot-toast"; // Toast notifications
+import NavbarWrapper from "@/components/layout/NavbarWrapper";
 import Footer from "@/components/layout/Footer";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -37,7 +37,7 @@ export default function RootLayout({
           </AuthProvider>
         </ThemeProvider>
 
-        {/* ২. ঠিক <body> ট্যাগ শেষ হওয়ার আগে এই লাইনটি বসিয়ে দাও */}
+        {/* Place toaster near the end of body */}
         <Toaster position="top-center" reverseOrder={false} />
       </body>
     </html>

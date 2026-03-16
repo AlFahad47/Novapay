@@ -17,6 +17,11 @@ type FullUser = {
   points?: number;
 };
 
+type FullUser = {
+  rank?: string;
+  points?: number;
+};
+
 const Navbar: React.FC = () => {
   const { data: session } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -134,10 +139,10 @@ const Navbar: React.FC = () => {
         }`}
       >
         {/* Subtle inner glass shine */}
-        <div className="absolute inset-0 rounded-[2rem] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] pointer-events-none"></div>
+        <div className="absolute inset-0 rounded-4xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] pointer-events-none"></div>
 
         {/* Brand / Logo */}
-        <div className="pl-4 md:pl-6 flex-shrink-0 z-20 flex items-center gap-2">
+        <div className="pl-4 md:pl-6 shrink-0 z-20 flex items-center gap-2">
           <Sparkles className="text-[#3b82f6] w-5 h-5" />
           <Link
             href="/"
@@ -173,7 +178,7 @@ const Navbar: React.FC = () => {
                 </span>
                 {/* Unread badge on Chat link */}
                 {link.name === "Chat" && unreadTotal > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-0.5 z-20">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-4 h-4 flex items-center justify-center px-0.5 z-20">
                     {unreadTotal > 99 ? "99+" : unreadTotal}
                   </span>
                 )}
@@ -186,7 +191,7 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Desktop Right - Dark Mode + Avatar / Get Started */}
-        <div className="hidden md:flex flex-shrink-0 pr-1 z-20">
+        <div className="hidden md:flex shrink-0 pr-1 z-20">
           <div className="flex items-center gap-3">
             {/* Dark Mode Toggle (always visible) */}
             <ThemeToggleButton2 className="h-9 w-9 p-1 rounded-full bg-white/5  dark:bg-gray-900" />
@@ -338,7 +343,7 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="absolute top-[120%] left-0 w-full bg-[#0a101f]/80 backdrop-blur-2xl border border-white/10 rounded-[1.5rem] p-5 flex flex-col gap-2 md:hidden">
+          <div className="absolute top-[120%] left-0 w-full bg-[#0a101f]/80 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 flex flex-col gap-2 md:hidden">
             {/* Mobile Dark Mode Toggle */}
             <div className="flex justify-end mb-4">
               <ThemeToggleButton2 className="h-9 w-9 p-1 rounded-full bg-white/10 hover:bg-white/20 dark:bg-gray-900" />
@@ -371,21 +376,31 @@ const Navbar: React.FC = () => {
             })}
 
             {user ? (
-              <Link
-                href="/"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  signOut({ callbackUrl: "/" });
-                }}
-                className="mt-4 flex justify-center items-center gap-2 bg-gradient-to-r from-[#3b82f6] to-[#2563eb] text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(59,130,246,0.6)]"
-              >
-                Logout <ArrowUpRight size={18} />
-              </Link>
+              <div className="flex flex-col gap-2 mt-4">
+                {/* Mobile Dashboard Link */}
+                <Link
+                  href={dashboardPath}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex justify-center items-center gap-2 bg-white/5 text-white px-5 py-3.5 rounded-xl text-sm font-bold border border-white/10"
+                >
+                  <FaUser size={16} /> Dashboard
+                </Link>
+                {/* Mobile Logout Trigger */}
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    signOut({ callbackUrl: "/" });
+                  }}
+                  className="flex justify-center items-center gap-2 bg-linear-to-r from-red-500 to-red-700 text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(239,68,68,0.6)]"
+                >
+                  Logout <IoLogOut size={18} />
+                </button>
+              </div>
             ) : (
               <Link
                 href="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="mt-4 flex justify-center items-center gap-2 bg-gradient-to-r from-[#3b82f6] to-[#2563eb] text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(59,130,246,0.6)]"
+                className="mt-4 flex justify-center items-center gap-2 bg-linear-to-r from-[#3b82f6] to-[#2563eb] text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(59,130,246,0.6)]"
               >
                 Get Started <ArrowUpRight size={18} />
               </Link>
@@ -401,6 +416,13 @@ const Navbar: React.FC = () => {
         />
       </nav>
     </div>
+    <RankDetailsModal
+      isOpen={isRankModalOpen}
+      onClose={() => setIsRankModalOpen(false)}
+      points={fullUser?.points || 0}
+      currentRank={fullUser?.rank || "BRONZE"}
+    />
+    </>
   );
 };
 

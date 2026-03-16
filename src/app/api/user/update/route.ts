@@ -29,6 +29,8 @@ export async function POST(request: Request) {
       email, 
       newGoal,
       bankBalance,
+      type,      
+      note,
       wallet,
       wallethistory,
       bankId,
@@ -43,6 +45,45 @@ export async function POST(request: Request) {
     const db = client.db("novapay_db");
     const usersCollection = db.collection("users");
 
+
+   // 1. LIQUID CASH LOGIC (Income/Expense)
+    if (type === 'income' || type === 'expense') {
+      const numAmount = parseFloat(amount);
+      const isIncome = type === 'income';
+
+      const historyItem = {
+        id: Math.random().toString(36).substring(2, 11),
+        type,
+        amount: numAmount,
+        note: note || `Cash ${type}`,
+        date: new Date(),
+      };
+
+      await usersCollection.updateOne(
+        { email },
+        {
+          $inc: {
+            bankBalance: isIncome ? numAmount : -numAmount,
+            "wallet.totalPhysicalIncome": isIncome ? numAmount : 0,
+            "wallet.totalPhysicalExpense": isIncome ? 0 : numAmount,
+          },
+          $push: {
+            wallethistory: {
+              $each: [historyItem],
+              $position: 0 
+            }
+          },
+          $set: { 
+            "wallet.lastTransactionDate": new Date(),
+            updatedAt: new Date() 
+          }
+        }
+      );
+
+      return NextResponse.json({ success: true, message: "Liquid asset updated" });
+    }
+
+    
     // --- LOGIC A: New Microsaving Goal Add ---
     if (newGoal) {
       const goalWithId = {
@@ -66,22 +107,29 @@ export async function POST(request: Request) {
 
     // --- LOGIC B: Handle Linking New Bank ---
     if (newBank) {
+      // Security: Only store the last 4 digits
+      const maskedAccNo = `**** **** **** ${newBank.accNo.slice(-4)}`;
+      
+      const bankData = {
+        id: Math.random().toString(36).substr(2, 9),
+        brand: newBank.brand,       // 'visa' or 'mastercard'
+        name: newBank.name,         // Cardholder name / Bank name
+        accNo: maskedAccNo,         // Masked for security
+        expiry: newBank.expiry,     // MM/YY
+        balance: Math.floor(Math.random() * 25000) + 5000, // Mock bank balance
+        addedAt: new Date()
+      };
+
+      // Note: We EXCLUDE 'cvv' from the database for PCI compliance realism.
+
       await usersCollection.updateOne(
         { email },
-        { 
-          // @ts-ignore
-          $push: { 
-            linkedBanks: { 
-              ...newBank, 
-              id: Math.random().toString(36).substring(2, 11), 
-              addedAt: new Date() 
-            } 
-          } 
-        }
+        { $push: { linkedBanks: bankData } as any }
       );
-      return NextResponse.json({ success: true, message: "Bank Linked Successfully" });
+      return NextResponse.json({ success: true, message: "Card Linked Securely" });
     }
 
+    // --- 2. TRANSACTION LOGIC ---
     // --- LOGIC C: Transaction Logic for existing User ---
     const existingUser = await usersCollection.findOne({ email });
     if (!existingUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -90,25 +138,29 @@ export async function POST(request: Request) {
     const numAmount = parseFloat(amount) || 0;
     
     const targetBank = existingUser.linkedBanks?.find((b: any) => b.id === bankId);
+    if (!targetBank && actionType) {
+        return NextResponse.json({ error: "Source Card not found" }, { status: 404 });
+    }
+
     let finalBankBalance = targetBank ? (parseFloat(targetBank.balance) || 0) : 0;
 
     if (actionType === "add_money") {
+      if (finalBankBalance < numAmount) return NextResponse.json({ error: "Insufficient Bank Balance" }, { status: 400 });
       novaPayBalance += numAmount;
       finalBankBalance -= numAmount;
     } else if (actionType === "deposit_money") {
+      if (novaPayBalance < numAmount) return NextResponse.json({ error: "Insufficient NovaPay Balance" }, { status: 400 });
       novaPayBalance -= numAmount;
       finalBankBalance += numAmount;
     }
 
+    // --- 3. DATABASE UPDATE ---
     // Database Update
     const updateQuery: any = { email: email };
     if (bankId) updateQuery["linkedBanks.id"] = bankId;
 
     const updatePayload: any = {
       $set: { 
-        bankBalance: bankBalance,
-        wallet: wallet,
-        wallethistory: wallethistory,
         balance: novaPayBalance,
         updatedAt: new Date()
       }
@@ -121,17 +173,12 @@ export async function POST(request: Request) {
 
     const result = await usersCollection.updateOne(updateQuery, updatePayload);
 
-    if (result.matchedCount === 0) {
-      return NextResponse.json({ error: "User or Bank Record not found" }, { status: 404 });
-    }
-
     return NextResponse.json({ 
       success: true, 
-      message: "Transaction Recorded Successfully", 
       currentNovaPayBalance: novaPayBalance 
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error("Database Update Error:", error);
     return NextResponse.json({ 
       error: "Failed to update database", 

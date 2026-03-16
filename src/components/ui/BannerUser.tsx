@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 
 const BannerUser: React.FC = () => {
   const { data: session } = useSession();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [dbUser, setDbUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [scrollY, setScrollY] = useState(0);
@@ -36,6 +37,7 @@ const BannerUser: React.FC = () => {
 
   // নোটিফিকেশন স্টেট
   const [pendingRequests, setPendingRequests] = useState<number>(0);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [notificationData, setNotificationData] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRankModalOpen, setIsRankModalOpen] = useState(false);
@@ -80,8 +82,8 @@ const BannerUser: React.FC = () => {
             setPendingRequests(1);
             setNotificationData(notifData.request);
           } else {
+            setNotifications([]);
             setPendingRequests(0);
-            setNotificationData(null);
           }
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -99,7 +101,6 @@ const BannerUser: React.FC = () => {
   const firstName =
     dbUser?.name?.split(" ")[0] || session?.user?.name?.split(" ")[0] || "User";
   const currencySymbol = dbUser?.currency === "BDT" ? "৳" : "$";
-  // const isApproved = dbUser?.kycStatus === "approved";
   const isApproved = true;
 
   const stats = [
@@ -141,7 +142,6 @@ const BannerUser: React.FC = () => {
     },
   ];
 
-  // UPDATED: Added onClick actions to the buttons
   const cardActions = [
     {
       label: "Send",
@@ -303,6 +303,7 @@ const BannerUser: React.FC = () => {
                 : "Complete your profile to unlock all features."}
             </p>
           </div>
+
           <div className="flex flex-wrap items-center gap-4">
             <Link href="/dashboard">
               <motion.button
@@ -333,6 +334,7 @@ const BannerUser: React.FC = () => {
               </motion.button>
             </Link>
           </div>
+
           <div className="flex flex-wrap gap-3">
             {stats.map((stat, i) => (
               <motion.div
@@ -392,6 +394,7 @@ const BannerUser: React.FC = () => {
             )}
           </motion.button>
 
+          {/* Card */}
           <div className="float-card">
             <div
               className={`shimmer-card w-[300px] md:w-[340px] h-[200px] md:h-[220px] rounded-2xl border border-white/20 p-6 flex flex-col justify-between shadow-2xl transition-all duration-500 ${!isApproved ? "grayscale brightness-75" : ""}`}
@@ -440,8 +443,8 @@ const BannerUser: React.FC = () => {
             </div>
           </div>
 
+          {/* Action Buttons */}
           <div className="flex items-center gap-3 w-full px-2">
-            {/* UPDATED: Dynamic Button mapping with onClick */}
             {cardActions.map((action) => (
               <motion.button
                 key={action.label}
@@ -459,8 +462,62 @@ const BannerUser: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* NOTIFICATION MODAL */}
+      {/* --- NOTIFICATION LIST MODAL --- */}
       <AnimatePresence>
+        {isListModalOpen && (
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setIsListModalOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-sm bg-white dark:bg-[#0F172A] rounded-[2.5rem] shadow-2xl border border-[#4DA1FF]/20 flex flex-col max-h-[70vh] overflow-hidden"
+            >
+              <div className="p-6 border-b border-[#4DA1FF]/10 flex justify-between items-center">
+                <h3 className="text-lg font-bold text-[#0F172A] dark:text-white">Recent Alerts</h3>
+                <button onClick={() => setIsListModalOpen(false)} className="p-2 text-gray-500 hover:rotate-90 transition-transform"><X size={18} /></button>
+              </div>
+
+              <div className="overflow-y-auto p-4 space-y-3 custom-scrollbar">
+                {notifications.map((item, index) => (
+                  <div key={item._id || index} className="p-4 rounded-2xl bg-[#f8faff] dark:bg-white/5 border border-[#4DA1FF]/10 flex flex-col gap-3">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-[#4DA1FF]/10 flex items-center justify-center">
+                          <UserCircle2 size={16} className="text-[#4DA1FF]" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">Request From</p>
+                          <p className="text-xs font-bold dark:text-white truncate max-w-[120px]">{item.from || item.senderEmail}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">Amount</p>
+                        <p className="text-sm font-black text-[#1E50FF] dark:text-[#4DA1FF]">{currencySymbol}{item.amount}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setNotificationData(item);
+                        setIsListModalOpen(false);
+                        setIsModalOpen(true);
+                      }}
+                      className="w-full py-2.5 rounded-xl bg-linear-to-r from-[#4DA1FF] to-[#1E50FF] text-white text-[10px] font-bold shadow-lg shadow-[#1E50FF]/20"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* --- ORIGINAL NOTIFICATION DETAIL MODAL --- */}
         {isModalOpen && notificationData && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Backdrop */}
@@ -489,7 +546,7 @@ const BannerUser: React.FC = () => {
               </Button>
 
               <div className="flex flex-col items-center text-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#4DA1FF]/20 to-[#1E50FF]/20 flex items-center justify-center mb-5 border border-[#4DA1FF]/20">
+                <div className="w-20 h-20 rounded-full bg-linear-to-tr from-[#4DA1FF]/20 to-[#1E50FF]/20 flex items-center justify-center mb-5 border border-[#4DA1FF]/20">
                   <UserCircle2 size={40} className="text-[#4DA1FF]" />
                 </div>
 
