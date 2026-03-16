@@ -23,6 +23,9 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Dynamic Dashboard Path based on session role
+  const dashboardPath = session?.user?.role === "admin" ? "/adminDashboard" : "/dashboard";
+
   // React Compiler-safe dark mode using useSyncExternalStore (avoids setState in effect)
   const darkMode = useSyncExternalStore(
     (callback) => {
@@ -252,12 +255,41 @@ useEffect(() => {
               {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-800" />}
             </button>
 
-{user ? (
-  <div className="relative" ref={profileDropdownRef}>
-    {/* 1. The Avatar Trigger */}
+ {user ? (
+  /* এখানে group ক্লাসটি মাস্ট লাগবে হোভার কাজ করার জন্য */
+  <div className="relative inline-block group" ref={profileDropdownRef}>
+    
+    {/* Rank Badge */}
+    <div 
+      onClick={(e) => {
+        e.stopPropagation(); 
+        setIsRankModalOpen(true);
+      }}
+      className={`absolute -top-2 left-1/2 -translate-x-1/2 z-30 px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md backdrop-blur-sm border transition-transform duration-300 hover:scale-110 active:scale-95 cursor-pointer
+      ${normalizedRank === 'PLATINUM' ? 'bg-slate-900 border-slate-700 text-white' : 
+        normalizedRank === 'GOLD' ? 'bg-amber-400 border-amber-300 text-amber-950' : 
+        normalizedRank === 'SILVER' ? 'bg-slate-200 border-slate-300 text-slate-800' : 
+        'bg-[#E63946] border-red-400 text-white'}`}
+    >
+      <span className="flex items-center justify-center">
+        {normalizedRank === 'PLATINUM' && <Trophy className="w-2.5 h-2.5" />}
+        {normalizedRank === 'GOLD' && <Crown className="w-2.5 h-2.5" />}
+        {normalizedRank === 'SILVER' && <ShieldCheck className="w-2.5 h-2.5" />}
+        {normalizedRank === 'BRONZE' && <Star className="w-2.5 h-2.5 fill-current" />}
+      </span>
+      <span className="text-[9px] font-black uppercase tracking-tighter leading-none">
+        {normalizedRank}
+      </span>
+    </div>
+
+    {/* User Avatar */}
     <div
       onClick={() => setIsProfileOpen(!isProfileOpen)}
-      className="relative w-12 h-12 rounded-full overflow-hidden border-2 z-20 cursor-pointer transition-all hover:scale-105 active:scale-95 border-gray-300 dark:border-gray-600"
+      className={`relative w-12 h-12 rounded-full overflow-hidden border-2 z-10 cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95
+        ${normalizedRank === 'PLATINUM' ? 'border-indigo-400 shadow-[0_0_12px_rgba(129,140,248,0.4)]' : 
+          normalizedRank === 'GOLD' ? 'border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.4)]' : 
+          normalizedRank === 'SILVER' ? 'border-slate-300 shadow-sm' : 
+          'border-gray-300 dark:border-gray-600'}`}
     >
       <Image
         alt="User Avatar"
@@ -269,49 +301,66 @@ useEffect(() => {
       />
     </div>
 
-    {/* 2. The Dropdown Menu */}
+    {/* Profile Dropdown  */}
     {isProfileOpen && (
       <div 
-        className="absolute right-0 mt-2 w-52 bg-white dark:bg-[#0D263C] text-gray-900 dark:text-gray-200 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.3)] border border-gray-200 dark:border-gray-700 py-2 z-[999] pointer-events-auto"
-        style={{ isolation: 'isolate' }} // Forces it to the top of the stack
+        className="absolute right-0 mt-3 w-52 bg-white dark:bg-[#0D263C] text-gray-900 dark:text-gray-200 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-200 z-[100] pointer-events-auto"
       >
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 mb-1">
-          <p className="text-sm font-bold truncate">{user.name}</p>
-          <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+          <p className="text-sm font-semibold truncate">{user.name}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
         </div>
-
-        <nav className="flex flex-col px-2 gap-1">
-          <Link
-            href="/dashboard"
-            onClick={() => setIsProfileOpen(false)}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium"
-          >
-            <FaUser className="text-gray-400" /> Dashboard
-          </Link>
-          
-          <Link
-            href="/dashboard/settings"
-            onClick={() => setIsProfileOpen(false)}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium"
-          >
-            <FaGear className="text-gray-400" /> Settings
-          </Link>
-
-          <div className="h-px bg-gray-200 dark:bg-gray-700 my-1 mx-2" />
-
-          <button
-            type="button"
-            onClick={async () => {
-              setIsProfileOpen(false);
-              await signOut({ callbackUrl: "/" });
-            }}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-sm font-bold cursor-pointer"
-          >
-            <IoLogOut size={18} /> Logout
-          </button>
-        </nav>
+        <ul className="flex flex-col px-2 py-1 gap-1">
+          <li>
+            <Link
+              href={dashboardPath}
+              onClick={() => setIsProfileOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              <FaUser /> Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/dashboard/settings"
+              onClick={() => setIsProfileOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              <FaGear /> Settings
+            </Link>
+          </li>
+          <li><hr className="border-t border-gray-200 dark:border-gray-700 my-1" /></li>
+          <li>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsProfileOpen(false);
+                signOut({ callbackUrl: "/" });
+              }}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-600 transition-colors font-medium cursor-pointer"
+            >
+              <IoLogOut /> Logout
+            </button>
+          </li>
+        </ul>
       </div>
     )}
+
+    {/* Online Status Dot */}
+    <span className="absolute bottom-0.5 right-0.5 flex h-3 w-3 z-20 pointer-events-none">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 border border-white"></span>
+      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500 border-2 border-white"></span>
+    </span>
+
+    {/* Points Indicator  */}
+    <div 
+      className="absolute -bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30"
+    >
+      <p className="text-[10px] font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap bg-white/90 dark:bg-black/80 px-2 py-0.5 mt-3 rounded-full shadow-md border border-blue-100 dark:border-blue-900/30">
+        {fullUser?.points || 0} Points
+      </p>
+    </div>
   </div>
 ): (
               <Link
@@ -326,59 +375,8 @@ useEffect(() => {
             )}
           </div>
 
-          {/* Profile Dropdown */}
-          {isProfileOpen && user && (
-  <div 
-    className="absolute right-0 mt-14 w-52 bg-white dark:bg-[#0D263C] text-gray-900 dark:text-gray-200 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 transition-all duration-200 z-[100] pointer-events-auto"
-    onClick={(e) => e.stopPropagation()}
-  >
-    {/* User Header */}
-    <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-      <p className="text-sm font-semibold truncate">{user.name}</p>
-      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
-    </div>
-
-    {/* Menu Items */}
-    <ul className="flex flex-col px-2 py-1 gap-1">
-      <li>
-        <Link
-          href="/dashboard"
-          onClick={() => setIsProfileOpen(false)}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors w-full cursor-pointer"
-        >
-          <FaUser className="shrink-0" /> 
-          <span className="text-sm">Dashboard</span>
-        </Link>
-      </li>
-      <li>
-        <Link
-          href="/dashboard/settings"
-          onClick={() => setIsProfileOpen(false)}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors w-full cursor-pointer"
-        >
-          <FaGear className="shrink-0" /> 
-          <span className="text-sm">Settings</span>
-        </Link>
-      </li>
-
-      <li><hr className="border-t border-gray-200 dark:border-gray-700 my-1" /></li>
-
-      <li>
-        <button
-          type="button"
-          onClick={() => {
-            setIsProfileOpen(false);
-            signOut({ callbackUrl: "/" });
-          }}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors font-medium cursor-pointer"
-        >
-          <IoLogOut className="shrink-0" /> 
-          <span className="text-sm">Logout</span>
-        </button>
-      </li>
-    </ul>
-  </div>
-)}
+{/* Profile Dropdown */}
+          
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -425,16 +423,26 @@ useEffect(() => {
             })}
 
             {user ? (
-              <Link
-                href="/"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  signOut({ callbackUrl: "/" });
-                }}
-                className="mt-4 flex justify-center items-center gap-2 bg-linear-to-r from-[#3b82f6] to-[#2563eb] text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(59,130,246,0.6)]"
-              >
-                Logout <ArrowUpRight size={18} />
-              </Link>
+              <div className="flex flex-col gap-2 mt-4">
+                {/* Mobile Dashboard Link */}
+                <Link
+                  href={dashboardPath}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex justify-center items-center gap-2 bg-white/5 text-white px-5 py-3.5 rounded-xl text-sm font-bold border border-white/10"
+                >
+                  <FaUser size={16} /> Dashboard
+                </Link>
+                {/* Mobile Logout Trigger */}
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    signOut({ callbackUrl: "/" });
+                  }}
+                  className="flex justify-center items-center gap-2 bg-linear-to-r from-red-500 to-red-700 text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(239,68,68,0.6)]"
+                >
+                  Logout <IoLogOut size={18} />
+                </button>
+              </div>
             ) : (
               <Link
                 href="/login"

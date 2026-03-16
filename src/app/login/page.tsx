@@ -188,7 +188,7 @@ const PandaLogin: React.FC = () => {
 
             <p className="text-[1em] font-black text-[#4DA1FF] tracking-widest uppercase">Access Granted</p>
 
-            <p className="text-[0.75em] font-medium text-slate-400 mt-0.5 tracking-wide">Identity confirmed. Routing to dashboard...</p>
+            <p className="text-[0.75em] font-medium text-slate-400 mt-0.5 tracking-wide">Identity confirmed. Routing to homapage...</p>
 
           </div>
 
@@ -200,7 +200,7 @@ const PandaLogin: React.FC = () => {
 
       setTimeout(() => {
 
-        router.push("/dashboard");
+        router.push("/");
 
       }, 2000);
 
@@ -382,7 +382,7 @@ const PandaLogin: React.FC = () => {
 
               <button 
                 type="button" 
-                onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+                onClick={() => signIn('google', { callbackUrl: '/' })}
                 className="p-2.5 rounded-full border border-slate-200 hover:border-[#2C64FF] hover:bg-[#2C64FF]/5 transition-colors group"
                 title="Sign in with Google"
               >
