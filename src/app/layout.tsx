@@ -6,8 +6,9 @@ import { Toaster } from "react-hot-toast"; // ১. এই লাইনটি ই
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/theme-provider";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,13 +23,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn("font-sans", geist.variable)}
+    >
       <body className={inter.className}>
-        <AuthProvider>
-          <Navbar />
-          {children}
-          <Footer></Footer>
-        </AuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AuthProvider>
+            <Navbar />
+            {children}
+            <Footer></Footer>
+          </AuthProvider>
+        </ThemeProvider>
 
         {/* ২. ঠিক <body> ট্যাগ শেষ হওয়ার আগে এই লাইনটি বসিয়ে দাও */}
         <Toaster position="top-center" reverseOrder={false} />

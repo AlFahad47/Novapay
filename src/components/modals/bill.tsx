@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FaLightbulb, FaWater, FaWifi, FaTv } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import Swal from "sweetalert2";
+import { Button } from "@/components/ui/button";
 
 const BillForm = () => {
   const { data: session } = useSession();
@@ -18,7 +19,7 @@ const BillForm = () => {
     { name: "TV/DTH", icon: FaTv, color: "text-purple-500" },
   ];
 
- const handlePayBill = async () => {
+  const handlePayBill = async () => {
     // validation
     if (!consumerId || !amount) {
       Swal.fire("Error", "Please fill all fields", "error");
@@ -34,7 +35,7 @@ const BillForm = () => {
 
     try {
       // 1. Process the main Transaction (POST)
-      const response = await fetch("/api/transactions", { 
+      const response = await fetch("/api/transactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -53,10 +54,10 @@ const BillForm = () => {
 
       if (data.success) {
         // 2. TRIGGER POINT UPDATE (PATCH)
-        // We use a separate try-catch so that if points fail, 
+        // We use a separate try-catch so that if points fail,
         // the user still knows their bill was paid.
         try {
-          await fetch("/api/points", { 
+          await fetch("/api/points", {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -93,18 +94,21 @@ const BillForm = () => {
       {/* Bill Type Selection */}
       <div className="grid grid-cols-2 gap-3">
         {billTypes.map((bill) => (
-          <button
+          <Button
             key={bill.name}
             onClick={() => setSelectedType(bill.name)}
-            className={`flex flex-col items-center p-3 rounded-xl border transition-all ${
+            variant="ghost"
+            className={`h-auto flex flex-col items-center p-3 rounded-xl border transition-all ${
               selectedType === bill.name
                 ? "bg-blue-50 border-blue-500 dark:bg-blue-900/20"
                 : "bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700"
             }`}
           >
             <bill.icon className={`text-xl mb-2 ${bill.color}`} />
-            <span className="text-xs font-medium dark:text-gray-200">{bill.name}</span>
-          </button>
+            <span className="text-xs font-medium dark:text-gray-200">
+              {bill.name}
+            </span>
+          </Button>
         ))}
       </div>
 
@@ -124,16 +128,18 @@ const BillForm = () => {
           placeholder="Amount"
           className="w-full p-3 rounded-xl border dark:border-gray-700 bg-transparent dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
         />
-        
-        <button
+
+        <Button
           onClick={handlePayBill}
           disabled={loading}
-          className={`w-full py-3 bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-opacity ${
+          variant="novapay"
+          size="lg"
+          className={`w-full rounded-xl font-bold ${
             loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
           }`}
         >
           {loading ? "Processing..." : `Pay ${selectedType} Bill`}
-        </button>
+        </Button>
       </div>
     </div>
   );

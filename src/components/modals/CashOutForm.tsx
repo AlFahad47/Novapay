@@ -2,12 +2,13 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import Swal from "sweetalert2";
+import { Button } from "@/components/ui/button";
 
 const CashOutForm = () => {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
 
- const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
@@ -16,23 +17,23 @@ const CashOutForm = () => {
       email: session?.user?.email,
       type: "cashout",
       amount: formData.get("amount"),
-      receiver: formData.get("agentNumber"), 
+      receiver: formData.get("agentNumber"),
       description: "Cash out from Novapay",
     };
 
     try {
       // 1. Process the main Cash Out Transaction
-      const res = await fetch("/api/transactions", { 
+      const res = await fetch("/api/transactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       const result = await res.json();
-      
+
       if (res.ok) {
         // 2. TRIGGER POINT UPDATE
-        // We run this in its own try-catch to prevent point errors 
+        // We run this in its own try-catch to prevent point errors
         // from blocking the success message.
         try {
           await fetch("/api/points", {
@@ -54,8 +55,8 @@ const CashOutForm = () => {
           text: "Cash out successful! Points have been added to your account.",
           confirmButtonColor: "#1E50FF",
         });
-        
-        window.location.reload(); 
+
+        window.location.reload();
       } else {
         Swal.fire("Error", result.message, "error");
       }
@@ -68,16 +69,36 @@ const CashOutForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1">Agent Number / Email</label>
-        <input name="agentNumber" type="text" required className="w-full p-3 rounded-xl border dark:bg-gray-800 dark:border-gray-700" placeholder="Enter agent info" />
+        <label className="block text-sm font-medium mb-1">
+          Agent Number / Email
+        </label>
+        <input
+          name="agentNumber"
+          type="text"
+          required
+          className="w-full p-3 rounded-xl border dark:bg-gray-800 dark:border-gray-700"
+          placeholder="Enter agent info"
+        />
       </div>
       <div>
         <label className="block text-sm font-medium mb-1">Amount</label>
-        <input name="amount" type="number" required className="w-full p-3 rounded-xl border dark:bg-gray-800 dark:border-gray-700" placeholder="0.00" />
+        <input
+          name="amount"
+          type="number"
+          required
+          className="w-full p-3 rounded-xl border dark:bg-gray-800 dark:border-gray-700"
+          placeholder="0.00"
+        />
       </div>
-      <button disabled={loading} className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+      <Button
+        type="submit"
+        disabled={loading}
+        variant="novapay"
+        size="lg"
+        className="w-full rounded-xl font-bold"
+      >
         {loading ? "Processing..." : "Confirm Cash Out"}
-      </button>
+      </Button>
     </form>
   );
 };
