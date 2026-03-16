@@ -261,6 +261,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import type { SubscriptionStatusResponse } from "@/types/subscription";
 import {
   LayoutDashboard,
   CreditCard,
@@ -273,7 +274,7 @@ import {
   MessageSquare,
   Crown,
   X,
-  Menu,
+  Crown,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -295,6 +296,15 @@ const sidebarItems = [
 
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] =
+    useState<SubscriptionStatusResponse>({
+      subscribed: false,
+      subscription: null,
+      daysLeft: null,
+    });
+
+  const isSubscribed = subscriptionStatus.subscribed;
+  const daysLeft = subscriptionStatus.daysLeft;
 
   /* ---------------- SUBSCRIPTION LOGIC ---------------- */
   // Accessing subscription data from session (adjust based on your actual user schema)
@@ -317,23 +327,50 @@ const sidebarItems = [
   }, [session, status, router]);
 
   useEffect(() => {
+    const email = session?.user?.email;
+
+    if (!email) {
+      setSubscriptionStatus({
+        subscribed: false,
+        subscription: null,
+        daysLeft: null,
+      });
+      return;
+    }
+
+    let isMounted = true;
+
     const fetchSubscriptionStatus = async () => {
-      if (!session?.user?.email) return;
-
       try {
-        const res = await fetch(`/api/subscription/status?email=${session.user.email}`);
-        const data = await res.json();
+        const res = await fetch(
+          `/api/subscription/status?email=${encodeURIComponent(email)}`
+        );
 
-        setSubscribed(data?.subscribed === true);
-        setDaysLeft(typeof data?.daysLeft === "number" ? data.daysLeft : null);
-      } catch (error) {
-        console.error("Subscription status fetch failed:", error);
-        setSubscribed(false);
-        setDaysLeft(null);
+        if (!res.ok) {
+          throw new Error("Failed to fetch subscription status");
+        }
+
+        const data: SubscriptionStatusResponse = await res.json();
+
+        if (isMounted) {
+          setSubscriptionStatus(data);
+        }
+      } catch {
+        if (isMounted) {
+          setSubscriptionStatus({
+            subscribed: false,
+            subscription: null,
+            daysLeft: null,
+          });
+        }
       }
     };
 
     fetchSubscriptionStatus();
+
+    return () => {
+      isMounted = false;
+    };
   }, [session?.user?.email]);
 
   if (status === "loading") {

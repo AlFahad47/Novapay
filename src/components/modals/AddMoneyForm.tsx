@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Swal from "sweetalert2";
+import { Button } from "@/components/ui/button";
 
 interface LinkedBank {
   id: string;
@@ -23,7 +24,9 @@ export default function AddMoneyForm() {
     const fetchBanks = async () => {
       if (!session?.user?.email) return;
       try {
-        const res = await fetch(`/api/user/update?email=${encodeURIComponent(session.user.email)}`);
+        const res = await fetch(
+          `/api/user/update?email=${encodeURIComponent(session.user.email)}`,
+        );
         const data = await res.json();
               setDbUser(data);
 
@@ -55,9 +58,15 @@ export default function AddMoneyForm() {
     if (selectedBank && selectedBank.balance < numAmount) {
       return Swal.fire({
         icon: "error",
+<<<<<<< HEAD
+        title: "Insufficient Balance",
+        text: `You only have ৳${selectedBank.balance.toLocaleString()} in this account.`,
+        confirmButtonColor: "#3b82f6",
+=======
         title: "Insufficient Bank Balance",
         text: `The selected card only has ${currencySymbol}${selectedBank.balance.toLocaleString()}.`,
         confirmButtonColor: "#3b82f6"
+>>>>>>> b4a0b85ceb52933a9593b28007865cde16ef9590
       });
     }
 
@@ -68,7 +77,7 @@ export default function AddMoneyForm() {
       email: session?.user?.email,
       bankId: selectedBankId,
       amount: numAmount,
-      actionType: "add_money", 
+      actionType: "add_money",
     };
 
     try {
@@ -80,16 +89,33 @@ export default function AddMoneyForm() {
       });
 
       const data = await res.json();
-      
+
       if (res.ok) {
         // Step 2: Points Update (Fired in background)
         fetch("/api/points", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            email: session?.user?.email, 
-            activityType: "ADD_MONEY" 
+          body: JSON.stringify({
+            email: session?.user?.email,
+            activityType: "ADD_MONEY",
           }),
+<<<<<<< HEAD
+        }).catch((err) => console.error("Points system unreachable:", err));
+        // -------------------------------------
+
+        Swal.fire(
+          "Success",
+          "Money added successfully and you've earned reward points.",
+          "success",
+        );
+        setAmount("");
+        setSelectedBankId("");
+
+        // Refresh local bank data so the balance UI is accurate
+        const refreshedRes = await fetch(
+          `/api/user/update?email=${encodeURIComponent(session?.user?.email!)}`,
+        );
+=======
         }).catch(err => console.error("Points system unreachable:", err));
 
         // Step 3: Success Feedback
@@ -105,9 +131,10 @@ export default function AddMoneyForm() {
         
         // Refresh local bank data for UI accuracy
         const refreshedRes = await fetch(`/api/user/update?email=${encodeURIComponent(session?.user?.email!)}`);
+>>>>>>> b4a0b85ceb52933a9593b28007865cde16ef9590
         const refreshedData = await refreshedRes.json();
-        if (refreshedData.linkedBanks) setLinkedBanks(refreshedData.linkedBanks);
-        
+        if (refreshedData.linkedBanks)
+          setLinkedBanks(refreshedData.linkedBanks);
       } else {
         Swal.fire("Transaction Failed", data.error || "Please try again later.", "error");
       }
@@ -119,6 +146,49 @@ export default function AddMoneyForm() {
   };
 
   return (
+<<<<<<< HEAD
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <h2 className="text-lg font-bold text-center mb-4">
+        Add Money to NovaPay
+      </h2>
+
+      {/* Bank Selection Dropdown */}
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-slate-400">
+          Select Bank Account
+        </label>
+        <select
+          className="w-full p-3 border rounded-xl dark:bg-gray-800 dark:border-gray-700 outline-none focus:border-blue-500 appearance-none cursor-pointer capitalize transition-all"
+          value={selectedBankId}
+          onChange={(e) => setSelectedBankId(e.target.value)}
+          required
+        >
+          <option value="">-- Choose Account --</option>
+          {linkedBanks.map((bank) => (
+            <option key={bank.id} value={bank.id}>
+              {bank.name} (****{bank.accNo.slice(-4)}) — ৳
+              {bank.balance.toLocaleString()}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Amount Input */}
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-slate-400">Amount</label>
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">
+            ৳
+          </span>
+          <input
+            type="number"
+            placeholder="0.00"
+            className="w-full p-3 pl-8 border rounded-xl dark:bg-gray-800 dark:border-gray-700 outline-none focus:border-blue-500 transition-all"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            required
+          />
+=======
     <div className="p-6 bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-800">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="text-center">
@@ -142,8 +212,25 @@ export default function AddMoneyForm() {
               </option>
             ))}
           </select>
+>>>>>>> b4a0b85ceb52933a9593b28007865cde16ef9590
         </div>
 
+<<<<<<< HEAD
+      <Button
+        type="submit"
+        disabled={loading || !amount}
+        variant="novapay"
+        size="lg"
+        className={`w-full rounded-xl font-bold ${
+          loading || !amount
+            ? "bg-gray-400 cursor-not-allowed hover:translate-y-0 hover:shadow-none"
+            : "shadow-blue-500/20"
+        }`}
+      >
+        {loading ? "Verifying Transaction..." : "Confirm Add Money"}
+      </Button>
+    </form>
+=======
         {/* Amount Input */}
         <div className="space-y-2">
           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Amount</label>
@@ -173,5 +260,6 @@ export default function AddMoneyForm() {
         </button>
       </form>
     </div>
+>>>>>>> b4a0b85ceb52933a9593b28007865cde16ef9590
   );
 }

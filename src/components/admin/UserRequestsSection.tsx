@@ -12,6 +12,7 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import Swal from "sweetalert2";
+import { Button } from "@/components/ui/button";
 
 type User = {
   name: string;
@@ -44,14 +45,12 @@ export default function UserRequestsSection() {
   }, []);
 
   const pendingUsers = users.filter(
-    (u) =>
-      u.kycStatus === "pending" ||
-      u.kycStatus === "Pending"
+    (u) => u.kycStatus === "pending" || u.kycStatus === "Pending",
   );
 
   const handleAction = async (
     email: string,
-    action: "Accepted" | "Rejected" | "Fraud"
+    action: "Accepted" | "Rejected" | "Fraud",
   ) => {
     const result = await Swal.fire({
       title: `Confirm ${action}?`,
@@ -62,8 +61,8 @@ export default function UserRequestsSection() {
         action === "Accepted"
           ? "#22c55e"
           : action === "Rejected"
-          ? "#ef4444"
-          : "#f97316",
+            ? "#ef4444"
+            : "#f97316",
       confirmButtonText: `Yes, ${action}`,
     });
 
@@ -77,11 +76,7 @@ export default function UserRequestsSection() {
       });
 
       setUsers((prev) =>
-        prev.map((u) =>
-          u.email === email
-            ? { ...u, kycStatus: action }
-            : u
-        )
+        prev.map((u) => (u.email === email ? { ...u, kycStatus: action } : u)),
       );
 
       Swal.fire({
@@ -120,7 +115,6 @@ export default function UserRequestsSection() {
 
   return (
     <div className="space-y-10">
-
       {/* ========================= */}
       {/* 🔵 PENDING KYC SECTION */}
       {/* ========================= */}
@@ -149,18 +143,13 @@ export default function UserRequestsSection() {
               className="p-6 rounded-2xl bg-white dark:bg-[#0c1a2b] shadow-lg border border-gray-100 dark:border-blue-900"
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <UserIcon size={18} />
-                    <h4 className="font-semibold text-lg">
-                      {user.name}
-                    </h4>
+                    <h4 className="font-semibold text-lg">{user.name}</h4>
                   </div>
 
-                  <p className="text-sm text-gray-500">
-                    {user.email}
-                  </p>
+                  <p className="text-sm text-gray-500">{user.email}</p>
 
                   <div className="flex gap-3 mt-2">
                     <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700">
@@ -169,7 +158,7 @@ export default function UserRequestsSection() {
 
                     <span
                       className={`text-xs px-3 py-1 rounded-full border ${getStatusStyle(
-                        user.kycStatus
+                        user.kycStatus,
                       )}`}
                     >
                       {user.kycStatus}
@@ -179,35 +168,32 @@ export default function UserRequestsSection() {
 
                 {/* ACTION BUTTONS */}
                 <div className="flex gap-3 flex-wrap">
-                  <button
-                    onClick={() =>
-                      handleAction(user.email, "Accepted")
-                    }
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white text-sm transition"
+                  <Button
+                    onClick={() => handleAction(user.email, "Accepted")}
+                    variant="success"
+                    className="rounded-xl"
                   >
                     <CheckCircle size={16} />
                     Approve
-                  </button>
+                  </Button>
 
-                  <button
-                    onClick={() =>
-                      handleAction(user.email, "Rejected")
-                    }
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm transition"
+                  <Button
+                    onClick={() => handleAction(user.email, "Rejected")}
+                    variant="destructive"
+                    className="rounded-xl"
                   >
                     <XCircle size={16} />
                     Reject
-                  </button>
+                  </Button>
 
-                  <button
-                    onClick={() =>
-                      handleAction(user.email, "Fraud")
-                    }
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-sm transition"
+                  <Button
+                    onClick={() => handleAction(user.email, "Fraud")}
+                    variant="warning"
+                    className="rounded-xl"
                   >
                     <AlertTriangle size={16} />
                     Mark Fraud
-                  </button>
+                  </Button>
                 </div>
               </div>
             </motion.div>
@@ -219,23 +205,18 @@ export default function UserRequestsSection() {
       {/* 🟣 COLLAPSIBLE USER LIST */}
       {/* ========================= */}
       <div className="rounded-2xl bg-white dark:bg-[#0c1a2b] shadow-lg border p-6">
-        <button
-          onClick={() =>
-            setShowAllUsers(!showAllUsers)
-          }
-          className="flex justify-between items-center w-full"
+        <Button
+          onClick={() => setShowAllUsers(!showAllUsers)}
+          variant="ghost"
+          className="flex w-full justify-between items-center h-auto px-0 py-0"
         >
           <h3 className="text-xl font-bold flex items-center gap-2">
             <Shield size={18} />
             All Registered Users
           </h3>
 
-          {showAllUsers ? (
-            <ChevronUp size={22} />
-          ) : (
-            <ChevronDown size={22} />
-          )}
-        </button>
+          {showAllUsers ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
+        </Button>
 
         <AnimatePresence>
           {showAllUsers && (
@@ -251,12 +232,8 @@ export default function UserRequestsSection() {
                   className="flex justify-between items-center p-4 rounded-xl border bg-gray-50 dark:bg-[#0a1624]"
                 >
                   <div>
-                    <p className="font-semibold">
-                      {user.name}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {user.email}
-                    </p>
+                    <p className="font-semibold">{user.name}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
                   </div>
 
                   <div className="flex gap-3 items-center">
@@ -266,7 +243,7 @@ export default function UserRequestsSection() {
 
                     <span
                       className={`text-xs px-3 py-1 rounded-full border ${getStatusStyle(
-                        user.kycStatus
+                        user.kycStatus,
                       )}`}
                     >
                       {user.kycStatus || "N/A"}
