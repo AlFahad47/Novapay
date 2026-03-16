@@ -11,7 +11,7 @@ interface LinkedBank {
   balance: number; 
 }
 
-export default function AddMoneyForm() {
+export default function AddMoneyForm() { 
   const { data: session } = useSession();
   const [amount, setAmount] = useState("");
   const [selectedBankId, setSelectedBankId] = useState("");
@@ -163,6 +163,7 @@ export default function AddMoneyForm() {
             onChange={(e) => setAmount(e.target.value)}
             required
           />
+        </div>
         </div>
 
       <Button
