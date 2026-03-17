@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   Landmark,
+  Crown,
 } from "lucide-react";
 
 const adminItems = [

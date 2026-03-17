@@ -26,6 +26,8 @@ const sidebarItems = [
   { icon: CreditCard, label: "Transactions", path: "/dashboard/transactions" },
   { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
   { icon: FileCheck, label: "KYC", path: "/dashboard/kyc" },
+  
+{ icon: Crown, label: "Subscription", path: "dashboard/subscription" },
   { icon: MessageSquare, label: "Support", path: "/chat/support" },
   { icon: Settings, label: "Settings", path: "/dashboard/settings" },
 ];
