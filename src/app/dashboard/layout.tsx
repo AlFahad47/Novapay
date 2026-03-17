@@ -273,7 +273,8 @@ import {
   FileCheck,
   MessageSquare,
   X,
-  Crown,
+  Menu,
+  
 } from "lucide-react";
 
 const sidebarItems = [
@@ -305,6 +306,14 @@ const sidebarItems = [
   const isSubscribed = subscriptionStatus.subscribed;
   const daysLeft = subscriptionStatus.daysLeft;
 
+<<<<<<< HEAD
+=======
+  /* ---------------- SUBSCRIPTION LOGIC ---------------- */
+  // Accessing subscription data from session (adjust based on your actual user schema)
+  const isSubscribed1 = session?.user?.isSubscribed || false;
+  const daysLeft1 = session?.user?.subscriptionDaysLeft ?? null;
+
+>>>>>>> 28e132ed27e2bbd6b8fba1cb7ff3c9bfb3f9cd23
   /* ---------------- PROTECT USER DASHBOARD ---------------- */
 
   useEffect(() => {

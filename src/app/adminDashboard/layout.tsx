@@ -471,6 +471,7 @@ import {
   BarChart3,
   LogOut,
   Menu,
+  Landmark,
 } from "lucide-react";
 
 const adminItems = [
@@ -478,6 +479,11 @@ const adminItems = [
   { icon: Users, label: "Users", path: "/adminDashboard/users" },
   { icon: FileCheck, label: "Requests", path: "/adminDashboard/requests" },
   { icon: BarChart3, label: "Analytics", path: "/adminDashboard/analytics" },
+  { 
+  icon: Landmark, 
+  label: "Savings Withdrawals", 
+  path: "/adminDashboard/savings-withdraw" 
+},
 ];
 
 export default function AdminLayout({
