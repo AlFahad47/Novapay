@@ -274,7 +274,7 @@ import {
   MessageSquare,
   Crown,
   X,
-  Crown,
+  
 } from "lucide-react";
 
 const sidebarItems = [
@@ -308,8 +308,8 @@ const sidebarItems = [
 
   /* ---------------- SUBSCRIPTION LOGIC ---------------- */
   // Accessing subscription data from session (adjust based on your actual user schema)
-  const isSubscribed = session?.user?.isSubscribed || false;
-  const daysLeft = session?.user?.subscriptionDaysLeft ?? null;
+  const isSubscribed1 = session?.user?.isSubscribed || false;
+  const daysLeft1 = session?.user?.subscriptionDaysLeft ?? null;
 
   /* ---------------- PROTECT USER DASHBOARD ---------------- */
 

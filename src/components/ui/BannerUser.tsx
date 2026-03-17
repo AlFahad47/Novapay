@@ -25,6 +25,9 @@ import { BsCoin } from "react-icons/bs";
 import { FaRankingStar } from "react-icons/fa6";
 import RankDetailsModal from "../modals/RankDetailsModal";
 import { Button } from "@/components/ui/button";
+import SendMoneyForm from "../modals/sendmoney";
+import AddMoneyForm from "../modals/AddMoneyForm";
+import RequestMoneyForm from "../modals/RequestMoney";
 
 const BannerUser: React.FC = () => {
   const { data: session } = useSession();
@@ -34,13 +37,15 @@ const BannerUser: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
   const [greeting, setGreeting] = useState("");
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [activeModal, setActiveModal] = useState<string | null>(null);
 
-  // নোটিফিকেশন স্টেট
+  // notification state
   const [pendingRequests, setPendingRequests] = useState<number>(0);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [notificationData, setNotificationData] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRankModalOpen, setIsRankModalOpen] = useState(false);
+  const [isListModalOpen, setIsListModalOpen] = useState(false);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -78,9 +83,11 @@ const BannerUser: React.FC = () => {
           );
           const notifData = await notifRes.json();
 
-          if (notifData.success && notifData.request) {
-            setPendingRequests(1);
-            setNotificationData(notifData.request);
+          if (notifData.success) {
+            // Check if backend returns 'requests' (array) or 'request' (single object)
+            const list = notifData.requests || (notifData.request ? [notifData.request] : []);
+            setNotifications(list);
+            setPendingRequests(list.length);
           } else {
             setNotifications([]);
             setPendingRequests(0);
@@ -180,38 +187,45 @@ const BannerUser: React.FC = () => {
   };
 
   const processPayment = async (data: any) => {
-    try {
-      const res = await fetch("/api/transactions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: session?.user?.email,
-          type: "send_money",
-          amount: Number(data.amount),
-          receiver: (data.from || data.senderEmail).toLowerCase().trim(),
-          description: `Payment for request: ${data.note || "No note"}`,
-          requestId: data._id,
-        }),
-      });
+  try {
+    // Determine the correct payload based on notification type
+    const isSaving = data.type === "saving_reminder";
+    
+    const payload = {
+      email: session?.user?.email,
+      type: isSaving ? "micro_saving_deposit" : "send_money",
+      amount: Number(data.amount),
+      // For savings, the receiver is the user themselves (or the goal)
+      receiver: isSaving ? session?.user?.email : (data.from || data.senderEmail).toLowerCase().trim(),
+      description: data.note || (isSaving ? "Micro-saving deposit" : "Payment for request"),
+      requestId: data._id,
+      goalId: data.goalId || null, // Pass the goalId for savings
+    };
 
-      const result = await res.json();
-      if (result.success) {
-        Swal.fire(
-          "Success!",
-          "Payment completed and request cleared.",
-          "success",
-        );
+    const res = await fetch("/api/transactions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-        setPendingRequests(0);
-        setNotificationData(null);
-        window.dispatchEvent(new Event("balanceUpdated"));
-      } else {
-        Swal.fire("Error", result.message, "error");
-      }
-    } catch (err) {
-      Swal.fire("Error", "Transaction failed", "error");
+    const result = await res.json();
+    
+    if (result.success) {
+      Swal.fire("Success!", isSaving ? "Savings updated!" : "Payment completed!", "success");
+      
+      // Update UI
+      setNotifications(prev => prev.filter(n => n._id !== data._id));
+      setPendingRequests(prev => prev - 1);
+      
+      // Refresh balance
+      window.dispatchEvent(new Event("balanceUpdated"));
+    } else {
+      Swal.fire("Error", result.message, "error");
     }
-  };
+  } catch (error) {
+    Swal.fire("Error", "Transaction failed", "error");
+  }
+};
 
   return (
     <section className="relative w-full min-h-[88vh] bg-[#f0f7ff] dark:bg-[#050B14] flex flex-col items-center justify-center pt-24 pb-16 overflow-hidden font-sans">
@@ -367,7 +381,7 @@ const BannerUser: React.FC = () => {
         >
           {/* ক্লিকযোগ্য এলার্ট বাটন */}
           <motion.button
-            onClick={() => pendingRequests > 0 && setIsModalOpen(true)}
+            onClick={() => pendingRequests > 0 && setIsListModalOpen(true)} 
             whileHover={pendingRequests > 0 ? { scale: 1.05 } : {}}
             whileTap={{ scale: 0.95 }}
             className={`relative flex items-center gap-2 self-end px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-500 cursor-pointer ${pendingRequests > 0 ? "bg-red-50 dark:bg-red-500/10 border-red-500 shadow-lg shadow-red-500/20 active:scale-95" : "bg-white/70 dark:bg-[#0F172A]/70 border-[#4DA1FF]/20"}`}
@@ -570,8 +584,8 @@ const BannerUser: React.FC = () => {
                   </div>
                   {notificationData.note && (
                     <div className="mt-3 pt-3 border-t border-[#4DA1FF]/10">
-                      <p className="text-xs italic text-[#64748B] dark:text-[#94A3B8]">
-                        "{notificationData.note}"
+                     <p className="text-xs italic text-[#64748B] dark:text-[#94A3B8]">
+                        &ldquo;{notificationData.note}&rdquo;
                       </p>
                     </div>
                   )}
@@ -615,6 +629,33 @@ const BannerUser: React.FC = () => {
             status={dbUser?.kycStatus}
             onClose={() => setShowOnboarding(false)}
           />
+        )}
+        {activeModal && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-200 flex items-center justify-center p-4"
+          >
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setActiveModal(null)} />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-md bg-white dark:bg-[#0F172A] rounded-3xl p-6 shadow-2xl border border-[#4DA1FF]/20"
+            >
+              <button
+                onClick={() => setActiveModal(null)}
+                className="absolute top-5 right-5 p-2 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500 hover:rotate-90 transition-transform"
+              >
+                <X size={16} />
+              </button>
+              <h2 className="text-lg font-bold text-[#0F172A] dark:text-white mb-5">
+                {activeModal === "send" ? "Send Money" : activeModal === "add" ? "Add Money" : "Request Money"}
+              </h2>
+              {activeModal === "send" && <SendMoneyForm onSuccess={() => setActiveModal(null)} />}
+              {activeModal === "add" && <AddMoneyForm />}
+              {activeModal === "request" && <RequestMoneyForm onSuccess={() => setActiveModal(null)} />}
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </section>
