@@ -151,20 +151,24 @@ export default function SmartSavingGoal() {
       });
 
       if (res.ok) {
-        Swal.fire("Request Sent", "Admin will review your request. Status updated to Pending.", "success");
-        setGoals(prev => prev.map(g => g.id === selectedGoal.id ? { ...g, status: "pending-withdrawal" } : g));
+        Swal.fire("Request Sent", "Admin will review your request.", "success");
+        setGoals(prev => prev.map(g => 
+          g.id === selectedGoal.id ? { ...g, status: "pending-withdrawal" } : g
+        ));
         setIsWithdrawOpen(false);
         setWithdrawReason("");
         setSelectedGoal(null);
+      } else {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to submit");
       }
-    } catch (error) {
-      Swal.fire("Error", "Failed to submit request.", "error");
+    } catch (error: any) {
+      Swal.fire("Error", error.message, "error");
     } finally {
       setWithdrawLoading(false);
     }
   };
 
-  // Logic to handle transfer when status is "approved"
   const handleTransferToWallet = async (goal: any) => {
     const result = await Swal.fire({
       title: "Transfer to Wallet?",
@@ -234,8 +238,14 @@ export default function SmartSavingGoal() {
                   <div className="p-3 bg-blue-500/10 rounded-2xl text-blue-600 dark:text-blue-400">
                     <Target size={24} />
                   </div>
-                  <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase ${goal.status === 'pending-withdrawal' ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600'}`}>
-                    {goal.status === 'pending-withdrawal' ? 'Pending' : `Day ${goal.savingDay}th`}
+                  {/* Status Badge Update */}
+                  <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase ${
+                    goal.status === 'pending-withdrawal' ? 'bg-amber-100 text-amber-600' : 
+                    goal.status === 'approved' ? 'bg-green-100 text-green-600' : 
+                    'bg-blue-100 text-blue-600'
+                  }`}>
+                    {goal.status === 'pending-withdrawal' ? 'Pending' : 
+                     goal.status === 'approved' ? 'Approved' : `Day ${goal.savingDay}th`}
                   </span>
                 </div>
                 <h3 className="text-xl font-bold mb-1">{goal.goalName}</h3>
@@ -253,7 +263,7 @@ export default function SmartSavingGoal() {
                   View Details <ChevronRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
                 </div>
               </motion.div>
-            )
+            );
           })
         )}
       </div>
@@ -322,7 +332,11 @@ export default function SmartSavingGoal() {
                   <Target size={32} />
                 </div>
                 <h2 className="text-2xl font-bold">{selectedGoal.goalName}</h2>
-                <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase ${selectedGoal.status === 'pending-withdrawal' ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600'}`}>
+                <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase inline-block mt-2 ${
+                  selectedGoal.status === 'pending-withdrawal' ? 'bg-amber-100 text-amber-600' : 
+                  selectedGoal.status === 'approved' ? 'bg-green-100 text-green-600' : 
+                  'bg-blue-100 text-blue-600'
+                }`}>
                    Status: {selectedGoal.status}
                 </span>
               </div>
@@ -333,7 +347,6 @@ export default function SmartSavingGoal() {
                     <span className="font-bold text-green-500">{currencySymbol}{selectedGoal.currentSaved || 0} / {currencySymbol}{selectedGoal.targetAmount}</span>
                 </div>
                 
-                {/* Status-wise information text */}
                 <div className="p-4 bg-blue-50 dark:bg-white/5 rounded-2xl border border-blue-100 dark:border-white/10">
                   <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-2">
                     <Info size={14}/> 

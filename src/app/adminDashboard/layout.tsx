@@ -472,6 +472,7 @@ import {
   LogOut,
   Menu,
   Landmark,
+  Crown,
 } from "lucide-react";
 
 const adminItems = [
@@ -479,6 +480,7 @@ const adminItems = [
   { icon: Users, label: "Users", path: "/adminDashboard/users" },
   { icon: FileCheck, label: "Requests", path: "/adminDashboard/requests" },
   { icon: BarChart3, label: "Analytics", path: "/adminDashboard/analytics" },
+  { icon: Crown, label: "Subscription", path:"/adminDashboard/subscription" },
   { 
   icon: Landmark, 
   label: "Savings Withdrawals", 
