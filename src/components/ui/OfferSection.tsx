@@ -6,17 +6,20 @@ const features = [
   {
     icon: "🔒",
     title: "Bank-Grade Security",
-    description: "Your funds are protected with end-to-end encryption and multi-layer authentication.",
+    description:
+      "Your funds are protected with end-to-end encryption and multi-layer authentication.",
   },
   {
     icon: "⚡",
     title: "Instant Transfers",
-    description: "Send and receive money in seconds — anytime, anywhere across Bangladesh.",
+    description:
+      "Send and receive money in seconds — anytime, anywhere across Bangladesh.",
   },
   {
     icon: "💳",
     title: "Easy Payments",
-    description: "Pay bills, recharge mobile, and shop online all from one wallet.",
+    description:
+      "Pay bills, recharge mobile, and shop online all from one wallet.",
   },
 ];
 
@@ -24,7 +27,6 @@ export default function OfferSection() {
   return (
     <section className="w-full py-16 bg-[#f0f7ff] dark:bg-[#04090f] transition-colors duration-300">
       <div className="w-11/12 mx-auto">
-
         {/* Heading */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -34,7 +36,10 @@ export default function OfferSection() {
           className="text-center mb-12"
         >
           <h2 className="text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white">
-            What We <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">Offer</span> 
+            What We{" "}
+            <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">
+              Offer
+            </span>
           </h2>
           <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm mx-auto">
             Everything you need to manage your money — simple, fast, and secure.
@@ -54,8 +59,12 @@ export default function OfferSection() {
               className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md border-t-4 border-[#0061ff] dark:border-[#0095ff] hover:shadow-xl transition-shadow duration-300"
             >
               <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-[#0061ff] dark:text-[#00b4ff] mb-2">{feature.title}</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+              <h3 className="text-xl font-semibold text-[#0061ff] dark:text-[#00b4ff] mb-2">
+                {feature.title}
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                {feature.description}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -83,7 +92,6 @@ export default function OfferSection() {
             Get Started →
           </a>
         </motion.div>
-
       </div>
     </section>
   );

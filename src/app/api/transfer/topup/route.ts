@@ -27,8 +27,8 @@ export async function POST(request: Request) {
     const user = await users.findOne({ email });
     if (!user) return NextResponse.json({ message: "User not found." }, { status: 404 });
 
-    // ── 3. Get user's local currency ─────────────────────────────────
-    const localCurrency = (user.currency || "USD") as string;
+    // ── 3. Main balance is always in BDT ─────────────────────────────
+    const localCurrency = "BDT";
 
     // ── 4. Get exchange rate (localCurrency → targetCurrency) ────────
     let amountDeductedFromBalance: number;

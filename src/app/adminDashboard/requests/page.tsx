@@ -1,23 +1,162 @@
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { motion } from "framer-motion";
+// import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+
+// type User = {
+//   _id: string;
+//   name: string;
+//   email: string;
+//   kycDetails: any;
+// };
+
+// export default function AdminRequestsPage() {
+//   const [users, setUsers] = useState<User[]>([]);
+
+//   async function loadRequests() {
+//     const res = await fetch("/api/admin/requests");
+//     const data = await res.json();
+//     setUsers(data.users);
+//   }
+
+//   useEffect(() => {
+//     loadRequests();
+//   }, []);
+
+//   async function updateStatus(id: string, status: string) {
+//     await fetch(`/api/admin/requests/${id}`, {
+//       method: "PATCH",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ status }),
+//     });
+
+//     loadRequests();
+//   }
+
+//   return (
+//     <div className="space-y-8">
+//       {/* PAGE TITLE */}
+//       <div>
+//         <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+//           KYC Requests
+//         </h1>
+//         <p className="text-gray-500 dark:text-gray-400 text-sm">
+//           Review and verify user identity submissions
+//         </p>
+//       </div>
+
+//       {/* NO REQUESTS */}
+//       {users.length === 0 && (
+//         <div className="text-center py-20 text-gray-500 dark:text-gray-400">
+//           No pending requests
+//         </div>
+//       )}
+
+//       {/* REQUEST LIST */}
+//       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+//         {users.map((user, i) => (
+//           <motion.div
+//             key={user._id}
+//             initial={{ opacity: 0, y: 30 }}
+//             animate={{ opacity: 1, y: 0 }}
+//             transition={{ delay: i * 0.05 }}
+//             className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-xl transition"
+//           >
+//             {/* USER INFO */}
+//             <div className="space-y-2 mb-4">
+//               <p className="text-lg font-semibold text-gray-800 dark:text-white">
+//                 {user.name}
+//               </p>
+
+//               <p className="text-sm text-gray-600 dark:text-gray-300">
+//                 {user.email}
+//               </p>
+
+//               <p className="text-xs text-gray-500 dark:text-gray-400">
+//                 Phone: {user.kycDetails?.phone || "N/A"}
+//               </p>
+//             </div>
+
+//             {/* ACTION BUTTONS */}
+//             <div className="flex flex-wrap gap-2 mt-4">
+//               {/* APPROVE */}
+//               <button
+//                 onClick={() => updateStatus(user._id, "approved")}
+//                 className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-2 rounded-lg transition"
+//               >
+//                 <CheckCircle size={16} />
+//                 Approve
+//               </button>
+
+//               {/* REJECT */}
+//               <button
+//                 onClick={() => updateStatus(user._id, "rejected")}
+//                 className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-3 py-2 rounded-lg transition"
+//               >
+//                 <XCircle size={16} />
+//                 Reject
+//               </button>
+
+//               {/* FRAUD */}
+//               <button
+//                 onClick={() => updateStatus(user._id, "fraud")}
+//                 className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-2 rounded-lg transition"
+//               >
+//                 <AlertTriangle size={16} />
+//                 Fraud
+//               </button>
+//             </div>
+//           </motion.div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import Swal from "sweetalert2";
+
+type KycDetails = {
+  phone?: string;
+  status?: string;
+};
 
 type User = {
   _id: string;
   name: string;
   email: string;
-  kycDetails: any;
+  kycDetails?: KycDetails;
 };
 
 export default function AdminRequestsPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState<string | null>(null);
 
   async function loadRequests() {
-    const res = await fetch("/api/admin/requests");
-    const data = await res.json();
-    setUsers(data.users);
+    try {
+      const res = await fetch("/api/admin/requests");
+
+      if (!res.ok) throw new Error("Failed to fetch requests");
+
+      const data = await res.json();
+      setUsers(data.users || []);
+    } catch (error) {
+      console.error("Error loading requests:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to load KYC requests",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -25,13 +164,72 @@ export default function AdminRequestsPage() {
   }, []);
 
   async function updateStatus(id: string, status: string) {
-    await fetch(`/api/admin/requests/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
+    const action =
+      status === "approved"
+        ? "Approve"
+        : status === "rejected"
+          ? "Reject"
+          : "Mark as Fraud";
+
+    const result = await Swal.fire({
+      title: `${action} this user?`,
+      text: "This action will update the KYC status.",
+      icon: status === "fraud" ? "warning" : "question",
+      showCancelButton: true,
+      confirmButtonColor:
+        status === "approved"
+          ? "#16a34a"
+          : status === "rejected"
+            ? "#eab308"
+            : "#ef4444",
+      confirmButtonText: action,
     });
 
-    loadRequests();
+    if (!result.isConfirmed) return;
+
+    try {
+      setProcessing(id);
+
+      const res = await fetch(`/api/admin/requests/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update status");
+
+      await Swal.fire({
+        icon: "success",
+        title: "Updated",
+        text: `User successfully ${action.toLowerCase()}!`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      loadRequests();
+    } catch (error) {
+      console.error("Update error:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: "Something went wrong.",
+      });
+    } finally {
+      setProcessing(null);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-60">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1 }}
+          className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full"
+        />
+      </div>
+    );
   }
 
   return (
@@ -46,14 +244,14 @@ export default function AdminRequestsPage() {
         </p>
       </div>
 
-      {/* NO REQUESTS */}
+      {/* EMPTY STATE */}
       {users.length === 0 && (
         <div className="text-center py-20 text-gray-500 dark:text-gray-400">
           No pending requests
         </div>
       )}
 
-      {/* REQUEST LIST */}
+      {/* REQUEST CARDS */}
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {users.map((user, i) => (
           <motion.div
@@ -61,6 +259,7 @@ export default function AdminRequestsPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
+            whileHover={{ scale: 1.03 }}
             className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-xl transition"
           >
             {/* USER INFO */}
@@ -76,36 +275,56 @@ export default function AdminRequestsPage() {
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 Phone: {user.kycDetails?.phone || "N/A"}
               </p>
+
+              {user.kycDetails?.status && (
+                <span
+                  className={`inline-block mt-1 text-xs px-2 py-1 rounded
+                  ${
+                    user.kycDetails.status === "approved"
+                      ? "bg-green-500 text-white"
+                      : user.kycDetails.status === "rejected"
+                        ? "bg-yellow-500 text-white"
+                        : user.kycDetails.status === "fraud"
+                          ? "bg-red-500 text-white"
+                          : "bg-gray-400 text-white"
+                  }`}
+                >
+                  {user.kycDetails.status}
+                </span>
+              )}
             </div>
 
             {/* ACTION BUTTONS */}
             <div className="flex flex-wrap gap-2 mt-4">
-              {/* APPROVE */}
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                disabled={processing === user._id}
                 onClick={() => updateStatus(user._id, "approved")}
-                className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-2 rounded-lg transition"
+                className="flex items-center gap-1 bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white text-sm px-3 py-2 rounded-lg"
               >
                 <CheckCircle size={16} />
                 Approve
-              </button>
+              </motion.button>
 
-              {/* REJECT */}
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                disabled={processing === user._id}
                 onClick={() => updateStatus(user._id, "rejected")}
-                className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-3 py-2 rounded-lg transition"
+                className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-white text-sm px-3 py-2 rounded-lg"
               >
                 <XCircle size={16} />
                 Reject
-              </button>
+              </motion.button>
 
-              {/* FRAUD */}
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                disabled={processing === user._id}
                 onClick={() => updateStatus(user._id, "fraud")}
-                className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-2 rounded-lg transition"
+                className="flex items-center gap-1 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-sm px-3 py-2 rounded-lg"
               >
                 <AlertTriangle size={16} />
                 Fraud
-              </button>
+              </motion.button>
             </div>
           </motion.div>
         ))}

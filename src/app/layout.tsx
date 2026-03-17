@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google"; // বা তোমার যে ফন্ট আছে
+import { Inter, Geist } from "next/font/google"; // বা তোমার যে ফন্ট আছে
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
-import { Toaster } from "react-hot-toast"; // ১. এই লাইনটি ইমপোর্ট করো
-import Navbar from "@/components/layout/Navbar";
+import { Toaster } from "react-hot-toast"; // Toast notifications
 import Footer from "@/components/layout/Footer";
+import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/theme-provider";
+import Navbar from "@/components/layout/Navbar";
+
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,15 +23,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <AuthProvider>
-          <Navbar />
-          {children}
-          <Footer></Footer>
-        </AuthProvider>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn("font-sans", geist.variable)}
+    >
+      <body suppressHydrationWarning className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AuthProvider>
+            <Navbar />
+            {children}
+            <Footer></Footer>
+          </AuthProvider>
+        </ThemeProvider>
 
-        {/* ২. ঠিক <body> ট্যাগ শেষ হওয়ার আগে এই লাইনটি বসিয়ে দাও */}
+        {/* Place toaster near the end of body */}
         <Toaster position="top-center" reverseOrder={false} />
       </body>
     </html>

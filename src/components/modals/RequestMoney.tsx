@@ -3,8 +3,13 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { HandHelping, Mail, Banknote, PenLine, Loader2 } from "lucide-react";
 import Swal from "sweetalert2";
+import { Button } from "@/components/ui/button";
 
-export default function RequestMoneyForm({ onSuccess }: { onSuccess?: () => void }) {
+export default function RequestMoneyForm({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+}) {
   const { data: session } = useSession();
   const [targetEmail, setTargetEmail] = useState("");
   const [amount, setAmount] = useState("");
@@ -12,19 +17,22 @@ export default function RequestMoneyForm({ onSuccess }: { onSuccess?: () => void
   const [loading, setLoading] = useState(false);
 
   const handleRequest = async () => {
-    if (!targetEmail || !amount) return Swal.fire("Error", "Fill all fields", "error");
-    if (targetEmail === session?.user?.email) return Swal.fire("Oops", "Can't request from yourself", "warning");
+    if (!targetEmail || !amount)
+      return Swal.fire("Error", "Fill all fields", "error");
+    if (targetEmail === session?.user?.email)
+      return Swal.fire("Oops", "Can't request from yourself", "warning");
 
     setLoading(true);
     try {
-      const res = await fetch("/api/requests", { // api
+      const res = await fetch("/api/requests", {
+        // api
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           senderEmail: session?.user?.email, // req
           receiverEmail: targetEmail.toLowerCase().trim(), // rece
           amount: Number(amount),
-          note: note
+          note: note,
         }),
       });
 
@@ -45,7 +53,11 @@ export default function RequestMoneyForm({ onSuccess }: { onSuccess?: () => void
         }
         // --- ADD POINTS LOGIC END ---
 
-        Swal.fire("Request Sent!", `Requested ৳${amount} from ${targetEmail} and you've earned reward points`, "success");
+        Swal.fire(
+          "Request Sent!",
+          `Requested ৳${amount} from ${targetEmail} and you've earned reward points`,
+          "success",
+        );
         if (onSuccess) onSuccess();
       } else {
         Swal.fire("Error", data.message, "error");
@@ -60,7 +72,10 @@ export default function RequestMoneyForm({ onSuccess }: { onSuccess?: () => void
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="relative group">
-        <Mail className="absolute left-3 top-4 text-gray-400 group-focus-within:text-blue-500" size={20} />
+        <Mail
+          className="absolute left-3 top-4 text-gray-400 group-focus-within:text-blue-500"
+          size={20}
+        />
         <input
           type="email"
           placeholder="From whose email?"
@@ -71,7 +86,10 @@ export default function RequestMoneyForm({ onSuccess }: { onSuccess?: () => void
       </div>
 
       <div className="relative group">
-        <Banknote className="absolute left-3 top-4 text-gray-400 group-focus-within:text-emerald-500" size={20} />
+        <Banknote
+          className="absolute left-3 top-4 text-gray-400 group-focus-within:text-emerald-500"
+          size={20}
+        />
         <input
           type="number"
           placeholder="Amount"
@@ -91,13 +109,21 @@ export default function RequestMoneyForm({ onSuccess }: { onSuccess?: () => void
         />
       </div>
 
-      <button
+      <Button
         onClick={handleRequest}
         disabled={loading}
-        className="w-full h-14 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl font-bold text-white shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-70"
+        variant="novapay"
+        size="lg"
+        className="w-full h-14 rounded-2xl font-bold"
       >
-        {loading ? <Loader2 className="animate-spin" /> : <><HandHelping size={20} /> Send Request</>}
-      </button>
+        {loading ? (
+          <Loader2 className="animate-spin" />
+        ) : (
+          <>
+            <HandHelping size={20} /> Send Request
+          </>
+        )}
+      </Button>
     </div>
   );
 }

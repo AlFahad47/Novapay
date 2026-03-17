@@ -9,6 +9,7 @@ import {
 import { IoCloseCircleOutline } from "react-icons/io5"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
+import Link from "next/link"
 
 type EliteMenuItem = {
   name: string
@@ -220,11 +221,32 @@ export default function EliteFeaturesSlider() {
                   <FaInfoCircle size={32} />
                 </div>
                 
-                <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Unlock Feature?</h3>
-                <p className="text-gray-500 dark:text-gray-400 text-sm mb-8">
-                  Unlock <span className="font-bold text-gray-800 dark:text-white">{selectedLock.name}</span> for 
-                  <span className="text-blue-600 font-bold ml-1">{selectedLock.pointsNeeded} coins</span>.
-                </p>
+                <div className="flex flex-col items-center">
+  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+    Unlock Feature?
+  </h3>
+  
+  <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 text-center">
+    Unlock <span className="font-bold text-gray-800 dark:text-white">{selectedLock.name}</span> for 
+    <span className="text-blue-600 font-bold ml-1">{selectedLock.pointsNeeded} coins</span>.
+  </p>
+
+  {/* Visual Separator */}
+  <div className="flex items-center w-full mb-6">
+    <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
+    <span className="px-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Or</span>
+    <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700"></div>
+  </div>
+
+ <Link href={"/dashboard/subscription"}>
+  <button className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 transform transition-all active:scale-95 duration-200 cursor-pointer">
+    Get NovaPay Subscription
+  </button></Link>
+  
+  <p className="mt-3 text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
+    Unlimited access to all elite features
+  </p>
+</div>
 
                 <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-5 mb-8 border dark:border-gray-800">
                   <div className="flex justify-between text-xs mb-2 font-bold text-gray-400 uppercase">

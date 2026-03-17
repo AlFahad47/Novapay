@@ -3,13 +3,18 @@ import React, { useState } from 'react';
 import { Chrome, Facebook, Linkedin, Eye, EyeOff, Shield, Unlock, Lock } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const PandaRegister: React.FC = () => {
+  const router = useRouter();
   const [activeField, setActiveField] = useState<'none' | 'text' | 'password'>('none');
   const [showPassword, setShowPassword] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
+  const [profileImage, setProfileImage] = useState<string>('');
+  const [selectedFileName, setSelectedFileName] = useState('');
 
   // Password strength calculation
   const calculateStrength = (pass: string) => {
@@ -25,11 +30,34 @@ const PandaRegister: React.FC = () => {
 
   const strength = calculateStrength(passwordInput);
 
-  // --- BRAND COLORS ---
-  const brandDark = '#050B14';
-  const brandSurface = '#0F172A';
-  const brandPrimary = '#2C64FF';
-  const brandLight = '#4DA1FF';
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setProfileImage('');
+      setSelectedFileName('');
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file.');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image size must be under 2MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === 'string') {
+        setProfileImage(result);
+        setSelectedFileName(file.name);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   // --- CREATIVE PROFESSIONAL REGISTRATION HANDLER ---
   const handleRegister = async (e: React.FormEvent) => {
@@ -71,15 +99,15 @@ const PandaRegister: React.FC = () => {
     ), { duration: Infinity });
 
     try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name: nameInput, 
-          email: emailInput, 
-          password: passwordInput 
-        })
-      });
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            name: nameInput, 
+            email: emailInput, 
+            password: passwordInput 
+          })
+        });
 
       const data = await res.json();
       toast.dismiss(toastId);
@@ -101,6 +129,20 @@ const PandaRegister: React.FC = () => {
               </div>
             </div>
          ));
+
+        const signInResult = await signIn('credentials', {
+         email: emailInput,
+         password: passwordInput,
+         redirect: false,
+        });
+
+        if (signInResult?.ok) {
+         router.push('/dashboard');
+         router.refresh();
+        } else {
+         toast.error('Account created, please login to continue.');
+         router.push('/login');
+        }
          
       } else {
          // 3. Error Case
@@ -117,7 +159,7 @@ const PandaRegister: React.FC = () => {
             </div>
          ));
       }
-    } catch (error) {
+    } catch {
       toast.dismiss(toastId);
       toast.error("Server connection failed!");
     }
@@ -246,6 +288,21 @@ const PandaRegister: React.FC = () => {
                     {strength <= 1 ? 'Weak' : strength === 2 ? 'Fair' : strength === 3 ? 'Good' : 'Strong'}
                   </span>
                 </div>
+              )}
+            </div>
+
+            {/* Profile Photo Field */}
+            <div className="relative mb-[1.2em] mt-[1.6em]">
+              <label htmlFor="profilePhoto" className="absolute -top-[0.6em] left-[1em] bg-white px-1 text-[0.7em] font-bold text-[#2C64FF] z-10">Profile Photo</label>
+              <input
+                type="file"
+                id="profilePhoto"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="text-[0.82em] font-medium text-[#0F172A] p-[0.9em] border border-slate-300 rounded-[0.5em] bg-transparent focus:border-[#2C64FF] focus:ring-1 focus:ring-[#2C64FF]/20 outline-none transition-all w-full file:mr-3 file:rounded-full file:border-0 file:bg-[#2C64FF]/10 file:px-3 file:py-1 file:text-[#2C64FF] file:font-semibold"
+              />
+              {selectedFileName && (
+                <p className="text-[0.7em] text-slate-500 mt-1 px-1">Selected: {selectedFileName}</p>
               )}
             </div>
 

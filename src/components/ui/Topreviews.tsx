@@ -25,7 +25,7 @@ export default function TopReviews() {
       try {
         const res = await fetch("/api/reviews")
         const data: ReviewType[] = await res.json()
-        // শুধুমাত্র ৫ স্টার রেটিং এবং সর্বোচ্চ ৬টি রিভিউ ফিল্টার করা হচ্ছে
+        // Keep only 5-star ratings and limit to 6 reviews
         const filtered = data.filter(r => r.rating === 5).slice(0, 6)
         setTopReviews(filtered)
       } catch (err) {

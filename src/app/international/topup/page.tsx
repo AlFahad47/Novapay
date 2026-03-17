@@ -43,15 +43,18 @@ export default function TopUpPage() {
       return;
     }
 
-    fetch(`/api/user/update?email=${session.user.email}`)
-      .then((r) => r.json())
-      .then((data) => {
-        const unlocked: string[] = data?.unlockedFeatures || [];
-        if (unlocked.includes("International Pay")) {
+    Promise.all([
+      fetch(`/api/subscription/status?email=${session.user.email}`).then((r) => r.json()),
+      fetch(`/api/user/update?email=${session.user.email}`).then((r) => r.json()),
+    ])
+      .then(([subData, userData]) => {
+        const isSubscribed = subData?.subscribed === true;
+        const unlocked: string[] = userData?.unlockedFeatures || [];
+        if (isSubscribed || unlocked.includes("International Pay")) {
           setHasAccess(true);
-          setMainBalance(data?.balance ?? 0);
-          setMainCurrency(data?.currency ?? "BDT");
-          setWallets(data?.wallets ?? {});
+          setMainBalance(userData?.balance ?? 0);
+          setMainCurrency("BDT");
+          setWallets(userData?.wallets ?? {});
         } else {
           router.push("/");
         }
