@@ -62,7 +62,6 @@ export default function WithdrawalsPage() {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: action === 'approved' ? '#10b981' : '#ef4444',
-      cancelButtonColor: '#64748b',
       background: '#0D263C',
       color: '#fff',
       confirmButtonText: `Yes, ${action} it!`
