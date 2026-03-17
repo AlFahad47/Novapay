@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Play, ArrowUpRight, Wallet, Wifi } from "lucide-react";
 import Link from "next/link";
+import Loader from "./Loader";
 
 const Banner: React.FC = () => {
   // --- STATES ---

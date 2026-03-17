@@ -147,8 +147,8 @@ const Navbar: React.FC = () => {
         <nav
           className={`pointer-events-auto relative flex items-center justify-between rounded-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             isScrolled
-              ? "w-full max-w-6xl px-6 py-3 bg-white/70 dark:bg-[#090F1E]/80 backdrop-blur-2xl border border-gray-200/60 dark:border-white/10 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.15)] dark:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.6)]"
-              : "w-full max-w-4xl px-5 py-3 bg-white/30 dark:bg-[#0F172A]/30 backdrop-blur-lg border border-white/50 dark:border-white/5 shadow-lg"
+              ? "w-full max-w-4xl px-5 py-3 bg-white/30 dark:bg-[#0F172A]/30 backdrop-blur-lg border border-white/50 dark:border-white/5 shadow-lg"
+              : "w-full max-w-6xl px-5 py-3 bg-white/70 dark:bg-[#090F1E]/80 backdrop-blur-2xl border border-gray-200/60 dark:border-white/10 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.15)] dark:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.6)]"
           }`}
         >
           {/* Subtle Inner Highlight */}

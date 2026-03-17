@@ -4,6 +4,35 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+
+body {
+  --sb-track-color: #1f2635;
+  --sb-thumb-color: #1f3575;
+  --sb-size: 12px;
+}
+
+body::-webkit-scrollbar {
+  width: var(--sb-size)
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 2px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 2px;
+  border: 1px solid #232E33;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  body {
+    scrollbar-color: var(--sb-thumb-color)
+                     var(--sb-track-color);
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

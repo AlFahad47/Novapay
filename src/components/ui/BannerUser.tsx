@@ -468,7 +468,9 @@ const BannerUser: React.FC = () => {
         {isListModalOpen && (
           <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setIsListModalOpen(false)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
@@ -479,26 +481,45 @@ const BannerUser: React.FC = () => {
               className="relative w-full max-w-sm bg-white dark:bg-[#0F172A] rounded-[2.5rem] shadow-2xl border border-[#4DA1FF]/20 flex flex-col max-h-[70vh] overflow-hidden"
             >
               <div className="p-6 border-b border-[#4DA1FF]/10 flex justify-between items-center">
-                <h3 className="text-lg font-bold text-[#0F172A] dark:text-white">Recent Alerts</h3>
-                <button onClick={() => setIsListModalOpen(false)} className="p-2 text-gray-500 hover:rotate-90 transition-transform"><X size={18} /></button>
+                <h3 className="text-lg font-bold text-[#0F172A] dark:text-white">
+                  Recent Alerts
+                </h3>
+                <button
+                  onClick={() => setIsListModalOpen(false)}
+                  className="p-2 text-gray-500 hover:rotate-90 transition-transform"
+                >
+                  <X size={18} />
+                </button>
               </div>
 
               <div className="overflow-y-auto p-4 space-y-3 custom-scrollbar">
                 {notifications.map((item, index) => (
-                  <div key={item._id || index} className="p-4 rounded-2xl bg-[#f8faff] dark:bg-white/5 border border-[#4DA1FF]/10 flex flex-col gap-3">
+                  <div
+                    key={item._id || index}
+                    className="p-4 rounded-2xl bg-[#f8faff] dark:bg-white/5 border border-[#4DA1FF]/10 flex flex-col gap-3"
+                  >
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-[#4DA1FF]/10 flex items-center justify-center">
                           <UserCircle2 size={16} className="text-[#4DA1FF]" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">Request From</p>
-                          <p className="text-xs font-bold dark:text-white truncate max-w-[120px]">{item.from || item.senderEmail}</p>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">
+                            Request From
+                          </p>
+                          <p className="text-xs font-bold dark:text-white truncate max-w-[120px]">
+                            {item.from || item.senderEmail}
+                          </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">Amount</p>
-                        <p className="text-sm font-black text-[#1E50FF] dark:text-[#4DA1FF]">{currencySymbol}{item.amount}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">
+                          Amount
+                        </p>
+                        <p className="text-sm font-black text-[#1E50FF] dark:text-[#4DA1FF]">
+                          {currencySymbol}
+                          {item.amount}
+                        </p>
                       </div>
                     </div>
                     <button

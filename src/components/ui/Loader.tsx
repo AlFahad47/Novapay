@@ -1,51 +1,166 @@
 "use client";
-import React from "react";
 
-const Loader: React.FC = () => {
+import React, { useState, useEffect } from "react";
+import { Sparkles } from "lucide-react";
+
+const LOADING_MESSAGES = [
+  "Securing your connection...",
+  "Encrypting financial data...",
+  "Syncing your wallets...",
+  "Preparing NovaPay dashboard...",
+];
+
+export default function Loader() {
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  // 1. Handle Scroll Locking & Timer Cleanup
+  useEffect(() => {
+    // Lock body scroll
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = "hidden";
+
+    // Cycle messages every 2.5s
+    const timer = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+    }, 2500);
+
+    // Strict cleanup on unmount
+    return () => {
+      clearInterval(timer);
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 dark:bg-black/50 backdrop-blur-sm">
-      <div className="relative flex flex-col items-center gap-4 p-6">
-        <div className="relative w-40 h-28 flex items-center justify-center perspective-1000">
-          <div className="bill bill-1 bg-gradient-to-r from-green-400 to-green-600 shadow-lg"></div>
-          <div className="bill bill-2 bg-gradient-to-r from-green-300 to-green-500 shadow-lg"></div>
-          <div className="bill bill-3 bg-gradient-to-r from-emerald-200 to-emerald-400 shadow-lg"></div>
+    <div
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden bg-white/80 backdrop-blur-2xl transition-colors duration-500 dark:bg-[#050B14]/85"
+      // A11y: Declare this as a polite live region so screen readers announce changes
+      role="status"
+      aria-live="polite"
+    >
+      {/* Dynamic Screen Reader Announcement */}
+      <span className="sr-only">
+        {LOADING_MESSAGES[messageIndex]}
+      </span>
 
-          <div className="absolute -bottom-6 right-2 flex items-center gap-2">
-            <div className="coin bg-yellow-400"></div>
-            <div className="coin bg-amber-400 delay-150"></div>
+      {/* Ambient Hardware-Accelerated Glow */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="absolute h-[30rem] w-[30rem] rounded-full bg-blue-500/10 blur-[120px] dark:bg-blue-600/15" />
+      </div>
+
+      {/* Main Glassmorphic Panel */}
+      <div className="relative flex flex-col items-center gap-8 rounded-[2rem] border border-white/60 bg-white/50 p-10 shadow-[0_20px_80px_-20px_rgba(30,80,255,0.15)] backdrop-blur-xl transition-all dark:border-slate-700/30 dark:bg-[#0B1221]/50 dark:shadow-[0_20px_80px_-20px_rgba(0,0,0,0.8)]">
+        
+        {/* Spinner Module */}
+        <NovaSpinner />
+
+        {/* Typography & Messaging */}
+        <div className="flex w-64 flex-col items-center text-center">
+          <h2 className="mb-2 text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            NovaPay
+          </h2>
+          
+          {/* Orchestrated Text Crossfade */}
+          <div className="relative h-5 w-full overflow-hidden">
+            {LOADING_MESSAGES.map((msg, idx) => {
+              // Directional animation logic:
+              // Past messages go UP (-translate-y-4)
+              // Current message is CENTER (translate-y-0)
+              // Future messages come from DOWN (translate-y-4)
+              let translateClass = "translate-y-4 opacity-0"; 
+              if (idx === messageIndex) translateClass = "translate-y-0 opacity-100";
+              else if (idx < messageIndex) translateClass = "-translate-y-4 opacity-0";
+
+              return (
+                <p
+                  key={msg}
+                  className={`absolute inset-0 flex items-center justify-center text-sm font-medium text-slate-500 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] dark:text-slate-400 ${translateClass}`}
+                  aria-hidden="true" // Hidden from SRs to avoid duplicate reading
+                >
+                  {msg}
+                </p>
+              );
+            })}
           </div>
         </div>
 
-        <div className="text-center">
-          <div className="text-sm font-medium text-slate-700 dark:text-slate-200">Processing transaction</div>
-          <div className="text-xs text-slate-500 dark:text-slate-300">Secure payment • please wait</div>
+        {/* Indeterminate Progress Bar */}
+        <div className="h-1 w-full max-w-[160px] overflow-hidden rounded-full bg-slate-200/80 dark:bg-slate-800/80">
+          <div 
+            className="h-full w-1/3 rounded-full bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF]"
+            style={{
+              animation: "nova-progress 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite"
+            }}
+          />
         </div>
 
-        <style dangerouslySetInnerHTML={{ __html: `
-          .perspective-1000 { perspective: 1000px; }
-          .bill { width: 160px; height: 56px; border-radius: 10px; position: absolute; top: 24px; left: 50%; transform-origin: 50% 50%; transform: translateX(-50%); box-shadow: 0 10px 30px rgba(2,6,23,0.25); display: flex; align-items: center; justify-content: center; }
-          .bill::after { content: '\\\u0024'; font-size: 22px; color: rgba(255,255,255,0.95); font-weight: 700; transform: translateZ(10px); }
-          .bill-1 { animation: billPop 1200ms cubic-bezier(.2,.9,.3,1) infinite; z-index: 40; }
-          .bill-2 { animation: billPop 1200ms cubic-bezier(.2,.9,.3,1) 160ms infinite; z-index: 30; }
-          .bill-3 { animation: billPop 1200ms cubic-bezier(.2,.9,.3,1) 320ms infinite; z-index: 20; }
-
-          @keyframes billPop {
-            0% { transform: translateX(-50%) translateY(0) rotateX(0deg) rotateZ(0deg) scale(1); opacity: 1; }
-            35% { transform: translateX(-50%) translateY(-14px) rotateX(110deg) rotateZ(-6deg) scale(1.02); opacity: 0.95; }
-            70% { transform: translateX(-50%) translateY(-32px) rotateX(180deg) rotateZ(-12deg) scale(0.98); opacity: 0.6; }
-            100% { transform: translateX(-50%) translateY(-48px) rotateX(220deg) rotateZ(-18deg) scale(0.96); opacity: 0; }
-          }
-
-          .coin { width: 28px; height: 28px; border-radius: 9999px; box-shadow: 0 6px 18px rgba(2,6,23,0.18); transform-style: preserve-3d; animation: coinSpin 900ms linear infinite; border: 2px solid rgba(255,255,255,0.6); }
-          .coin.delay-150 { animation-delay: 160ms; }
-
-          @keyframes coinSpin { from { transform: translateY(0) rotateY(0deg); } 50% { transform: translateY(-8px) rotateY(180deg); } to { transform: translateY(0) rotateY(360deg); } }
-
-          @media (max-width: 480px) { .bill { width: 130px; height: 46px; } }
-        ` }} />
+        {/* Isolated Keyframes to avoid tailwind.config.js modifications */}
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            @keyframes nova-progress {
+              0% { transform: translateX(-100%); }
+              100% { transform: translateX(300%); }
+            }
+          `
+        }} />
       </div>
     </div>
   );
-};
+}
 
-export default Loader;
+/**
+ * Extracted Spinner Component for modularity.
+ * Uses SVG stroke-dasharray for hardware-accelerated, perfectly rounded spinning tails.
+ */
+function NovaSpinner() {
+  return (
+    <div className="relative flex h-24 w-24 items-center justify-center">
+      {/* Soft pulsing aura */}
+      <div className="absolute inset-0 rounded-full bg-blue-500/20 blur-xl animate-pulse" />
+      
+      {/* SVG Spinner */}
+      <svg
+        className="absolute inset-0 h-full w-full animate-spin text-transparent"
+        viewBox="0 0 50 50"
+        style={{ animationDuration: "1.2s" }} // Slightly faster spin feels more responsive
+      >
+        <defs>
+          <linearGradient id="novaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#4DA1FF" />
+            <stop offset="100%" stopColor="#1E50FF" />
+          </linearGradient>
+        </defs>
+        {/* Track */}
+        <circle
+          className="opacity-20"
+          cx="25"
+          cy="25"
+          r="22"
+          fill="none"
+          stroke="#4DA1FF"
+          strokeWidth="2.5"
+        />
+        {/* Tail */}
+        <circle
+          cx="25"
+          cy="25"
+          r="22"
+          fill="none"
+          stroke="url(#novaGradient)"
+          strokeWidth="2.5"
+          strokeDasharray="90 150"
+          strokeLinecap="round"
+        />
+      </svg>
+
+      {/* Core Icon */}
+      <div className="absolute flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-inner dark:bg-[#0F172A]">
+        <Sparkles 
+          className="h-6 w-6 text-blue-500 animate-pulse" 
+          strokeWidth={2.5} 
+          style={{ animationDuration: "2s" }}
+        />
+      </div>
+    </div>
+  );
+}

@@ -272,7 +272,6 @@ import {
   ChevronRight,
   FileCheck,
   MessageSquare,
-  Crown,
   X,
   Crown,
 } from "lucide-react";
@@ -305,11 +304,6 @@ const sidebarItems = [
 
   const isSubscribed = subscriptionStatus.subscribed;
   const daysLeft = subscriptionStatus.daysLeft;
-
-  /* ---------------- SUBSCRIPTION LOGIC ---------------- */
-  // Accessing subscription data from session (adjust based on your actual user schema)
-  const isSubscribed = session?.user?.isSubscribed || false;
-  const daysLeft = session?.user?.subscriptionDaysLeft ?? null;
 
   /* ---------------- PROTECT USER DASHBOARD ---------------- */
 
@@ -505,7 +499,7 @@ const sidebarItems = [
               className="lg:hidden text-gray-700 dark:text-gray-300"
               onClick={() => setMobileOpen(true)}
             >
-              <Menu size={22} />
+              {/* Menu icon */}
             </button>
 
             <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 capitalize">

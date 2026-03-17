@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="relative bg-[#F8FAFC] dark:bg-[#04090f] pt-12 mt-20 rounded-t-[2.5rem] md:rounded-t-[4rem] overflow-hidden border-t border-slate-200/50 dark:border-white/[0.06] shadow-[0_-10px_40px_rgba(0,0,0,0.02)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+    <footer className="relative bg-[#F8FAFC] dark:bg-[#04090f] pt-12 rounded-t-[2.5rem] md:rounded-t-[4rem] overflow-hidden border-t border-slate-200/50 dark:border-white/[0.06] shadow-[0_-10px_40px_rgba(0,0,0,0.02)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
       <div className="absolute bottom-0 right-0 w-full md:w-1/2 h-64 bg-gradient-to-tl from-[#2C64FF]/10 to-transparent blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-full md:w-1/2 h-64 bg-gradient-to-tr from-[#4DA1FF]/5 to-transparent blur-3xl pointer-events-none"></div>
 
