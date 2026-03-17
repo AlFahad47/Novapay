@@ -1,119 +1,3 @@
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import { motion } from "framer-motion";
-// import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
-
-// type User = {
-//   _id: string;
-//   name: string;
-//   email: string;
-//   kycDetails: any;
-// };
-
-// export default function AdminRequestsPage() {
-//   const [users, setUsers] = useState<User[]>([]);
-
-//   async function loadRequests() {
-//     const res = await fetch("/api/admin/requests");
-//     const data = await res.json();
-//     setUsers(data.users);
-//   }
-
-//   useEffect(() => {
-//     loadRequests();
-//   }, []);
-
-//   async function updateStatus(id: string, status: string) {
-//     await fetch(`/api/admin/requests/${id}`, {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ status }),
-//     });
-
-//     loadRequests();
-//   }
-
-//   return (
-//     <div className="space-y-8">
-//       {/* PAGE TITLE */}
-//       <div>
-//         <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-//           KYC Requests
-//         </h1>
-//         <p className="text-gray-500 dark:text-gray-400 text-sm">
-//           Review and verify user identity submissions
-//         </p>
-//       </div>
-
-//       {/* NO REQUESTS */}
-//       {users.length === 0 && (
-//         <div className="text-center py-20 text-gray-500 dark:text-gray-400">
-//           No pending requests
-//         </div>
-//       )}
-
-//       {/* REQUEST LIST */}
-//       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-//         {users.map((user, i) => (
-//           <motion.div
-//             key={user._id}
-//             initial={{ opacity: 0, y: 30 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             transition={{ delay: i * 0.05 }}
-//             className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-xl transition"
-//           >
-//             {/* USER INFO */}
-//             <div className="space-y-2 mb-4">
-//               <p className="text-lg font-semibold text-gray-800 dark:text-white">
-//                 {user.name}
-//               </p>
-
-//               <p className="text-sm text-gray-600 dark:text-gray-300">
-//                 {user.email}
-//               </p>
-
-//               <p className="text-xs text-gray-500 dark:text-gray-400">
-//                 Phone: {user.kycDetails?.phone || "N/A"}
-//               </p>
-//             </div>
-
-//             {/* ACTION BUTTONS */}
-//             <div className="flex flex-wrap gap-2 mt-4">
-//               {/* APPROVE */}
-//               <button
-//                 onClick={() => updateStatus(user._id, "approved")}
-//                 className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-2 rounded-lg transition"
-//               >
-//                 <CheckCircle size={16} />
-//                 Approve
-//               </button>
-
-//               {/* REJECT */}
-//               <button
-//                 onClick={() => updateStatus(user._id, "rejected")}
-//                 className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-3 py-2 rounded-lg transition"
-//               >
-//                 <XCircle size={16} />
-//                 Reject
-//               </button>
-
-//               {/* FRAUD */}
-//               <button
-//                 onClick={() => updateStatus(user._id, "fraud")}
-//                 className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-2 rounded-lg transition"
-//               >
-//                 <AlertTriangle size={16} />
-//                 Fraud
-//               </button>
-//             </div>
-//           </motion.div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -124,6 +8,7 @@ import Swal from "sweetalert2";
 type KycDetails = {
   phone?: string;
   status?: string;
+  nid?: string; // ✅ NEW
 };
 
 type User = {
@@ -234,7 +119,7 @@ export default function AdminRequestsPage() {
 
   return (
     <div className="space-y-8">
-      {/* PAGE TITLE */}
+      {/* TITLE */}
       <div>
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
           KYC Requests
@@ -244,91 +129,133 @@ export default function AdminRequestsPage() {
         </p>
       </div>
 
-      {/* EMPTY STATE */}
+      {/* EMPTY */}
       {users.length === 0 && (
         <div className="text-center py-20 text-gray-500 dark:text-gray-400">
           No pending requests
         </div>
       )}
 
-      {/* REQUEST CARDS */}
+      {/* CARDS */}
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {users.map((user, i) => (
           <motion.div
             key={user._id}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            whileHover={{ scale: 1.03 }}
-            className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow hover:shadow-xl transition"
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: i * 0.05, type: "spring" }}
+            whileHover={{ scale: 1.05 }}
+            className="relative p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500"
           >
-            {/* USER INFO */}
-            <div className="space-y-2 mb-4">
-              <p className="text-lg font-semibold text-gray-800 dark:text-white">
-                {user.name}
-              </p>
+            <div className="relative bg-white dark:bg-[#0c1a2b] rounded-2xl p-6 shadow-xl hover:shadow-2xl transition">
+              {/* HEADER */}
+              <div className="flex items-center gap-4 mb-4">
+                <div className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                  {user.name.charAt(0)}
+                </div>
 
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                {user.email}
-              </p>
+                <div>
+                  <p className="text-lg font-semibold text-gray-800 dark:text-white">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-gray-500">{user.email}</p>
+                </div>
+              </div>
 
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Phone: {user.kycDetails?.phone || "N/A"}
-              </p>
+              {/* BASIC INFO */}
+              <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                <Info label="User ID" value={user._id.slice(-6)} />
+                <Info label="Phone" value={user.kycDetails?.phone || "N/A"} />
+                <Info label="Email" value={user.email} />
+                <Info
+                  label="Status"
+                  value={user.kycDetails?.status || "pending"}
+                />
+              </div>
 
+              {/* 🔥 KYC DETAILS */}
+              <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-[#08111f] dark:to-[#0f1f35] border border-gray-200 dark:border-gray-700">
+                <p className="text-xs font-semibold text-gray-500 mb-2">
+                  KYC DETAILS
+                </p>
+
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <Info
+                    label="NID Number"
+                    value={user.kycDetails?.nid || "Not Provided"}
+                  />
+                  <Info label="Phone" value={user.kycDetails?.phone || "N/A"} />
+                </div>
+              </div>
+
+              {/* STATUS BADGE */}
               {user.kycDetails?.status && (
-                <span
-                  className={`inline-block mt-1 text-xs px-2 py-1 rounded
-                  ${
-                    user.kycDetails.status === "approved"
-                      ? "bg-green-500 text-white"
-                      : user.kycDetails.status === "rejected"
-                        ? "bg-yellow-500 text-white"
-                        : user.kycDetails.status === "fraud"
-                          ? "bg-red-500 text-white"
-                          : "bg-gray-400 text-white"
-                  }`}
-                >
-                  {user.kycDetails.status}
-                </span>
+                <div className="mt-4">
+                  <span
+                    className={`text-xs px-3 py-1 rounded-full font-medium
+                    ${
+                      user.kycDetails.status === "approved"
+                        ? "bg-green-500/20 text-green-600"
+                        : user.kycDetails.status === "rejected"
+                          ? "bg-yellow-500/20 text-yellow-600"
+                          : user.kycDetails.status === "fraud"
+                            ? "bg-red-500/20 text-red-600"
+                            : "bg-gray-400/20 text-gray-600"
+                    }`}
+                  >
+                    {user.kycDetails.status.toUpperCase()}
+                  </span>
+                </div>
               )}
-            </div>
 
-            {/* ACTION BUTTONS */}
-            <div className="flex flex-wrap gap-2 mt-4">
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                disabled={processing === user._id}
-                onClick={() => updateStatus(user._id, "approved")}
-                className="flex items-center gap-1 bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white text-sm px-3 py-2 rounded-lg"
-              >
-                <CheckCircle size={16} />
-                Approve
-              </motion.button>
+              {/* ACTIONS */}
+              <div className="flex flex-wrap gap-2 mt-5">
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  disabled={processing === user._id}
+                  onClick={() => updateStatus(user._id, "approved")}
+                  className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-2 rounded-lg"
+                >
+                  <CheckCircle size={16} />
+                  Approve
+                </motion.button>
 
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                disabled={processing === user._id}
-                onClick={() => updateStatus(user._id, "rejected")}
-                className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-white text-sm px-3 py-2 rounded-lg"
-              >
-                <XCircle size={16} />
-                Reject
-              </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  disabled={processing === user._id}
+                  onClick={() => updateStatus(user._id, "rejected")}
+                  className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-sm px-3 py-2 rounded-lg"
+                >
+                  <XCircle size={16} />
+                  Reject
+                </motion.button>
 
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                disabled={processing === user._id}
-                onClick={() => updateStatus(user._id, "fraud")}
-                className="flex items-center gap-1 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-sm px-3 py-2 rounded-lg"
-              >
-                <AlertTriangle size={16} />
-                Fraud
-              </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  disabled={processing === user._id}
+                  onClick={() => updateStatus(user._id, "fraud")}
+                  className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-2 rounded-lg"
+                >
+                  <AlertTriangle size={16} />
+                  Fraud
+                </motion.button>
+              </div>
             </div>
           </motion.div>
         ))}
       </div>
     </div>
+  );
+}
+
+function Info({ label, value }: { label: string; value: string }) {
+  return (
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      className="bg-gray-50 dark:bg-[#08111f] p-3 rounded-lg"
+    >
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="font-medium break-words">{value}</p>
+    </motion.div>
   );
 }
