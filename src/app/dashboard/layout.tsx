@@ -274,6 +274,7 @@ import {
   MessageSquare,
   Crown,
   X,
+  Menu,
   
 } from "lucide-react";
 
