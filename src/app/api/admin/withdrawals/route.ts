@@ -48,7 +48,6 @@ export async function PATCH(req: Request) {
   try {
     const { status, goalId, email } = await req.json();
 
-    // Field validation
     if (!status || !goalId || !email) {
       return NextResponse.json(
         { success: false, message: "Missing required fields" }, 
@@ -59,7 +58,7 @@ export async function PATCH(req: Request) {
     const client = await clientPromise;
     const db = client.db("novapay_db");
 
-    // 1. Withdrawal Request update 
+    // 1. Withdrawal Request collection update (Sob somoy hobe, status approved hok ba rejected)
     const withdrawUpdate = await db.collection("withdraw-microsaving").updateOne(
       { goalId: goalId, email: email }, 
       { $set: { status: status, processedAt: new Date() } }
@@ -72,23 +71,20 @@ export async function PATCH(req: Request) {
       );
     }
 
-    // 2. Main Goal collection / User array status update
-    if (status === 'approved') {
-      
-      
-      await db.collection("users").updateOne(
-        { email: email, "microsaving.id": goalId }, 
-        { 
-          $set: { "microsaving.$.status": "approved" } 
-        }
-      );
-
-      
-    }
+    // 2. Main User collection update (Approved ba Rejected - dui khetrei user dashboard update hobe)
+    // Age shudhu status === 'approved' chilo, ekhon status check ta remove kore diyechi
+    // jate 'rejected' pathaleo database-e update hoy.
+    
+    await db.collection("users").updateOne(
+      { email: email, "microsaving.id": goalId }, 
+      { 
+        $set: { "microsaving.$.status": status } // dynamic bhabe approved/rejected bose jabe
+      }
+    );
 
     return NextResponse.json({ 
       success: true, 
-      message: "Status updated in both collections successfully!" 
+      message: `Status updated to ${status} in both collections!` 
     });
 
   } catch (error: any) {

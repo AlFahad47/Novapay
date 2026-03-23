@@ -314,6 +314,7 @@ export async function POST(request: Request) {
     }
 
     const txAmount = Number(amount);
+    const finalAmount = txAmount;
     const normalizedType = type.toLowerCase().trim().replace(/\s+/g, "_");
     const EXCHANGE_RATE = 120; // ১ ডলার = ১২০ টাকা
 
@@ -450,6 +451,45 @@ export async function POST(request: Request) {
         { status: 200 },
       );
     }
+
+    // ---------------------------------------------------------
+    // 5. CASHOUT REWARDS (Savings to Wallet)
+    // ---------------------------------------------------------
+    if (normalizedType === "cashout_rewards") {
+      if (!goalId || finalAmount <= 0) {
+        return NextResponse.json({ success: false, message: "Missing Goal ID or Amount" }, { status: 400 });
+      }
+
+      const currentTxId = `REW-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+
+      const rewardTx = {
+        transactionId: currentTxId,
+        type: "Savings Reward",
+        amount: finalAmount,
+        currency: user?.currency || "BDT",
+        receiver: "Main Wallet",
+        description: `Rewards cashout for goal: ${goalId}`,
+        status: "completed",
+        date: new Date(),
+      };
+
+      const updateResult = await usersCollection.updateOne(
+        { email: email, "microsaving.id": goalId },
+        {
+          $inc: { balance: finalAmount }, 
+          $push: { history: { $each: [rewardTx], $position: 0 } } as any,
+          $pull: { microsaving: { id: goalId } }, 
+          $set: { updatedAt: new Date() },
+        }
+      );
+
+      if (updateResult.modifiedCount === 0) {
+        return NextResponse.json({ success: false, message: "Goal not found" }, { status: 404 });
+      }
+
+      return NextResponse.json({ success: true, message: "Cashed out to wallet!", transactionId: currentTxId });
+    }
+
 
     // ---------------------------------------------------------
     // 6. SEND MONEY LOGIC (Currency Conversion)
