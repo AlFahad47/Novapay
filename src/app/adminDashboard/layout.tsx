@@ -22,6 +22,7 @@ const adminItems = [
   { icon: ShieldAlert, label: "Fraud", path: "/adminDashboard/fraud" },
   { icon: FileCheck, label: "Requests", path: "/adminDashboard/requests" },
   { icon: BarChart3, label: "Analytics", path: "/adminDashboard/analytics" },
+   { icon: Crown, label: "Subscription", path:"/adminDashboard/subscription" },
   {
     icon: Landmark,
     label: "Savings Withdrawals",
