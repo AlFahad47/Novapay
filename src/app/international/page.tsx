@@ -477,7 +477,7 @@ export default function InternationalTransferPage() {
 
         </AnimatePresence>
 
-        {/* Wallet info hint + Top Up link */}
+        {/* Wallet info hint + Top Up / Cash Out links */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -488,12 +488,20 @@ export default function InternationalTransferPage() {
             <Wallet size={16} />
             <span>Need to fund your wallet first?</span>
           </div>
-          <Link
-            href="/international/topup"
-            className="flex items-center gap-1 text-[#0070ff] font-semibold hover:underline whitespace-nowrap"
-          >
-            <PlusCircle size={15} /> Top Up
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/international/topup"
+              className="flex items-center gap-1 text-[#0070ff] font-semibold hover:underline whitespace-nowrap text-sm"
+            >
+              <PlusCircle size={15} /> Top Up
+            </Link>
+            <Link
+              href="/international/cashout"
+              className="flex items-center gap-1 text-[#7c3aed] font-semibold hover:underline whitespace-nowrap text-sm"
+            >
+              <ArrowDownCircle size={15} /> Cash Out
+            </Link>
+          </div>
         </motion.div>
 
       </div>
