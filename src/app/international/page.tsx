@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Globe, Wallet, RefreshCw, CheckCircle2, AlertCircle, ArrowLeft, PlusCircle, Crown, Lock } from "lucide-react";
+import { ArrowRight, Globe, Wallet, RefreshCw, CheckCircle2, AlertCircle, ArrowLeft, PlusCircle, ArrowDownCircle, Crown, Lock } from "lucide-react";
 import { CURRENCY_META, SupportedCurrency, TransferPreview } from "@/types/international";
 
 type Step = "form" | "preview" | "success";
@@ -226,9 +226,14 @@ export default function InternationalTransferPage() {
           >
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-blue-400">Your Wallets</p>
-              <Link href="/international/topup" className="text-xs text-[#0070ff] font-semibold hover:underline flex items-center gap-1">
-                <PlusCircle size={13} /> Top Up
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link href="/international/topup" className="text-xs text-[#0070ff] font-semibold hover:underline flex items-center gap-1">
+                  <PlusCircle size={13} /> Top Up
+                </Link>
+                <Link href="/international/cashout" className="text-xs text-[#7c3aed] font-semibold hover:underline flex items-center gap-1">
+                  <ArrowDownCircle size={13} /> Cash Out
+                </Link>
+              </div>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {Object.entries(wallets).map(([currency, balance]) => {
