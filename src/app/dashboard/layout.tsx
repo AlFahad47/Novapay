@@ -19,6 +19,7 @@ import {
   Crown,
   X,
   Menu,
+  Heart,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -203,6 +204,25 @@ export default function DashboardLayout({
             </Link>
           );
         })}
+
+        {/* Donate — Elite subscribers only */}
+        {isSubscribed && (
+          <Link
+            href="/donation"
+            onClick={() => setMobileOpen(false)}
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition
+            ${
+              pathname === "/donation"
+                ? "bg-[#e63b60] text-white"
+                : "text-[#e63b60] hover:bg-pink-50 dark:hover:bg-pink-900/20"
+            }`}
+          >
+            <Heart size={20} />
+            {!desktopCollapsed && (
+              <span className="text-sm font-medium">Donate</span>
+            )}
+          </Link>
+        )}
       </nav>
     </aside>
   );
