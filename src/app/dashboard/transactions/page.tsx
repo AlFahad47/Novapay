@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, ArrowDownLeft, Loader2, Download, FileText, Printer, Globe, PlusCircle } from "lucide-react";
+import { ArrowUpRight, ArrowDownLeft, Loader2, Download, FileText, Printer, Globe, PlusCircle, Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -133,15 +133,20 @@ export default function TransactionsPage() {
                 const isTopUp       = normalizedType === "wallet_topup";
                 const isIntl        = isIntlSend || isIntlReceive || isTopUp;
 
+                // Donation
+                const isDonation = normalizedType === "donation";
+
                 // Regular expense types
                 const expenseTypes = ["withdraw", "send_money", "bill_payment", "cash_out", "mobile_recharge", "pay_bill", "subscription"];
-                const isExpense = isIntlSend || isTopUp || expenseTypes.includes(normalizedType);
+                const isExpense = isIntlSend || isTopUp || isDonation || expenseTypes.includes(normalizedType);
 
                 // Icon
-                const Icon = isTopUp ? PlusCircle : isIntl ? Globe : isExpense ? ArrowUpRight : ArrowDownLeft;
+                const Icon = isDonation ? Heart : isTopUp ? PlusCircle : isIntl ? Globe : isExpense ? ArrowUpRight : ArrowDownLeft;
 
                 // Icon background color
-                const iconClass = isIntlReceive
+                const iconClass = isDonation
+                  ? "bg-pink-100 text-[#e63b60] dark:bg-pink-900/20"
+                  : isIntlReceive
                   ? "bg-blue-100 text-blue-600 dark:bg-blue-900/20"
                   : isIntl
                   ? "bg-purple-100 text-purple-600 dark:bg-purple-900/20"
@@ -154,7 +159,11 @@ export default function TransactionsPage() {
                 let amountColor   = "";
                 let subLabel      = "";
 
-                if (isIntlSend) {
+                if (isDonation) {
+                  amountDisplay = `-${tx.amount} BDT`;
+                  amountColor   = "text-[#e63b60]";
+                  subLabel      = `Donated to ${tx.campaignTitle}`;
+                } else if (isIntlSend) {
                   amountDisplay = `-${tx.amountSent} ${tx.fromCurrency}`;
                   amountColor   = "text-rose-500";
                   subLabel      = `→ ${tx.amountReceived} ${tx.toCurrency} • Fee: ${tx.fee} ${tx.fromCurrency}`;
@@ -186,6 +195,11 @@ export default function TransactionsPage() {
                           {isIntl && (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 uppercase tracking-wide">
                               International
+                            </span>
+                          )}
+                          {isDonation && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-100 dark:bg-pink-900/30 text-[#e63b60] uppercase tracking-wide">
+                              Donation
                             </span>
                           )}
                         </div>
