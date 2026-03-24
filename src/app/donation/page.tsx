@@ -29,8 +29,9 @@ export default function DonationPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loadingCampaigns, setLoadingCampaigns] = useState(true);
 
-  // User BDT balance
+  // User BDT balance + international wallets
   const [userBalance, setUserBalance] = useState<number>(0);
+  const [userWallets, setUserWallets] = useState<Record<string, number>>({});
 
   // Donate modal state
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
@@ -64,6 +65,7 @@ export default function DonationPage() {
     ]).then(([campaignData, userData]) => {
       setCampaigns(Array.isArray(campaignData) ? campaignData : []);
       setUserBalance(userData?.balance ?? 0);
+      setUserWallets(userData?.wallets ?? {});
       setLoadingCampaigns(false);
     }).catch(() => setLoadingCampaigns(false));
   }, [hasAccess, session]);
@@ -92,7 +94,12 @@ export default function DonationPage() {
       return;
     }
     if (Number(amount) > userBalance) {
-      setError("Insufficient BDT balance. Please top up your BDT balance first via International → Top Up.");
+      const hasForeignWallet = Object.values(userWallets).some((b) => (b as number) > 0);
+      if (hasForeignWallet) {
+        setError("CASHOUT_NEEDED");
+      } else {
+        setError("Insufficient BDT balance. Please add funds to your account.");
+      }
       return;
     }
 
@@ -349,11 +356,26 @@ export default function DonationPage() {
                 </div>
               ) : (
                 <>
-                  {error && (
+                  {error && error === "CASHOUT_NEEDED" ? (
+                    <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-3 rounded-xl text-sm space-y-2">
+                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-medium">
+                        <AlertCircle size={15} /> Insufficient BDT balance
+                      </div>
+                      <p className="text-amber-700 dark:text-amber-300 text-xs">
+                        You have foreign currency in your international wallets. Cash out to BDT first, then donate.
+                      </p>
+                      <a
+                        href="/international/cashout"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#7c3aed] hover:underline"
+                      >
+                        Go to Cash Out →
+                      </a>
+                    </div>
+                  ) : error ? (
                     <div className="flex items-center gap-2 text-red-500 bg-red-50 dark:bg-red-900/20 p-3 rounded-xl text-sm">
                       <AlertCircle size={15} /> {error}
                     </div>
-                  )}
+                  ) : null}
 
                   {/* BDT Balance info */}
                   <div className="flex items-center justify-between bg-gray-50 dark:bg-[#071120] rounded-xl px-3 py-2.5 border border-gray-200 dark:border-blue-900">
