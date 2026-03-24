@@ -29,6 +29,9 @@ export default function DonationPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loadingCampaigns, setLoadingCampaigns] = useState(true);
 
+  // User BDT balance
+  const [userBalance, setUserBalance] = useState<number>(0);
+
   // Donate modal state
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [amount, setAmount] = useState("");
@@ -52,17 +55,18 @@ export default function DonationPage() {
       .catch(() => setAccessChecked(true));
   }, [session, status, router]);
 
-  // ── Fetch campaigns (only if access granted) ──────────────────────
+  // ── Fetch campaigns + user balance (only if access granted) ───────
   useEffect(() => {
-    if (!hasAccess) return;
-    fetch("/api/donation/campaigns")
-      .then((r) => r.json())
-      .then((data) => {
-        setCampaigns(Array.isArray(data) ? data : []);
-        setLoadingCampaigns(false);
-      })
-      .catch(() => setLoadingCampaigns(false));
-  }, [hasAccess]);
+    if (!hasAccess || !session?.user?.email) return;
+    Promise.all([
+      fetch("/api/donation/campaigns").then((r) => r.json()),
+      fetch(`/api/user/update?email=${session.user.email}`).then((r) => r.json()),
+    ]).then(([campaignData, userData]) => {
+      setCampaigns(Array.isArray(campaignData) ? campaignData : []);
+      setUserBalance(userData?.balance ?? 0);
+      setLoadingCampaigns(false);
+    }).catch(() => setLoadingCampaigns(false));
+  }, [hasAccess, session]);
 
   function openModal(campaign: Campaign) {
     setSelectedCampaign(campaign);
@@ -85,6 +89,10 @@ export default function DonationPage() {
     }
     if (!amount || Number(amount) < 10) {
       setError("Minimum donation is ৳10.");
+      return;
+    }
+    if (Number(amount) > userBalance) {
+      setError("Insufficient BDT balance. Please top up your BDT balance first via International → Top Up.");
       return;
     }
 
@@ -118,6 +126,7 @@ export default function DonationPage() {
         )
       );
 
+      setUserBalance((prev) => prev - Number(amount));
       setSuccess({
         transactionId: data.transactionId,
         campaignTitle: data.campaignTitle,
@@ -345,6 +354,12 @@ export default function DonationPage() {
                       <AlertCircle size={15} /> {error}
                     </div>
                   )}
+
+                  {/* BDT Balance info */}
+                  <div className="flex items-center justify-between bg-gray-50 dark:bg-[#071120] rounded-xl px-3 py-2.5 border border-gray-200 dark:border-blue-900">
+                    <span className="text-xs text-gray-500 dark:text-blue-400">Your BDT Balance</span>
+                    <span className="text-sm font-bold text-gray-800 dark:text-blue-100">৳{userBalance.toLocaleString()}</span>
+                  </div>
 
                   {/* Quick amounts */}
                   <div>
