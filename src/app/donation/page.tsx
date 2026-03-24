@@ -214,8 +214,9 @@ export default function DonationPage() {
                   key={campaign._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.07 }}
-                  className="bg-white dark:bg-[#0c1a2b] rounded-2xl border border-gray-200 dark:border-blue-800 overflow-hidden shadow-sm hover:shadow-md transition"
+                  whileHover={{ y: -6, scale: 1.02, boxShadow: "0 20px 40px rgba(230,59,96,0.18)" }}
+                  transition={{ delay: i * 0.07, type: "spring", stiffness: 300, damping: 20 }}
+                  className="bg-white dark:bg-[#111c2e] rounded-2xl border border-gray-200 dark:border-[#1e3a5f] overflow-hidden shadow-sm cursor-pointer"
                 >
                   {/* Campaign image */}
                   {campaign.image ? (
@@ -225,8 +226,8 @@ export default function DonationPage() {
                       className="w-full h-36 object-cover"
                     />
                   ) : (
-                    <div className="w-full h-36 bg-gradient-to-br from-pink-100 to-red-100 dark:from-pink-900/20 dark:to-red-900/20 flex items-center justify-center">
-                      <Heart size={36} className="text-[#e63b60] opacity-40" />
+                    <div className="w-full h-36 bg-gradient-to-br from-pink-100 to-red-100 dark:from-[#2a0d1a] dark:to-[#1a0a1f] flex items-center justify-center">
+                      <Heart size={40} className="text-[#e63b60] opacity-60" />
                     </div>
                   )}
 
