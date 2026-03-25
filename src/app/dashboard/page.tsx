@@ -261,7 +261,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import DashboardHome from "@/components/dashboard/DashboardHome";
-import { CreditCard, Bell, Clock, Edit, Activity, DollarSign } from "lucide-react";
+import { CreditCard, Bell, Clock, Edit, Activity, DollarSign,Info } from "lucide-react";
 import Image from "next/image";
 import Swal from "sweetalert2";
 
@@ -275,6 +275,8 @@ export default function DashboardPage() {
   const [loadingData, setLoadingData] = useState(true);
 const [loanLimit, setLoanLimit] = useState<number | null>(null);
 const [isCalculating, setIsCalculating] = useState(false);
+const [limitReason, setLimitReason] = useState<string | null>(null); 
+const [activeLoan, setActiveLoan] = useState<any>(null);
 
   /* Profile State */
   const [profile, setProfile] = useState({
@@ -314,7 +316,7 @@ const [isCalculating, setIsCalculating] = useState(false);
       setPending(data.pendingRequests || 0);
       setNotifications(data.notifications || 0);
       setTransactions(data.transactions || []);
-      
+      setActiveLoan(data.activeLoan || null)
     } catch (err) {
       console.error("Failed loading dashboard data", err);
     } finally {
@@ -383,6 +385,36 @@ if (data.limit !== undefined) {
   }
 };
   /* -------- Edit Profile -------- */
+
+
+const handleApplyLoan = async () => {
+  const { value: amount } = await Swal.fire({
+    title: "Instant AI Loan",
+    text: `Apply for up to ${loanLimit} BDT instantly.`,
+    input: "number",
+    inputAttributes: { min: "100", max: String(loanLimit), step: "100" },
+    showCancelButton: true,
+    confirmButtonText: "Get Funds Now",
+    confirmButtonColor: "#4f46e5",
+  });
+
+  if (amount) {
+    Swal.fire({ title: "Sending funds...", didOpen: () => Swal.showLoading() });
+
+    const res = await fetch("/api/loan/apply", {
+      method: "POST",
+      body: JSON.stringify({ email: profile.email, amount }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      Swal.fire("Success!", "Money has been added to your wallet.", "success");
+      fetchDashboard(); // Refresh balance and limit
+    } else {
+      Swal.fire("Error", data.error, "error");
+    }
+  }
+};
 
   const editProfile = async () => {
     const { value: formValues } = await Swal.fire({
@@ -494,43 +526,70 @@ if (data.limit !== undefined) {
     </button>
   </div>
 
-  {loadingData ? (
-    <p className="text-gray-500 text-sm">Loading account data...</p>
+ {loadingData ? (
+  <p className="text-gray-500 text-sm">Loading account data...</p>
+) : (
+  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4"> 
+    
+    {/* 1. First Card: Wallet Balance */}
+    <SummaryCard
+      title="Wallet Balance"
+      value={`$${balance}`}
+      icon={<CreditCard size={20} />}
+    />
+
+    {/* 2. SECOND CARD:  */}
+    {/* 2. SECOND CARD: AI LOAN CARD WITH DEBT PROTECTION */}
+<div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-slate-800 p-6 rounded-2xl border border-blue-100 dark:border-slate-700 shadow-sm">
+  <div className="flex justify-between items-start mb-4">
+    <div>
+      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">AI Credit Line</p>
+      <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+        {loanLimit ?? 0} BDT
+      </h3>
+    </div>
+    <div className="p-2 bg-white dark:bg-slate-700 rounded-lg shadow-sm">
+      <DollarSign className="text-indigo-600 dark:text-indigo-400" size={24} />
+    </div>
+  </div>
+  
+  {/* NEW DYNAMIC BUTTON LOGIC */}
+  {loanLimit && loanLimit > 0 ? (
+    <button
+      onClick={handleApplyLoan}
+      className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-indigo-200 dark:shadow-none cursor-pointer"
+    >
+      Get Instant Loan
+    </button>
   ) : (
-    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4"> 
-      <SummaryCard
-        title="Wallet Balance"
-        value={`$${balance}`}
-        icon={<CreditCard size={20} />}
-      />
-
-      {/* NEW AI LOAN CARD */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-blue-900/20 p-4 rounded-xl flex items-center gap-4 border border-blue-100 dark:border-blue-900/50">
-        <div className="text-indigo-600 dark:text-indigo-400">
-           <DollarSign size={20} />
-        </div>
-        <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">AI Loan Limit</p>
-          <p className="text-lg font-bold text-gray-900 dark:text-white">
-  {/* Use !== null to allow 0 to show up properly */}
-  {loanLimit !== null ? `${loanLimit} BDT` : "Calculate Now"}
-</p>
-        </div>
-      </div>
-
-      <SummaryCard
-        title="Pending Requests"
-        value={pending}
-        icon={<Clock size={20} />}
-      />
-
-      <SummaryCard
-        title="Notifications"
-        value={notifications}
-        icon={<Bell size={20} />}
-      />
+    <div className="w-full py-2.5 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-[11px] font-medium text-center rounded-xl border border-amber-100 dark:border-amber-900/50 flex items-center justify-center gap-2">
+      <Info size={14} />
+      {limitReason || "Repay current loan to unlock limits."}
     </div>
   )}
+  
+  {limitReason && loanLimit && loanLimit > 0 && (
+    <p className="mt-3 text-[10px] text-gray-400 italic text-center leading-tight">
+      *AI Suggestion: {limitReason.substring(0, 60)}...
+    </p>
+  )}
+</div>
+
+    {/* 3. Third Card: Pending Requests */}
+    <SummaryCard
+      title="Pending Requests"
+      value={pending}
+      icon={<Clock size={20} />}
+    />
+
+    {/* 4. Fourth Card: Notifications */}
+    <SummaryCard
+      title="Notifications"
+      value={notifications}
+      icon={<Bell size={20} />}
+    />
+  </div>
+)}
 </div>
       {/* Recent Transactions */}
 
@@ -563,7 +622,44 @@ if (data.limit !== undefined) {
     </div>
   );
 }
+{activeLoan && (
+  <div className="bg-white dark:bg-[#0c1a2b] border-2 border-indigo-100 dark:border-indigo-900/50 rounded-2xl p-6 shadow-md">
+    <div className="flex justify-between items-center mb-4">
+      <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+        <Clock className="text-indigo-500" size={18} /> Active Loan Details
+      </h3>
+      <span className="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold uppercase">
+        Auto-Cut Active
+      </span>
+    </div>
 
+    <div className="space-y-3">
+      <div className="flex justify-between text-sm">
+        <span className="text-gray-500">Remaining Debt:</span>
+        <span className="font-bold text-indigo-600">{activeLoan.remainingAmount.toFixed(2)} BDT</span>
+      </div>
+      
+      {/* Progress Bar */}
+      <div className="w-full bg-gray-100 dark:bg-slate-800 rounded-full h-2">
+        <div 
+          className="bg-indigo-600 h-2 rounded-full transition-all" 
+          style={{ width: `${((activeLoan.totalPayable - activeLoan.remainingAmount) / activeLoan.totalPayable) * 100}%` }}
+        />
+      </div>
+
+      <p className="text-[10px] text-gray-400">
+        Next Auto-Cut: {new Date(activeLoan.nextInstallmentDate).toLocaleDateString()} ({activeLoan.monthlyInstallment.toFixed(2)} BDT)
+      </p>
+
+      <button
+        onClick={() => handleInstantRepay(activeLoan._id)}
+        className="w-full mt-2 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-xs font-bold rounded-xl hover:opacity-90 transition active:scale-95"
+      >
+        Pay Full Amount Instantly
+      </button>
+    </div>
+  </div>
+)}
 /* Summary Card */
 
 function SummaryCard({ title, value, icon }: any) {

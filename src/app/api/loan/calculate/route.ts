@@ -1,5 +1,5 @@
 import Groq from "groq-sdk";
-import clientPromise from "@/lib/mongodb"; // Fixed: No curly braces
+import clientPromise from "@/lib/mongodb";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -9,12 +9,39 @@ export async function POST(req: Request) {
     const client = await clientPromise;
     const db = client.db("novapay_db");
 
+    // 1. Fetch User
     const user = await db.collection("users").findOne({ email });
-
     if (!user) return Response.json({ error: "User not found" }, { status: 404 });
 
-    // SAFE DATA GATHERING
-    // We check both 'history' and 'wallethistory' and default to an empty array if null
+    // 2. CHECK FOR ACTIVE LOANS (The Bug Fix)
+    // We check if the user has any loan that isn't 'completed' or 'rejected'
+    const activeLoan = await db.collection("loans").findOne({ 
+      userEmail: email, 
+      status: { $in: ["active", "defaulted", "pending"] } 
+    });
+
+    if (activeLoan) {
+      const blockedReason = "You have an active loan. Please repay it to unlock a new credit limit.";
+      
+      await db.collection("users").updateOne(
+        { email },
+        { 
+          $set: { 
+            loanLimit: 0, 
+            limitReason: blockedReason,
+            lastAiUpdate: new Date() 
+          } 
+        }
+      );
+
+      return Response.json({ 
+        success: true, 
+        limit: 0, 
+        reason: blockedReason 
+      });
+    }
+
+    // 3. SAFE DATA GATHERING (Only runs if no active loan)
     const allHistory = [...(user.history || []), ...(user.wallethistory || [])];
     
     const stats = allHistory.reduce((acc: any, tx: any) => {
@@ -27,12 +54,12 @@ export async function POST(req: Request) {
       return acc;
     }, { inflow: 0, outflow: 0 });
 
-    // GROQ AI LOGIC
+    // 4. GROQ AI LOGIC
     const completion = await groq.chat.completions.create({
       messages: [
         {
           role: "system",
-          content: `You are NovaPay's AI Risk Engine. Return ONLY JSON: { \"limit\": number, \"reason\": \"string\" }`
+          content: `You are NovaPay's AI Risk Engine. Return ONLY JSON: { "limit": number, "reason": "string" }`
         },
         {
           role: "user",
@@ -45,19 +72,23 @@ export async function POST(req: Request) {
 
     const aiResult = JSON.parse(completion.choices[0].message.content || "{}");
 
-    // SAVE TO DB
-    const updateResult = await db.collection("users").updateOne(
+    // 5. SAVE TO DB
+    await db.collection("users").updateOne(
       { email },
       { 
         $set: { 
-          loanLimit: aiResult.limit || 500, // Fallback to 500 if AI fails
+          loanLimit: aiResult.limit || 500, 
           limitReason: aiResult.reason,
           lastAiUpdate: new Date()
         } 
       }
     );
 
-    return Response.json({ success: true, limit: aiResult.limit,reason: aiResult.reason });
+    return Response.json({ 
+      success: true, 
+      limit: aiResult.limit, 
+      reason: aiResult.reason 
+    });
 
   } catch (error: any) {
     console.error("AI Route Error:", error);
