@@ -7,7 +7,7 @@ import {
   Clock, 
   Loader2,
   Banknote,
-  MessageSquare // Reason icon er jonno
+  MessageSquare // Reason icon 
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 
@@ -21,7 +21,7 @@ export default function WithdrawalsPage() {
       const res = await fetch('/api/admin/withdrawals');
       const data = await res.json();
       if (data.success) {
-        // logic: Pending gulo upore rakhbe, Approved/Rejected niche
+       
         const sortedData = data.data.sort((a, b) => {
           if (a.status === 'pending' && b.status !== 'pending') return -1;
           if (a.status !== 'pending' && b.status === 'pending') return 1;
@@ -40,7 +40,7 @@ export default function WithdrawalsPage() {
     fetchWithdrawals();
   }, []);
 
-  // Full Note show korar function
+  // Full Note show 
   const showFullNote = (note: string) => {
     Swal.fire({
       title: 'Withdrawal Reason',
@@ -107,6 +107,9 @@ export default function WithdrawalsPage() {
     }
   };
 
+  
+  
+
   return (
     <div className="min-h-screen bg-[#F0F7FF] dark:bg-[#050B14] p-6 lg:p-10 font-sans">
       
@@ -167,9 +170,7 @@ export default function WithdrawalsPage() {
                         onClick={() => showFullNote(req.reason)} 
                         className="flex flex-col gap-1 cursor-pointer hover:opacity-70 transition-opacity"
                       >
-                        <span className="text-[10px] w-fit px-2 py-0.5 rounded bg-blue-500/10 text-blue-500 font-bold uppercase tracking-tight">
-                          {req.goalName}
-                        </span>
+                    
                         <p className="text-sm text-slate-600 dark:text-slate-300 italic truncate max-w-[180px] flex items-center gap-2">
                           <MessageSquare size={12} /> "{req.reason}"
                         </p>
