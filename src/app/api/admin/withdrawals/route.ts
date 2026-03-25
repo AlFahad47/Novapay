@@ -46,51 +46,32 @@ export async function GET() {
 
 export async function PATCH(req: Request) {
   try {
-    const { status, goalId, email } = await req.json();
-
-    if (!status || !goalId || !email) {
-      return NextResponse.json(
-        { success: false, message: "Missing required fields" }, 
-        { status: 400 }
-      );
-    }
-
+    const { status, goalId, email, amount } = await req.json();
     const client = await clientPromise;
     const db = client.db("novapay_db");
 
-    // 1. Withdrawal Request collection update (Sob somoy hobe, status approved hok ba rejected)
-    const withdrawUpdate = await db.collection("withdraw-microsaving").updateOne(
-      { goalId: goalId, email: email }, 
-      { $set: { status: status, processedAt: new Date() } }
-    );
-
-    if (withdrawUpdate.matchedCount === 0) {
-      return NextResponse.json(
-        { success: false, message: "Request not found" }, 
-        { status: 404 }
-      );
+    let finalAmount = Number(amount);
+    
+    // Status approved 3% fee
+    if (status === "approved") {
+      const fee = finalAmount * 0.03;
+      finalAmount = finalAmount - fee;
     }
 
-    // 2. Main User collection update (Approved ba Rejected - dui khetrei user dashboard update hobe)
-    // Age shudhu status === 'approved' chilo, ekhon status check ta remove kore diyechi
-    // jate 'rejected' pathaleo database-e update hoy.
-    
+    // Update withdrawal collection with net amount
+    await db.collection("withdraw-microsaving").updateOne(
+      { goalId, email },
+      { $set: { status, netAmount: finalAmount, processedAt: new Date() } }
+    );
+
+    // Update user's microsaving status
     await db.collection("users").updateOne(
-      { email: email, "microsaving.id": goalId }, 
-      { 
-        $set: { "microsaving.$.status": status } // dynamic bhabe approved/rejected bose jabe
-      }
+      { email, "microsaving.id": goalId },
+      { $set: { "microsaving.$.status": status } }
     );
 
-    return NextResponse.json({ 
-      success: true, 
-      message: `Status updated to ${status} in both collections!` 
-    });
-
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, message: error.message }, 
-      { status: 500 }
-    );
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ success: false }, { status: 500 });
   }
 }
