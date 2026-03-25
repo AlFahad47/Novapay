@@ -34,6 +34,7 @@ export async function GET() {
 
   return NextResponse.json({
     balance: user?.balance || 0,
+    loanLimit: user?.loanLimit || 0,
     pendingRequests,
     notifications,
     transactions: transactions.map((t) => ({
