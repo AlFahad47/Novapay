@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Target, CalendarDays, Wallet, X, Sparkles, TrendingUp, AlertCircle, Info, Plus, BellRing, ChevronRight, ArrowUpRight, HandCoins, MessageSquare, CheckCircle2 } from 'lucide-react';
 import { useSession } from "next-auth/react";
 import Swal from 'sweetalert2';
+import T from "@/components/T";
 
 export default function SmartSavingGoal() {
   const { data: session } = useSession();
@@ -259,19 +260,19 @@ export default function SmartSavingGoal() {
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex justify-between items-center mb-12">
         <div>
           <h1 className="text-4xl font-black tracking-tight bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-white dark:to-blue-400 bg-clip-text text-transparent">
-            NovaPay Savings
+            <T>NovaPay Savings</T>
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Smart micro-savings for your future goals.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium"><T>Smart micro-savings for your future goals.</T></p>
         </div>
         <button onClick={() => setIsOpen(true)} className="bg-blue-600 px-6 py-3 rounded-2xl font-bold flex items-center gap-2 text-white hover:bg-blue-500 hover:scale-105 transition-all shadow-lg shadow-blue-600/25 active:scale-95">
-          <Plus size={20} /> New Goal
+          <Plus size={20} /> <T>New Goal</T>
         </button>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {goals.length === 0 ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-full text-center p-20 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[3rem]">
-            <p className="text-slate-400 font-medium">No active goals found. Start by creating one!</p>
+            <p className="text-slate-400 font-medium"><T>No active goals found. Start by creating one!</T></p>
           </motion.div>
         ) : (
           goals.map((goal, index) => {
@@ -309,11 +310,11 @@ export default function SmartSavingGoal() {
                 </div>
 
                 <h3 className="text-xl font-bold mb-1 truncate">{goal.goalName}</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mb-5 font-medium">Target: {currencySymbol}{goal.targetAmount.toLocaleString()}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-5 font-medium"><T>Target:</T> {currencySymbol}{goal.targetAmount.toLocaleString()}</p>
                 
                 <div className="space-y-3">
                   <div className="flex justify-between text-xs font-bold dark:text-slate-300">
-                    <span>Progress</span>
+                    <span><T>Progress</T></span>
                     <span className={isCompleted ? "text-green-500" : ""}>{progress}%</span>
                   </div>
                   <div className="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
@@ -326,7 +327,7 @@ export default function SmartSavingGoal() {
                 </div>
 
                 <div className="mt-6 flex items-center text-blue-600 dark:text-blue-400 text-sm font-bold">
-                  Manage Goal <ChevronRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+                  <T>Manage Goal</T> <ChevronRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
                 </div>
               </motion.div>
             );
@@ -343,7 +344,7 @@ export default function SmartSavingGoal() {
               <div className="space-y-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-3 bg-blue-500/10 rounded-2xl text-blue-600"><Sparkles /></div>
-                  <h2 className="text-2xl font-bold dark:text-white">Setup Goal</h2>
+                  <h2 className="text-2xl font-bold dark:text-white"><T>Setup Goal</T></h2>
                 </div>
                 <div className="space-y-4">
                   <InputField label="Goal Name" icon={<Target size={16}/>} placeholder="e.g. Europe Trip" value={goalName} onChange={(e:any) => setGoalName(e.target.value)} />
@@ -367,9 +368,9 @@ export default function SmartSavingGoal() {
               </div>
               <div className="bg-blue-50/50 dark:bg-slate-800/30 border border-blue-100 dark:border-slate-700/50 rounded-[2.5rem] p-8 flex flex-col justify-between">
                 <div className="space-y-6">
-                  <h3 className="text-xl font-bold flex items-center gap-2 dark:text-white"><Info size={20} className="text-blue-500" /> AI Plan</h3>
+                  <h3 className="text-xl font-bold flex items-center gap-2 dark:text-white"><Info size={20} className="text-blue-500" /> <T>AI Plan</T></h3>
                   <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-blue-600/10">
-                    <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Monthly Deposit</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm font-medium"><T>Monthly Deposit</T></p>
                     <p className="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">{currencySymbol}{monthlySavingNeeded.toLocaleString()}</p>
                   </div>
                   <div className={`p-5 rounded-2xl text-xs font-semibold flex gap-3 items-start ${isFeasible ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
@@ -378,7 +379,7 @@ export default function SmartSavingGoal() {
                   </div>
                 </div>
                 <motion.button whileTap={{ scale: 0.98 }} onClick={handleConfirmGoal} disabled={loading || !isFeasible || targetAmount <= 0} className={`w-full py-5 rounded-2xl font-bold text-lg mt-8 shadow-xl transition-all ${loading || !isFeasible ? "bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-500 active:shadow-inner"}`}>
-                  {loading ? "Saving Plan..." : `Confirm Goal for ${savingDay}th`}
+                  {loading ? <T>Saving Plan...</T> : <><T>Confirm Goal for</T> {savingDay}th</>}
                 </motion.button>
               </div>
             </motion.div>
@@ -409,7 +410,7 @@ export default function SmartSavingGoal() {
 
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                    <span className="text-slate-500 dark:text-slate-400 font-medium">Total Saved</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-medium"><T>Total Saved</T></span>
                     <span className="font-bold text-green-600 dark:text-green-500">{currencySymbol}{(selectedGoal.currentSaved || 0).toLocaleString()} / {currencySymbol}{selectedGoal.targetAmount.toLocaleString()}</span>
                 </div>
                 
@@ -426,7 +427,7 @@ export default function SmartSavingGoal() {
                 </div>
 
                 <div className="flex justify-between px-5 py-1">
-                    <span className="text-slate-500 dark:text-slate-400 font-medium">Auto-Remind</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-medium"><T>Auto-Remind</T></span>
                     <span className="font-bold dark:text-white">Every {selectedGoal.savingDay}th</span>
                 </div>
               </div>
@@ -438,7 +439,7 @@ export default function SmartSavingGoal() {
                   onClick={() => handleCashoutRewards(selectedGoal)}
                     className="w-full py-4.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all bg-green-600 text-white hover:bg-green-500 shadow-lg shadow-green-600/20 py-4"
                   >
-                    <HandCoins size={18}/> Cashout Rewards
+                    <HandCoins size={18}/> <T>Cashout Rewards</T>
                   </button>
                 ) : (
                   <>
@@ -448,7 +449,7 @@ export default function SmartSavingGoal() {
                         onClick={() => handleTransferToWallet(selectedGoal)}
                         className="w-full py-4 rounded-2xl font-bold bg-green-600 text-white hover:bg-green-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-green-600/20"
                       >
-                        <HandCoins size={18}/> Transfer to NovaPay Wallet
+                        <HandCoins size={18}/> <T>Transfer to NovaPay Wallet</T>
                       </button>
                     ) : (
                       <button 
@@ -456,7 +457,7 @@ export default function SmartSavingGoal() {
                         disabled={selectedGoal.status === "pending-withdrawal"}
                         className={`w-full py-4 rounded-2xl font-bold border flex items-center justify-center gap-2 transition-all ${selectedGoal.status === "pending-withdrawal" ? "bg-slate-100 dark:bg-slate-800 text-slate-400 border-transparent" : "bg-amber-500/5 text-amber-600 border-amber-500/20 hover:bg-amber-500/10"}`}
                       >
-                        <ArrowUpRight size={18}/> {selectedGoal.status === "pending-withdrawal" ? "Withdrawal Pending" : "Request Early Withdrawal"}
+                        <ArrowUpRight size={18}/> {selectedGoal.status === "pending-withdrawal" ? <T>Withdrawal Pending</T> : <T>Request Early Withdrawal</T>}
                       </button>
                     )}
                     
@@ -465,7 +466,7 @@ export default function SmartSavingGoal() {
                       disabled={true}
                       className="w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
                     >
-                      <HandCoins size={18}/> Cashout Rewards
+                      <HandCoins size={18}/> <T>Cashout Rewards</T>
                     </button>
                   </>
                 )}
@@ -481,7 +482,7 @@ export default function SmartSavingGoal() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsWithdrawOpen(false)} className="fixed inset-0 bg-slate-900/80 backdrop-blur-md" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative w-full max-w-md bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-2xl">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold flex items-center gap-2 dark:text-white"><AlertCircle className="text-amber-500" /> Withdrawal Request</h3>
+                <h3 className="text-xl font-bold flex items-center gap-2 dark:text-white"><AlertCircle className="text-amber-500" /> <T>Withdrawal Request</T></h3>
                 <button onClick={() => setIsWithdrawOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white"><X size={20}/></button>
               </div>
               <div className="space-y-4">
@@ -491,7 +492,7 @@ export default function SmartSavingGoal() {
                     <textarea value={withdrawReason} onChange={(e) => setWithdrawReason(e.target.value)} placeholder="Why are you withdrawing early?" className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-5 py-4 text-slate-800 dark:text-white focus:outline-none focus:border-amber-500/50 min-h-[120px] resize-none transition-all" />
                 </div>
                 <button onClick={handleWithdrawSubmit} disabled={withdrawLoading || !withdrawReason} className="w-full py-4 rounded-2xl font-bold bg-amber-600 text-white hover:bg-amber-500 transition-all shadow-lg shadow-amber-600/20 disabled:bg-slate-400 dark:disabled:bg-slate-700">
-                  {withdrawLoading ? "Submitting Request..." : "Submit Request"}
+                  {withdrawLoading ? <T>Submitting Request...</T> : <T>Submit Request</T>}
                 </button>
               </div>
             </motion.div>
@@ -505,7 +506,7 @@ export default function SmartSavingGoal() {
 function InputField({ label, icon, ...props }: any) {
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2 px-1">{icon} {label}</label>
+      <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2 px-1">{icon} <T>{label}</T></label>
       <input {...props} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-5 py-4 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all placeholder:text-slate-400/70" />
     </div>
   );

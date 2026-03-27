@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 import Swal from "sweetalert2";
+import T from "@/components/T";
 
 const WalletAccountPage = () => {
   const { data: session } = useSession();
@@ -169,16 +170,16 @@ const WalletAccountPage = () => {
              <h1 className="text-2xl font-black tracking-tight leading-none bg-gradient-to-r from-slate-900 to-slate-500 dark:from-white dark:to-slate-400 bg-clip-text text-transparent">
                 Wallet<span className="text-blue-500">Pro</span>
               </h1>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Liquid Assets & Real-Time Flow</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1"><T>Liquid Assets & Real-Time Flow</T></p>
             </div>
           </div>
 
           <div className="flex gap-3">
              <button onClick={() => setRecordType('income')} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-white/5 text-xs font-black rounded-2xl shadow-sm border border-slate-200 dark:border-white/5 hover:border-blue-500/50 transition-all">
-               <Plus size={14} className="text-blue-500" /> Income
+               <Plus size={14} className="text-blue-500" /> <T>Income</T>
              </button>
              <button onClick={() => setRecordType('expense')} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-black text-xs font-black rounded-2xl shadow-lg transition-all active:scale-95">
-               <ArrowUpRight size={14} /> Expense
+               <ArrowUpRight size={14} /> <T>Expense</T>
              </button>
           </div>
         </header>
@@ -209,14 +210,14 @@ const WalletAccountPage = () => {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                   <span className="text-[10px] font-black text-slate-400 uppercase">Retention</span>
+                   <span className="text-[10px] font-black text-slate-400 uppercase"><T>Retention</T></span>
                    <span className="text-4xl font-black">{wealthStats.retention}%</span>
                 </div>
               </div>
 
               <div className="space-y-6 pl-0 md:pl-8 mt-6 md:mt-0">
                 <div>
-                  <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Available Pocket Cash</h2>
+                  <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1"><T>Available Pocket Cash</T></h2>
                   <p className="text-5xl font-black tracking-tighter tabular-nums">
                     {currency}{dbUser?.bankBalance?.toLocaleString() || "0"}
                   </p>
@@ -224,11 +225,11 @@ const WalletAccountPage = () => {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-                    <p className="text-[9px] font-black text-blue-500 uppercase mb-1">Total In</p>
+                    <p className="text-[9px] font-black text-blue-500 uppercase mb-1"><T>Total In</T></p>
                     <p className="text-lg font-bold">{currency}{wealthStats.totalIn.toLocaleString()}</p>
                   </div>
                   <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-                    <p className="text-[9px] font-black text-rose-500 uppercase mb-1">Total Out</p>
+                    <p className="text-[9px] font-black text-rose-500 uppercase mb-1"><T>Total Out</T></p>
                     <p className="text-lg font-bold">{currency}{wealthStats.totalOut.toLocaleString()}</p>
                   </div>
                 </div>
@@ -246,7 +247,7 @@ const WalletAccountPage = () => {
                     {aiAdvice && <span className="bg-white/20 px-2 py-0.5 rounded text-[8px]">AI INSIGHT</span>}
                  </h4>
                  <p className="text-sm opacity-90 font-medium">
-                    {isLoadingAI ? "WalletPro AI is analyzing your pockets..." : (aiAdvice || wealthStats.suggestion.text)}
+                    {isLoadingAI ? <T>WalletPro AI is analyzing your pockets...</T> : (aiAdvice || <T>{wealthStats.suggestion.text}</T>)}
                  </p>
                </div>
                <div className="absolute -right-4 -bottom-4 opacity-10">
@@ -262,7 +263,7 @@ const WalletAccountPage = () => {
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-2">
                         <History size={16} className="text-indigo-500" />
-                        <h3 className="text-[11px] font-black uppercase tracking-widest">History</h3>
+                        <h3 className="text-[11px] font-black uppercase tracking-widest"><T>History</T></h3>
                     </div>
                     <div className="flex gap-1">
                         <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-20 transition-all"><ChevronLeft size={16}/></button>
@@ -301,7 +302,7 @@ const WalletAccountPage = () => {
                     {paginatedHistory.length === 0 && (
                         <div className="py-20 text-center opacity-20">
                             <List size={40} className="mx-auto mb-2" />
-                            <p className="text-xs font-bold uppercase">No records found</p>
+                            <p className="text-xs font-bold uppercase"><T>No records found</T></p>
                         </div>
                     )}
                 </div>
@@ -317,7 +318,7 @@ const WalletAccountPage = () => {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setRecordType(null)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" />
             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-sm bg-white dark:bg-[#0F172A] rounded-[3rem] p-10 shadow-2xl">
               <div className="flex justify-between items-center mb-10">
-                <h2 className="text-xl font-black capitalize">Record {recordType}</h2>
+                <h2 className="text-xl font-black capitalize"><T>Record</T> {recordType}</h2>
                 <button onClick={() => setRecordType(null)} className="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full transition-colors"><X size={20}/></button>
               </div>
               <div className="space-y-6">
@@ -327,7 +328,7 @@ const WalletAccountPage = () => {
                 </div>
                 <input value={note} onChange={(e) => setNote(e.target.value)} type="text" placeholder="What was this for?" className="w-full bg-slate-50 dark:bg-white/5 rounded-2xl p-5 outline-none font-bold text-sm text-center border-2 border-transparent focus:border-indigo-500 transition-all" />
                 <button onClick={handleRecord} disabled={isSubmitting} className={`w-full py-5 rounded-2xl text-white font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-xl ${recordType === 'income' ? 'bg-indigo-600 shadow-indigo-500/30' : 'bg-slate-900 dark:bg-white dark:text-black'}`}>
-                  {isSubmitting ? "Processing..." : `Confirm ${recordType}`}
+                  {isSubmitting ? <T>Processing...</T> : <><T>Confirm</T> {recordType}</>}
                 </button>
               </div>
             </motion.div>

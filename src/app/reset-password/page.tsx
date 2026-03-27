@@ -5,6 +5,7 @@ import { Lock, Eye, EyeOff, ArrowLeft, KeyRound } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import T from "@/components/T";
 
 // Create a component that uses useSearchParams
 const ResetPasswordForm = () => {
@@ -88,10 +89,10 @@ const ResetPasswordForm = () => {
             <KeyRound className="text-white" size={28} strokeWidth={2.5} />
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-[#0F172A] dark:text-white mb-2 tracking-tight transition-colors">
-            Set New Password
+            <T>Set New Password</T>
           </h1>
           <p className="text-sm font-medium text-[#64748B] dark:text-slate-400">
-            Please enter your new password below.
+            <T>Please enter your new password below.</T>
           </p>
         </div>
 
@@ -99,7 +100,7 @@ const ResetPasswordForm = () => {
           {/* Email (readonly / prepopulated) */}
           <div className="relative">
             <label className="block text-xs font-bold text-[#2C64FF] dark:text-[#4DA1FF] mb-2 uppercase tracking-widest">
-              Email Address
+              <T>Email Address</T>
             </label>
             <input
               type="email"
@@ -114,7 +115,7 @@ const ResetPasswordForm = () => {
           {/* Reset Token */}
           <div className="relative">
             <label className="block text-xs font-bold text-[#2C64FF] dark:text-[#4DA1FF] mb-2 uppercase tracking-widest">
-              Reset Code (6-Digit)
+              <T>Reset Code (6-Digit)</T>
             </label>
             <input
               type="text"
@@ -130,7 +131,7 @@ const ResetPasswordForm = () => {
           {/* New Password */}
           <div className="relative">
             <label className="block text-xs font-bold text-[#2C64FF] dark:text-[#4DA1FF] mb-2 uppercase tracking-widest">
-              New Password
+              <T>New Password</T>
             </label>
             <div className="relative border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-transparent focus-within:border-[#2C64FF] dark:focus-within:border-[#4DA1FF] focus-within:ring-4 focus-within:ring-[#2C64FF]/10 transition-all">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -175,7 +176,7 @@ const ResetPasswordForm = () => {
           {/* Confirm Password */}
           <div className="relative">
             <label className="block text-xs font-bold text-[#2C64FF] dark:text-[#4DA1FF] mb-2 uppercase tracking-widest">
-              Confirm Password
+              <T>Confirm Password</T>
             </label>
             <div className="relative border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-transparent focus-within:border-[#2C64FF] dark:focus-within:border-[#4DA1FF] focus-within:ring-4 focus-within:ring-[#2C64FF]/10 transition-all">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -205,7 +206,7 @@ const ResetPasswordForm = () => {
                   Saving...
                 </>
               ) : (
-                "Reset Password"
+                <T>Reset Password</T>
               )}
             </span>
           </button>
@@ -218,7 +219,7 @@ const ResetPasswordForm = () => {
             className="inline-flex items-center gap-2 text-sm font-bold text-[#64748B] dark:text-slate-400 hover:text-[#2C64FF] dark:hover:text-[#4DA1FF] transition-colors group"
           >
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            Back to Sign In
+            <T>Back to Sign In</T>
           </Link>
         </div>
       </div>
