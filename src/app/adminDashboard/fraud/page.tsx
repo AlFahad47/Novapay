@@ -9,6 +9,8 @@ type User = {
   email: string;
   createdAt?: string;
 
+  image?: string; // ✅ added
+
   kycStatus?: string;
   accountStatus?: string;
 
@@ -47,7 +49,6 @@ export default function FraudUsersPage() {
     fetchFraudUsers();
   }, []);
 
-  // 🔥 FILTER + SORT
   const filteredUsers = useMemo(() => {
     return users
       .filter(
@@ -59,9 +60,7 @@ export default function FraudUsersPage() {
         const dateA = new Date(a.createdAt || 0).getTime();
         const dateB = new Date(b.createdAt || 0).getTime();
 
-        return sortOrder === "asc"
-          ? dateB - dateA // New → Old
-          : dateA - dateB; // Old → New
+        return sortOrder === "asc" ? dateB - dateA : dateA - dateB;
       });
   }, [users, search, sortOrder]);
 
@@ -90,7 +89,6 @@ export default function FraudUsersPage() {
           </p>
         </div>
 
-        {/* 🔍 SEARCH + SORT */}
         <div className="flex gap-3">
           <input
             type="text"
@@ -135,9 +133,24 @@ export default function FraudUsersPage() {
                   onClick={() => setSelectedUser(user)}
                   className="cursor-pointer border-b border-gray-100 dark:border-gray-800 hover:bg-red-50/60 dark:hover:bg-red-900/20 transition"
                 >
-                  <td className="p-3 font-medium text-gray-900 dark:text-gray-100">
-                    {user.name}
+                  {/* ✅ NAME WITH IMAGE */}
+                  <td className="p-3 flex items-center gap-3">
+                    {user.image ? (
+                      <img
+                        src={user.image}
+                        alt={user.name}
+                        className="w-9 h-9 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-r from-red-600 to-pink-500 flex items-center justify-center text-white text-sm font-bold">
+                        {user.name.charAt(0)}
+                      </div>
+                    )}
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      {user.name}
+                    </span>
                   </td>
+
                   <td className="p-3 text-gray-600 dark:text-gray-400">
                     {user.email}
                   </td>
@@ -160,11 +173,11 @@ export default function FraudUsersPage() {
         </div>
       </div>
 
-      {/* MODAL (UNCHANGED) */}
+      {/* ✅ MODAL (MATCHED STYLE) */}
       <AnimatePresence>
         {selectedUser && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
             onClick={() => setSelectedUser(null)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -172,49 +185,61 @@ export default function FraudUsersPage() {
           >
             <motion.div
               onClick={(e) => e.stopPropagation()}
-              initial={{ scale: 0.7, opacity: 0, y: 60 }}
+              initial={{ scale: 0.6, opacity: 0, y: 80 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.7, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 140 }}
-              className="w-[92%] max-w-md rounded-3xl bg-white dark:bg-[#0b1220] p-6 shadow-2xl border border-gray-200 dark:border-gray-800"
+              exit={{ scale: 0.6, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 120 }}
+              className="w-[95%] max-w-lg rounded-3xl bg-white dark:bg-[#0c1a2b] shadow-2xl p-6"
             >
-              <h2 className="text-xl font-bold text-red-600 mb-3">
-                Fraud Details
-              </h2>
+              <div className="text-center mb-5">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="h-20 w-20 mx-auto rounded-full overflow-hidden bg-gradient-to-r from-red-600 to-pink-500 flex items-center justify-center text-white text-2xl font-bold"
+                >
+                  {selectedUser.image ? (
+                    <img
+                      src={selectedUser.image}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    selectedUser.name.charAt(0)
+                  )}
+                </motion.div>
 
-              <div className="space-y-2 text-sm">
-                <p>
-                  <b>Name:</b> {selectedUser.name}
-                </p>
-                <p>
-                  <b>Email:</b> {selectedUser.email}
-                </p>
-                <p>
-                  <b>Phone:</b> {selectedUser.phone || "N/A"}
-                </p>
-                <p>
-                  <b>NID:</b> {selectedUser.nid || "N/A"}
-                </p>
-                <p>
-                  <b>Status:</b> FRAUD
-                </p>
+                <h2 className="mt-3 text-xl font-bold">{selectedUser.name}</h2>
+                <p className="text-sm text-gray-500">{selectedUser.email}</p>
+              </div>
 
-                <p>
-                  <b>Wallet:</b>{" "}
-                  {selectedUser.fraudInfo?.walletFrozen
-                    ? "Frozen ❌"
-                    : "Active ✅"}
-                </p>
-
-                <p>
-                  <b>Reason:</b>{" "}
-                  {selectedUser.fraudInfo?.reason || "Not provided"}
-                </p>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <Info label="Phone" value={selectedUser.phone || "N/A"} />
+                <Info label="NID" value={selectedUser.nid || "N/A"} />
+                <Info label="Status" value="FRAUD" />
+                {/* <Info
+                  label="Wallet"
+                  value={
+                    selectedUser.fraudInfo?.walletFrozen
+                      ? "Frozen ❌"
+                      : "Active ✅"
+                  }
+                /> */}
+                <Info
+                  label="Reason"
+                  value={selectedUser.fraudInfo?.reason || "Not provided"}
+                />
+                <Info
+                  label="Created"
+                  value={
+                    selectedUser.createdAt
+                      ? new Date(selectedUser.createdAt).toLocaleString()
+                      : "N/A"
+                  }
+                />
               </div>
 
               <button
                 onClick={() => setSelectedUser(null)}
-                className="mt-4 w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded"
+                className="mt-6 w-full py-2 rounded-xl bg-gradient-to-r from-red-600 to-pink-500 text-white"
               >
                 Close
               </button>
@@ -223,5 +248,17 @@ export default function FraudUsersPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function Info({ label, value }: { label: string; value: string }) {
+  return (
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      className="bg-gray-50 dark:bg-[#08111f] p-3 rounded-lg"
+    >
+      <p className="text-xs text-gray-500">{label}</p>
+      <p className="font-medium break-words">{value}</p>
+    </motion.div>
   );
 }

@@ -8,10 +8,26 @@ export async function GET() {
 
     const usersCollection = db.collection("users");
 
-    // get only approved / accepted users
+    // ✅ Match ANY verified condition dynamically
     const users = await usersCollection
       .find({
-        kycStatus: { $in: ["approved", "Accepted"] },
+        $or: [
+          {
+            "kycDetails.kycStatus": {
+              $in: ["approved", "accepted", "Approved", "Accepted"],
+            },
+          },
+          {
+            kycStatus: {
+              $in: ["approved", "accepted", "Approved", "Accepted"],
+            },
+          },
+          {
+            status: {
+              $in: ["approved", "accepted", "Approved", "Accepted"],
+            },
+          },
+        ],
       })
       .project({
         password: 0, // hide password
@@ -24,7 +40,7 @@ export async function GET() {
 
     return NextResponse.json(
       { error: "Failed to fetch users" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

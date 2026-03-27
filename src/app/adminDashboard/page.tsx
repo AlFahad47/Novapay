@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import DashboardHome from "@/components/dashboard/DashboardHome";
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
   ResponsiveContainer,
@@ -27,13 +28,23 @@ type Transaction = {
   date: string;
 };
 
+type User = {
+  name: string;
+  email: string;
+  image?: string;
+};
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
 
   const [stats, setStats] = useState<Stat[]>([]);
   const [revenue, setRevenue] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -41,9 +52,13 @@ export default function AdminDashboard() {
         const res = await fetch("/api/admin/stats");
         const data = await res.json();
 
+        const userRes = await fetch("/api/admin/users");
+        const userData = await userRes.json();
+
         setStats(data.stats || []);
         setRevenue(data.revenue || []);
         setTransactions(data.transactions || []);
+        setUsers(userData.users || []);
       } catch (err) {
         console.error("Admin dashboard error:", err);
       } finally {
@@ -64,13 +79,15 @@ export default function AdminDashboard() {
 
   const role = session?.user?.role ?? "User";
 
+  const getUserInfo = (txUser: string) => {
+    return users.find((u) => u.email === txUser || u.name === txUser);
+  };
+
   return (
     <div className="space-y-8 w-full">
-      {/* Dashboard Home */}
       <DashboardHome role={role as "Admin"} />
 
-      {/* Chart */}
-
+      {/* ✅ FIXED Monthly Revenue */}
       <div className="bg-white dark:bg-[#0c1a2b] p-4 sm:p-6 lg:p-8 rounded-xl shadow border border-gray-200 dark:border-gray-700 w-full">
         <h3 className="font-semibold mb-6 text-gray-800 dark:text-gray-200 text-lg">
           Monthly Revenue
@@ -148,7 +165,6 @@ export default function AdminDashboard() {
       </div>
 
       {/* Transactions */}
-
       <div className="bg-white dark:bg-[#0c1a2b] p-4 sm:p-6 lg:p-8 rounded-xl shadow border border-gray-200 dark:border-gray-700 w-full">
         <h3 className="font-semibold mb-6 text-gray-800 dark:text-gray-200 text-lg">
           Recent Transactions
@@ -166,47 +182,116 @@ export default function AdminDashboard() {
             </thead>
 
             <tbody>
-              {transactions.map((tx) => (
-                <tr
-                  key={tx.id}
-                  className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-[#111c2d]"
-                >
-                  <td className="py-3 font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">
-                    {tx.user}
-                  </td>
+              {transactions.map((tx) => {
+                const user = getUserInfo(tx.user);
 
-                  <td className="font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                    ${tx.amount}
-                  </td>
+                return (
+                  <tr
+                    key={tx.id}
+                    onClick={() => {
+                      setSelectedTx(tx);
+                      setIsOpen(true);
+                    }}
+                    className="cursor-pointer border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-[#111c2d]"
+                  >
+                    <td className="py-3 flex items-center gap-3">
+                      {user?.image ? (
+                        <img
+                          src={user.image}
+                          className="w-9 h-9 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-white text-sm font-bold">
+                          {(user?.name || tx.user).charAt(0)}
+                        </div>
+                      )}
 
-                  <td className="whitespace-nowrap">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium
-                ${
-                  tx.status === "completed"
-                    ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
-                    : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400"
-                }`}
-                    >
-                      {tx.status}
-                    </span>
-                  </td>
+                      <div>
+                        <p className="font-medium text-gray-800 dark:text-gray-200">
+                          {user?.name || tx.user}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {user?.email || "No email"}
+                        </p>
+                      </div>
+                    </td>
 
-                  <td className="text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                    {tx.date}
-                  </td>
-                </tr>
-              ))}
+                    <td className="font-semibold">${tx.amount}</td>
+
+                    <td>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          tx.status === "completed"
+                            ? "bg-green-100 text-green-600"
+                            : "bg-yellow-100 text-yellow-600"
+                        }`}
+                      >
+                        {tx.status}
+                      </span>
+                    </td>
+
+                    <td>{tx.date}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 
           {transactions.length === 0 && (
-            <p className="text-center text-gray-500 dark:text-gray-400 py-6">
+            <p className="text-center text-gray-500 py-6">
               No transactions yet
             </p>
           )}
         </div>
       </div>
+
+      {/* Modal */}
+      <AnimatePresence>
+        {isOpen && selectedTx && (
+          <motion.div
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+            onClick={() => setIsOpen(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white dark:bg-[#0c1a2b] p-6 rounded-2xl w-[90%] max-w-md"
+              initial={{ scale: 0.7 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.7 }}
+            >
+              <h2 className="text-xl font-bold mb-4">Transaction Details</h2>
+
+              <div className="space-y-2 text-sm">
+                <p>
+                  <strong>User:</strong> {selectedTx.user}
+                </p>
+                <p>
+                  <strong>Amount:</strong> ${selectedTx.amount}
+                </p>
+                <p>
+                  <strong>Status:</strong> {selectedTx.status}
+                </p>
+                <p>
+                  <strong>Date:</strong> {selectedTx.date}
+                </p>
+                <p>
+                  <strong>ID:</strong> {selectedTx.id}
+                </p>
+              </div>
+
+              <button
+                onClick={() => setIsOpen(false)}
+                className="mt-5 w-full bg-blue-600 text-white py-2 rounded-xl"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
