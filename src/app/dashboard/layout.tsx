@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react"; // ✅ ADDED signOut
 import type { SubscriptionStatusResponse } from "@/types/subscription";
+import { useTranslations } from "next-intl";
 import {
   LayoutDashboard,
   CreditCard,
@@ -22,17 +23,6 @@ import {
   Heart,
 } from "lucide-react";
 
-const sidebarItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: CreditCard, label: "Transactions", path: "/dashboard/transactions" },
-  { icon: BarChart3, label: "Analytics", path: "/dashboard/analytics" },
-  { icon: FileCheck, label: "KYC", path: "/dashboard/kyc" },
-  
-{ icon: Crown, label: "Subscription", path: "dashboard/subscription" },
-  { icon: MessageSquare, label: "Support", path: "/chat/support" },
-  { icon: Settings, label: "Settings", path: "/dashboard/settings" },
-];
-
 export default function DashboardLayout({
   children,
 }: {
@@ -41,6 +31,18 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { data: session, status } = useSession();
+  const t = useTranslations("sidebar");
+  const td = useTranslations("dashboard");
+
+  const sidebarItems = [
+    { icon: LayoutDashboard, label: t("dashboard"), path: "/dashboard" },
+    { icon: CreditCard, label: t("transactions"), path: "/dashboard/transactions" },
+    { icon: BarChart3, label: t("analytics"), path: "/dashboard/analytics" },
+    { icon: FileCheck, label: t("kyc"), path: "/dashboard/kyc" },
+    { icon: Crown, label: t("subscription"), path: "dashboard/subscription" },
+    { icon: MessageSquare, label: t("support"), path: "/chat/support" },
+    { icon: Settings, label: t("settings"), path: "/dashboard/settings" },
+  ];
 
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -129,7 +131,7 @@ export default function DashboardLayout({
   if (status === "loading") {
     return (
       <div className="h-screen flex items-center justify-center text-gray-600 dark:text-gray-300">
-        Loading dashboard...
+        {td("loading")}
       </div>
     );
   }
@@ -219,7 +221,7 @@ export default function DashboardLayout({
           >
             <Heart size={20} />
             {!desktopCollapsed && (
-              <span className="text-sm font-medium">Donate</span>
+              <span className="text-sm font-medium">{t("donate")}</span>
             )}
           </Link>
         )}
@@ -300,16 +302,16 @@ export default function DashboardLayout({
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-700 px-6 py-2 flex items-center gap-2 text-sm text-yellow-800 dark:text-yellow-300">
             <Crown size={14} className="text-yellow-500 shrink-0" />
             <span>
-              Your Elite subscription expires in{" "}
+              {td("subscription_expiry")}{" "}
               <strong>
-                {daysLeft} day{daysLeft !== 1 ? "s" : ""}
+                {daysLeft} {daysLeft !== 1 ? td("days") : td("day")}
               </strong>
               .{" "}
               <Link
                 href="/dashboard/subscription"
                 className="underline font-medium"
               >
-                Renew now
+                {td("renew_now")}
               </Link>
             </span>
           </div>
