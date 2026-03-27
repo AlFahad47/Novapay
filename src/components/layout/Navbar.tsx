@@ -11,6 +11,7 @@ import { IoLogOut } from "react-icons/io5";
 import { Crown, ShieldCheck, Star, Trophy } from "lucide-react";
 import RankDetailsModal from "../modals/RankDetailsModal";
 import { ThemeToggleButton2 } from "@/components/ui/skiper-ui/skiper4";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type FullUser = {
   rank?: string;
@@ -189,6 +190,9 @@ const Navbar: React.FC = () => {
           {/* Desktop Right - Dark Mode + Avatar / Get Started */}
           <div className="hidden md:flex shrink-0 pr-1 z-20">
             <div className="flex items-center gap-3">
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+
               {/* Dark Mode Toggle (always visible) */}
               <ThemeToggleButton2 className="h-9 w-9 p-1 rounded-full bg-white/5  dark:bg-gray-900" />
 
