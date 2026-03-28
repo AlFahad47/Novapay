@@ -10,6 +10,7 @@ import { IoCloseCircleOutline } from "react-icons/io5"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
+import T from "@/components/T"
 
 type EliteMenuItem = {
   name: string
@@ -152,14 +153,14 @@ export default function EliteFeaturesSlider() {
             <FaBolt size={10} /> Your Coins: {userPoints}
           </div>
           <h2 className="text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white">
-            Elite <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">Privileges</span>
+            <T>Elite</T> <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent"><T>Privileges</T></span>
           </h2>
 
           <div className="flex items-center justify-center gap-4 mt-8">
             <button onClick={() => scroll("left")} className="p-3 rounded-full bg-white dark:bg-[#121928] border border-gray-200 dark:border-gray-800 text-gray-400 hover:text-[#1E50FF] transition shadow-sm">
               <FaChevronLeft size={14} />
             </button>
-            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium italic">Explore premium features</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium italic"><T>Explore premium features</T></p>
             <button onClick={() => scroll("right")} className="p-3 rounded-full bg-white dark:bg-[#121928] border border-gray-200 dark:border-gray-800 text-gray-400 hover:text-[#1E50FF] transition shadow-sm">
               <FaChevronRight size={14} />
             </button>
@@ -182,7 +183,7 @@ export default function EliteFeaturesSlider() {
                   <span className={`text-[10px] font-bold px-3 py-1 rounded-full shadow-sm ${
                     isUnlocked ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-600'
                   }`}>
-                    {isUnlocked ? "Unlocked" : isSubscribed ? "Elite" : `${item.pointsNeeded} Coins`}
+                    {isUnlocked ? <T>Unlocked</T> : isSubscribed ? <T>Elite</T> : `${item.pointsNeeded} Coins`}
                   </span>
                 </div>
 
@@ -193,14 +194,14 @@ export default function EliteFeaturesSlider() {
                 </div>
 
                 <h3 className={`text-xl font-bold mb-2 ${!isUnlocked ? 'text-gray-400' : 'text-gray-800 dark:text-white'}`}>
-                  {item.name}
+                  <T>{item.name}</T>
                 </h3>
                 <p className={`text-sm mb-6 ${!isUnlocked ? 'text-gray-300' : 'text-gray-500 dark:text-gray-400'}`}>
-                  {item.description}
+                  <T>{item.description}</T>
                 </p>
 
                 <div className={`flex items-center text-xs font-bold gap-2 transition-all uppercase tracking-wider ${!isUnlocked ? 'text-gray-300' : 'text-[#1E50FF]'}`}>
-                  {!isUnlocked ? 'Locked' : 'Open'} <FaRocket />
+                  {!isUnlocked ? <T>Locked</T> : <T>Open</T>} <FaRocket />
                 </div>
               </motion.div>
             )
@@ -223,7 +224,7 @@ export default function EliteFeaturesSlider() {
                 
                 <div className="flex flex-col items-center">
   <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-    Unlock Feature?
+    <T>Unlock Feature?</T>
   </h3>
   
   <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 text-center">
@@ -240,11 +241,11 @@ export default function EliteFeaturesSlider() {
 
  <Link href={"/dashboard/subscription"}>
   <button className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 transform transition-all active:scale-95 duration-200 cursor-pointer">
-    Get NovaPay Subscription
+    <T>Get NovaPay Subscription</T>
   </button></Link>
   
   <p className="mt-3 text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
-    Unlimited access to all elite features
+    <T>Unlimited access to all elite features</T>
   </p>
 </div>
 
@@ -269,7 +270,7 @@ export default function EliteFeaturesSlider() {
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
                 >
-                  {loading ? "Processing..." : userPoints >= selectedLock.pointsNeeded ? "Unlock Now" : "Insufficient Coins"}
+                  {loading ? <T>Processing...</T> : userPoints >= selectedLock.pointsNeeded ? <T>Unlock Now</T> : <T>Insufficient Coins</T>}
                 </button>
               </div>
             </motion.div>

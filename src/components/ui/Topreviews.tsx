@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { FaStar, FaQuoteRight, FaArrowRight, FaLock } from 'react-icons/fa'
 import { useSession, signIn } from 'next-auth/react'
 import Link from 'next/link'
+import T from "@/components/T"
 
 type ReviewType = {
   _id: string
@@ -53,7 +54,7 @@ export default function TopReviews() {
               whileInView={{ opacity: 1, y: 0 }}
               className="text-[#1E50FF] font-bold tracking-widest uppercase text-sm"
             >
-              Testimonials
+              <T>Testimonials</T>
             </motion.span>
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
@@ -61,7 +62,7 @@ export default function TopReviews() {
               transition={{ delay: 0.1 }}
               className="text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white "
             >
-              What Our Users  <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">Say</span>
+              <T>What Our Users Say</T>
             </motion.h2>
           </div>
 
@@ -71,14 +72,14 @@ export default function TopReviews() {
                 href="/review" 
                 className="group flex items-center gap-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 px-6 py-3 rounded-2xl font-bold text-gray-800 dark:text-white hover:bg-[#1E50FF] hover:text-white transition-all shadow-xl"
               >
-                Share Your Experience <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                <T>Share Your Experience</T> <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
               </Link>
             ) : (
               <button 
                 onClick={() => signIn("google")}
                 className="group flex items-center gap-3 bg-[#1E50FF] px-6 py-3 rounded-2xl font-bold text-white shadow-lg shadow-blue-500/30 hover:bg-blue-600 transition-all"
               >
-                <FaLock size={14} /> Login to Review
+                <FaLock size={14} /> <T>Login to Review</T>
               </button>
             )}
           </motion.div>
@@ -130,7 +131,7 @@ export default function TopReviews() {
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-900 dark:text-white text-lg leading-tight">{review.name}</h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-500">Verified User</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-500"><T>Verified User</T></p>
                     </div>
                   </div>
                 </div>
@@ -145,7 +146,7 @@ export default function TopReviews() {
         {/* View All Button */}
         <div className="mt-16 text-center">
           <Link href="/review" className="text-gray-500 hover:text-[#1E50FF] font-semibold flex items-center justify-center gap-2 transition-colors">
-            See all community feedback <FaArrowRight size={12} />
+            <T>See all community feedback</T> <FaArrowRight size={12} />
           </Link>
         </div>
       </div>

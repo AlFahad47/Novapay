@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ShieldCheck, Zap, Wallet, BarChart3, Globe, Lock } from "lucide-react";
+import T from "@/components/T";
 
 const features = [
   {
@@ -61,12 +62,12 @@ export default function KeyFeatures() {
         <h1
           className="text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white"
         >
-          Key <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">Features</span> 
+          <T>Key</T> <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent"><T>Features</T></span>
         </h1>
 
         <p className="mt-6 text-sm  text-gray-600 dark:text-gray-300">
-          Explore powerful features designed to deliver speed, security, and a
-          modern financial experience.
+          <T>Explore powerful features designed to deliver speed, security, and a
+          modern financial experience.</T>
         </p>
       </motion.div>
 
@@ -146,7 +147,7 @@ export default function KeyFeatures() {
                       mb-1 md:mb-2
                     "
                     >
-                      {feature.title}
+                      <T>{feature.title}</T>
                     </h3>
 
                     {/* Description */}
@@ -158,7 +159,7 @@ export default function KeyFeatures() {
                       flex-grow
                     "
                     >
-                      {feature.desc}
+                      <T>{feature.desc}</T>
                     </p>
                   </div>
                 </div>

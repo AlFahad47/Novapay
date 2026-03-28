@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import T from "@/components/T";
 
 export default function ProjectDemo() {
   const [hovered, setHovered] = useState(false);
@@ -18,14 +19,14 @@ export default function ProjectDemo() {
           transition={{ duration: 0.6 }}
         >
           <span className="inline-block bg-[#0061ff] text-white text-sm font-semibold px-4 py-1 rounded-full mb-4">
-            Track Your Balance
+            <T>Track Your Balance</T>
           </span>
           <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#0061ff] via-[#0095ff] to-[#00d4ff] dark:from-white dark:via-[#93C5FD] dark:to-[#0061ff] bg-clip-text text-transparent leading-tight">
-            See exactly where your money goes
+            <T>See exactly where your money goes</T>
           </h2>
           <p className="mt-4 text-gray-500 dark:text-gray-400 text-base leading-relaxed max-w-md">
-            With NovaPay, you get a real-time view of your wallet balance,
-            transaction history, and spending patterns — all in one place.
+            <T>With NovaPay, you get a real-time view of your wallet balance,
+            transaction history, and spending patterns — all in one place.</T>
           </p>
 
           <ul className="mt-6 space-y-3">
@@ -37,7 +38,7 @@ export default function ProjectDemo() {
             ].map((item) => (
               <li key={item} className="flex items-center gap-3 text-gray-600 dark:text-gray-300 text-sm">
                 <span className="w-5 h-5 rounded-full bg-[#0061ff] flex items-center justify-center text-white font-bold text-xs">✓</span>
-                {item}
+                <T>{item}</T>
               </li>
             ))}
           </ul>
@@ -70,12 +71,12 @@ export default function ProjectDemo() {
               </svg>
             </motion.div>
             <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-              Demo video coming soon
+              <T>Demo video coming soon</T>
             </p>
           </div>
 
           <span className="absolute top-4 left-4 bg-[#0061ff] text-white text-xs font-semibold px-3 py-1 rounded-full">
-            NovaPay Demo
+            <T>NovaPay Demo</T>
           </span>
         </motion.div>
 

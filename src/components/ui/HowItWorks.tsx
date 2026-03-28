@@ -4,6 +4,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import T from "@/components/T";
 
 const Card = ({ children }: { children: React.ReactNode }) => (
   <div
@@ -92,7 +93,7 @@ export default function HowItWorksPage() {
             text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white
           "
         >
-          How NovaPay<span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent"> Works</span> 
+          <T>How NovaPay</T><span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent"> <T>Works</T></span>
         </motion.h1>
 
         <motion.p
@@ -101,8 +102,8 @@ export default function HowItWorksPage() {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
         >
-          Experience a next-generation digital wallet built with security,
-          performance, and modern architecture at its core.
+          <T>Experience a next-generation digital wallet built with security,
+          performance, and modern architecture at its core.</T>
         </motion.p>
       </section>
 
@@ -135,11 +136,11 @@ export default function HowItWorksPage() {
                 </div>
 
                 <h3 className="text-base md:text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
-                  {step.title}
+                  <T>{step.title}</T>
                 </h3>
 
                 <p className="text-xs md:text-sm lg:text-base text-gray-600 dark:text-gray-400">
-                  {step.desc}
+                  <T>{step.desc}</T>
                 </p>
               </CardContent>
             </Card>
@@ -173,12 +174,12 @@ export default function HowItWorksPage() {
             />
 
             <h2 className="relative text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-5 md:mb-6">
-              Ready to Experience the Future of Digital Finance?
+              <T>Ready to Experience the Future of Digital Finance?</T>
             </h2>
 
             <Link href="/login" className="relative">
               <Button>
-                Get Started <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
+                <T>Get Started</T> <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
               </Button>
             </Link>
           </div>
