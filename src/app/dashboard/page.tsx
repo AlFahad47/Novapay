@@ -3,19 +3,12 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import DashboardHome from "@/components/dashboard/DashboardHome";
-import {
-  CreditCard,
-  Bell,
-  Clock,
-  Edit,
-  Activity,
-  DollarSign,
-} from "lucide-react";
+import { CreditCard, Bell, Clock, Activity, DollarSign } from "lucide-react";
 import Image from "next/image";
 import Swal from "sweetalert2";
 
 export default function DashboardPage() {
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
 
   const [balance, setBalance] = useState(0);
   const [pending, setPending] = useState(0);
@@ -25,17 +18,12 @@ export default function DashboardPage() {
   const [loanLimit, setLoanLimit] = useState<number | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
-  /* Profile State */
   const [profile, setProfile] = useState({
     name: "",
     email: "",
     image: "",
     role: "",
   });
-
-  const user = session?.user;
-
-  /* Sync session → profile */
 
   useEffect(() => {
     if (session?.user) {
@@ -48,8 +36,6 @@ export default function DashboardPage() {
     }
   }, [session]);
 
-  /* -------- Fetch Dashboard Data -------- */
-
   const fetchDashboard = async () => {
     try {
       setLoadingData(true);
@@ -59,7 +45,6 @@ export default function DashboardPage() {
 
       setBalance(data.balance || 0);
       setLoanLimit(data.loanLimit || 0);
-
       setPending(data.pendingRequests || 0);
       setNotifications(data.notifications || 0);
       setTransactions(data.transactions || []);
@@ -89,11 +74,9 @@ export default function DashboardPage() {
         ? "Agent"
         : "User";
 
-  /* -------- AI Loan Calculation -------- */
   const calculateLimit = async () => {
     setIsCalculating(true);
 
-    // Show a "Processing" toast
     Swal.fire({
       title: "AI is analyzing...",
       text: "Evaluating your transaction history for the best limit.",
@@ -114,12 +97,13 @@ export default function DashboardPage() {
 
       if (data.limit !== undefined) {
         setLoanLimit(data.limit);
-        // Ensure you are using data.reason here!
         Swal.fire({
           icon: "success",
           title: "Limit Updated!",
           text: `Based on your usage, your new limit is ${data.limit} BDT.`,
-          footer: `Reason: ${data.reason || "High trust score based on account activity"}`,
+          footer: `Reason: ${
+            data.reason || "High trust score based on account activity"
+          }`,
         });
       }
     } catch (err) {
@@ -128,111 +112,50 @@ export default function DashboardPage() {
       setIsCalculating(false);
     }
   };
-  /* -------- Edit Profile -------- */
-
-  const editProfile = async () => {
-    const { value: formValues } = await Swal.fire({
-      title: "Edit Profile",
-      html: `
-        <input id="name" class="swal2-input" placeholder="Name" value="${profile.name}">
-        <input id="email" class="swal2-input" placeholder="Email" value="${profile.email}">
-      `,
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      preConfirm: () => {
-        return {
-          name: (document.getElementById("name") as HTMLInputElement).value,
-          email: (document.getElementById("email") as HTMLInputElement).value,
-        };
-      },
-    });
-
-    if (formValues) {
-      const res = await fetch("/api/user/update-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formValues),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        Swal.fire("Updated!", "Profile updated successfully", "success");
-
-        /* update session */
-        await update();
-
-        /* update UI instantly */
-        setProfile({
-          name: formValues.name,
-          email: formValues.email,
-          image: profile.image,
-          role: profile.role,
-        });
-
-        /* refresh dashboard */
-        fetchDashboard();
-      } else {
-        Swal.fire("Error", "Profile update failed", "error");
-      }
-    }
-  };
 
   return (
     <div className="space-y-8">
-      {/* Main Dashboard */}
       <DashboardHome role={role} />
 
-      {/* User Profile */}
+      {/* Modern Profile Card */}
+      <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg overflow-hidden">
+        <div className="absolute right-0 top-0 opacity-20 text-[120px] pr-6 pt-2">
+          💳
+        </div>
 
-      <div className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
+          <div className="relative">
             <Image
               src={profile.image || "/dashboard.jfif"}
               alt="profile"
-              width={70}
-              height={70}
-              className="rounded-full object-cover"
+              width={80}
+              height={80}
+              className="rounded-full border-4 border-white shadow-md object-cover"
             />
-
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {profile.name}
-              </h2>
-
-              <p className="text-sm text-gray-500">{profile.email}</p>
-
-              <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-md mt-1 inline-block">
-                {profile.role || "User"}
-              </span>
-            </div>
           </div>
 
-          <button
-            onClick={editProfile}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
-          >
-            <Edit size={16} />
-            Edit Profile
-          </button>
+          <div>
+            <h2 className="text-xl font-semibold">{profile.name}</h2>
+            <p className="text-sm opacity-90">{profile.email}</p>
+
+            <span className="mt-2 inline-block text-xs bg-white/20 px-3 py-1 rounded-full">
+              {profile.role}
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Account Summary */}
-
       <div className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Account Summary
+            Account Overview
           </h2>
-          {/* AI Trigger Button */}
+
           <button
             onClick={calculateLimit}
             disabled={isCalculating}
-            className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1 cursor-pointer disabled:opacity-50"
+            className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1 disabled:opacity-50"
           >
             <Activity size={14} />
             {isCalculating ? "Analyzing..." : "Refresh AI Limit"}
@@ -249,21 +172,11 @@ export default function DashboardPage() {
               icon={<CreditCard size={20} />}
             />
 
-            {/* NEW AI LOAN CARD */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-blue-900/20 p-4 rounded-xl flex items-center gap-4 border border-blue-100 dark:border-blue-900/50">
-              <div className="text-indigo-600 dark:text-indigo-400">
-                <DollarSign size={20} />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  AI Loan Limit
-                </p>
-                <p className="text-lg font-bold text-gray-900 dark:text-white">
-                  {/* Use !== null to allow 0 to show up properly */}
-                  {loanLimit !== null ? `${loanLimit} BDT` : "Calculate Now"}
-                </p>
-              </div>
-            </div>
+            <SummaryCard
+              title="AI Loan Limit"
+              value={loanLimit !== null ? `${loanLimit} BDT` : "Not calculated"}
+              icon={<DollarSign size={20} />}
+            />
 
             <SummaryCard
               title="Pending Requests"
@@ -279,8 +192,26 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
-      {/* Recent Transactions */}
 
+      {/* Quick Insights Section */}
+      <div className="grid md:grid-cols-3 gap-4">
+        <div className="p-5 rounded-xl bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900/20">
+          <p className="text-sm text-gray-500">Spending Trend</p>
+          <p className="text-lg font-semibold">Stable</p>
+        </div>
+
+        <div className="p-5 rounded-xl bg-gradient-to-br from-yellow-100 to-yellow-50 dark:from-yellow-900/20">
+          <p className="text-sm text-gray-500">Risk Score</p>
+          <p className="text-lg font-semibold">Low</p>
+        </div>
+
+        <div className="p-5 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-900/20">
+          <p className="text-sm text-gray-500">Account Status</p>
+          <p className="text-lg font-semibold">Active</p>
+        </div>
+      </div>
+
+      {/* Transactions */}
       <div className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
         <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
           Recent Transactions
@@ -309,11 +240,9 @@ export default function DashboardPage() {
   );
 }
 
-/* Summary Card */
-
 function SummaryCard({ title, value, icon }: any) {
   return (
-    <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-xl flex items-center gap-4">
+    <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-xl flex items-center gap-4 hover:shadow-md transition">
       <div className="text-blue-600 dark:text-blue-400">{icon}</div>
 
       <div>
@@ -325,8 +254,6 @@ function SummaryCard({ title, value, icon }: any) {
     </div>
   );
 }
-
-/* Transaction Item */
 
 function TransactionItem({ name, amount, time }: any) {
   return (
