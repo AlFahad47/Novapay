@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import T from "@/components/T";
 
 interface DMConversation {
   _id: string;          // channelId e.g. "dm-abc-xyz"
@@ -99,9 +100,9 @@ export default function ChatHubPage() {
 
         {/* Page title */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Messages</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white"><T>Messages</T></h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Chat with support or message other users
+            <T>Chat with support or message other users</T>
           </p>
         </div>
 
@@ -114,18 +115,18 @@ export default function ChatHubPage() {
             S
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-gray-800 dark:text-white">Support Team</p>
+            <p className="font-semibold text-gray-800 dark:text-white"><T>Support Team</T></p>
             <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-              Get help with your account
+              <T>Get help with your account</T>
             </p>
           </div>
-          <span className="text-blue-500 text-sm font-medium">Chat →</span>
+          <span className="text-blue-500 text-sm font-medium"><T>Chat</T> →</span>
         </Link>
 
         {/* Search bar */}
         <div>
           <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-            Start a new conversation
+            <T>Start a new conversation</T>
           </p>
           <input
             type="text"
@@ -139,10 +140,10 @@ export default function ChatHubPage() {
           {searchQuery.trim() && (
             <div className="mt-2 bg-white dark:bg-[#0d1b2e] border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-md">
               {searching && (
-                <p className="text-center text-gray-400 text-sm py-4">Searching...</p>
+                <p className="text-center text-gray-400 text-sm py-4"><T>Searching...</T></p>
               )}
               {!searching && searchResults.filter((u) => u._id !== currentUserId).length === 0 && (
-                <p className="text-center text-gray-400 text-sm py-4">No users found</p>
+                <p className="text-center text-gray-400 text-sm py-4"><T>No users found</T></p>
               )}
               {searchResults
                 .filter((u) => u._id !== currentUserId)
@@ -174,7 +175,7 @@ export default function ChatHubPage() {
         {conversations.length > 0 && (
           <div>
             <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-              Recent conversations
+              <T>Recent conversations</T>
             </p>
             <div className="bg-white dark:bg-[#0d1b2e] rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
               {conversations.map((conv, i) => {
@@ -226,7 +227,7 @@ export default function ChatHubPage() {
 
         {conversations.length === 0 && (
           <p className="text-center text-gray-400 text-sm py-8">
-            No direct messages yet. Search for a user above to start chatting.
+            <T>No direct messages yet. Search for a user above to start chatting.</T>
           </p>
         )}
 
