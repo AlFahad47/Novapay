@@ -248,14 +248,14 @@ export default function AdminCampaignsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-gray-800 dark:text-blue-100 text-sm truncate">
-                        {campaign.title}
+                        <T>{campaign.title}</T>
                       </h3>
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${campaign.active ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"}`}>
                         {campaign.active ? <T>Active</T> : <T>Inactive</T>}
                       </span>
                     </div>
                     {campaign.description && (
-                      <p className="text-xs text-gray-400 dark:text-blue-400 mt-0.5 line-clamp-1">{campaign.description}</p>
+                      <p className="text-xs text-gray-400 dark:text-blue-400 mt-0.5 line-clamp-1"><T>{campaign.description}</T></p>
                     )}
                   </div>
                   <button
