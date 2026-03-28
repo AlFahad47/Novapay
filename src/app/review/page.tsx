@@ -10,6 +10,7 @@ import {
   FaChevronLeft, FaChevronRight
 } from "react-icons/fa"
 import "sweetalert2/dist/sweetalert2.min.css"
+import T from "@/components/T"
 
 // ... (Type definitions and FLOATING constants remain same)
 type ReviewType = {
@@ -168,10 +169,10 @@ export default function Page() {
       {/* HEADER */}
       <div className="relative max-w-5xl mx-auto px-6 pt-10 pb-8 text-center z-10">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#4DA1FF]/30 bg-[#4DA1FF]/10 text-[#4DA1FF] text-sm font-medium mb-3">
-          <FaStar size={11} /> NovaPay Reviews
+          <FaStar size={11} /> <T>NovaPay Reviews</T>
         </motion.div>
         <motion.h1 className="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-[#4DA1FF] via-[#1E50FF] to-[#4DA1FF] bg-clip-text text-transparent leading-tight">
-          What Our Users Are Saying
+          <T>What Our Users Are Saying</T>
         </motion.h1>
       </div>
 
@@ -190,7 +191,7 @@ export default function Page() {
                       <FaStar key={i} size={13} className={i < Math.round(parseFloat(avg)) ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"} />
                     ))}
                   </div>
-                  <p className="text-[11px] text-gray-400 mt-1">{total} reviews</p>
+                  <p className="text-[11px] text-gray-400 mt-1">{total} <T>reviews</T></p>
                 </div>
                 <div className="w-px h-16 bg-gray-200 dark:bg-white/10 shrink-0" />
                 <div className="flex-1 flex flex-col gap-1.5">
@@ -214,17 +215,17 @@ export default function Page() {
                   <div className="flex items-center gap-4 mb-5 p-3 rounded-2xl bg-[#4DA1FF]/5 border border-[#4DA1FF]/15">
                     <img src={session.user?.image || ""} className="w-12 h-12 rounded-full border-2 border-[#1E50FF]" alt="User" />
                     <div>
-                      <p className="text-xs text-[#4DA1FF] font-semibold">Writing as</p>
+                      <p className="text-xs text-[#4DA1FF] font-semibold"><T>Writing as</T></p>
                       <p className="font-bold text-gray-800 dark:text-white">{session.user?.name}</p>
                     </div>
                   </div>
                 ) : (
                   <div className="flex items-center gap-3 mb-5 p-3 rounded-2xl bg-[#4DA1FF]/5 border border-[#4DA1FF]/15">
                     <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-white/10 flex items-center justify-center"><FaUser className="text-gray-400" /></div>
-                    <button onClick={() => signIn("google")} className="text-xs text-[#4DA1FF] font-semibold hover:underline">Sign in to leave a review</button>
+                    <button onClick={() => signIn("google")} className="text-xs text-[#4DA1FF] font-semibold hover:underline"><T>Sign in to leave a review</T></button>
                   </div>
                 )}
-                <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2"><FaPen size={14} className="text-[#4DA1FF]" /> {editingId ? "Update Review" : "Leave a Review"}</h2>
+                <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2"><FaPen size={14} className="text-[#4DA1FF]" /> {editingId ? <T>Update Review</T> : <T>Leave a Review</T>}</h2>
                 <input type="text" placeholder="Your Name" value={session?.user?.name || name} onChange={e => setName(e.target.value)} readOnly={!!session} className="w-full mb-3 px-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm focus:ring-2 focus:ring-[#4DA1FF]/40 outline-none" />
                 <textarea placeholder="Share your experience..." value={comment} onChange={e => setComment(e.target.value)} rows={3} className="w-full mb-4 px-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-sm focus:ring-2 focus:ring-[#4DA1FF]/40 outline-none resize-none" />
                 <div className="flex flex-col items-center gap-2 mb-5">
@@ -235,10 +236,10 @@ export default function Page() {
                       </button>
                     ))}
                   </div>
-                  <p className="text-xs font-medium text-[#4DA1FF]">{activeRating > 0 ? STAR_LABELS[activeRating - 1] : ""}</p>
+                  <p className="text-xs font-medium text-[#4DA1FF]">{activeRating > 0 ? <T>{STAR_LABELS[activeRating - 1]}</T> : ""}</p>
                 </div>
                 <button onClick={submitReview} className="w-full py-3 rounded-xl bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] text-white font-bold text-sm shadow-lg">
-                  {editingId ? "Update Review" : "Submit Review"}
+                  {editingId ? <T>Update Review</T> : <T>Submit Review</T>}
                 </button>
             </motion.div>
           </div>
@@ -246,12 +247,12 @@ export default function Page() {
           {/* RIGHT: REVIEW CARDS WITH PAGINATION */}
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest whitespace-nowrap">Community Reviews</span>
+              <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest whitespace-nowrap"><T>Community Reviews</T></span>
               <div className="flex-1 h-px bg-gray-200 dark:bg-white/10" />
             </div>
 
             {loading ? (
-              <div className="h-40 flex items-center justify-center text-gray-400">Loading reviews...</div>
+              <div className="h-40 flex items-center justify-center text-gray-400"><T>Loading reviews...</T></div>
             ) : (
               <>
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -265,7 +266,7 @@ export default function Page() {
                         transition={{ duration: 0.2, delay: i * 0.05 }}
                         className="card-shimmer relative overflow-hidden rounded-2xl p-5 bg-white/50 dark:bg-white/5 border border-[#4DA1FF]/20 backdrop-blur-xl flex flex-col gap-3"
                       >
-                        {review.email === currentUserEmail && <span className="absolute top-3 right-3 text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#4DA1FF]/20 text-[#4DA1FF]">YOUR REVIEW</span>}
+                        {review.email === currentUserEmail && <span className="absolute top-3 right-3 text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#4DA1FF]/20 text-[#4DA1FF]"><T>YOUR REVIEW</T></span>}
                         <FaQuoteLeft size={18} className="text-[#4DA1FF]/30" />
                         <p className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed flex-1">{review.comment}</p>
                         <div className="flex gap-0.5">
@@ -281,8 +282,8 @@ export default function Page() {
                         </div>
                         {review.email === currentUserEmail && (
                           <div className="flex gap-2 mt-1">
-                            <button onClick={() => editReview(review)} className="flex-1 py-1 text-[10px] rounded-md bg-[#4DA1FF]/10 text-[#4DA1FF] font-bold uppercase tracking-tighter">Edit</button>
-                            <button onClick={() => deleteReview(review._id!)} className="flex-1 py-1 text-[10px] rounded-md bg-red-500/10 text-red-400 font-bold uppercase tracking-tighter">Delete</button>
+                            <button onClick={() => editReview(review)} className="flex-1 py-1 text-[10px] rounded-md bg-[#4DA1FF]/10 text-[#4DA1FF] font-bold uppercase tracking-tighter"><T>Edit</T></button>
+                            <button onClick={() => deleteReview(review._id!)} className="flex-1 py-1 text-[10px] rounded-md bg-red-500/10 text-red-400 font-bold uppercase tracking-tighter"><T>Delete</T></button>
                           </div>
                         )}
                       </motion.div>
