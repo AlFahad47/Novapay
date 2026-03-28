@@ -63,7 +63,7 @@ export default function DashboardPage() {
   if (status === "loading") {
     return (
       <div className="flex items-center justify-center h-full text-gray-500">
-        Loading dashboard...
+        <T>Loading dashboard...</T>
       </div>
     );
   }
@@ -150,7 +150,7 @@ export default function DashboardPage() {
       <div className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Account Overview
+            <T>Account Overview</T>
           </h2>
 
           <button
@@ -159,12 +159,12 @@ export default function DashboardPage() {
             className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1 disabled:opacity-50"
           >
             <Activity size={14} />
-            {isCalculating ? "Analyzing..." : "Refresh AI Limit"}
+            {isCalculating ? <T>Analyzing...</T> : <T>Refresh AI Limit</T>}
           </button>
         </div>
 
         {loadingData ? (
-          <p className="text-gray-500 text-sm">Loading account data...</p>
+          <p className="text-gray-500 text-sm"><T>Loading account data...</T></p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             <SummaryCard
@@ -197,33 +197,33 @@ export default function DashboardPage() {
       {/* Quick Insights Section */}
       <div className="grid md:grid-cols-3 gap-4">
         <div className="p-5 rounded-xl bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900/20">
-          <p className="text-sm text-gray-500">Spending Trend</p>
-          <p className="text-lg font-semibold">Stable</p>
+          <p className="text-sm text-gray-500"><T>Spending Trend</T></p>
+          <p className="text-lg font-semibold"><T>Stable</T></p>
         </div>
 
         <div className="p-5 rounded-xl bg-gradient-to-br from-yellow-100 to-yellow-50 dark:from-yellow-900/20">
-          <p className="text-sm text-gray-500">Risk Score</p>
-          <p className="text-lg font-semibold">Low</p>
+          <p className="text-sm text-gray-500"><T>Risk Score</T></p>
+          <p className="text-lg font-semibold"><T>Low</T></p>
         </div>
 
         <div className="p-5 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-900/20">
-          <p className="text-sm text-gray-500">Account Status</p>
-          <p className="text-lg font-semibold">Active</p>
+          <p className="text-sm text-gray-500"><T>Account Status</T></p>
+          <p className="text-lg font-semibold"><T>Active</T></p>
         </div>
       </div>
 
       {/* Transactions */}
       <div className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
         <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-          Recent Transactions
+          <T>Recent Transactions</T>
         </h2>
 
         {loadingData ? (
-          <p className="text-gray-500 text-sm">Loading transactions...</p>
+          <p className="text-gray-500 text-sm"><T>Loading transactions...</T></p>
         ) : (
           <ul className="space-y-3">
             {transactions.length === 0 ? (
-              <p className="text-gray-500 text-sm">No transactions found</p>
+              <p className="text-gray-500 text-sm"><T>No transactions found</T></p>
             ) : (
               transactions.map((tx, i) => (
                 <TransactionItem
@@ -247,7 +247,7 @@ function SummaryCard({ title, value, icon }: any) {
       <div className="text-blue-600 dark:text-blue-400">{icon}</div>
 
       <div>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400"><T>{title}</T></p>
         <p className="text-lg font-semibold text-gray-900 dark:text-white">
           {value}
         </p>

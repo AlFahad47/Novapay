@@ -10,6 +10,7 @@ import {
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import T from "@/components/T";
 
 type Role = "User" | "Agent" | "Admin";
 
@@ -56,18 +57,18 @@ export default function DashboardHome({ role }: { role: Role }) {
 
       <div className="bg-gradient-to-r from-[#0095ff] to-[#0061ff] text-white p-8 rounded-2xl shadow-lg">
         <h1 className="text-3xl font-bold tracking-tight">
-          {greeting}, {name} 👋
+          <T>{greeting}</T>, {name} 👋
         </h1>
 
         <p className="mt-2 text-sm text-blue-100">
-          Here's what's happening in your dashboard today.
+          <T>Here's what's happening in your dashboard today.</T>
         </p>
       </div>
 
       {/* Stats */}
 
       {loading ? (
-        <p className="text-gray-500 dark:text-gray-400">Loading stats...</p>
+        <p className="text-gray-500 dark:text-gray-400"><T>Loading stats...</T></p>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {stats.map((stat, index) => {
@@ -122,7 +123,7 @@ function StatCard({
         {value}
       </h3>
 
-      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{title}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1"><T>{title}</T></p>
     </motion.div>
   );
 }

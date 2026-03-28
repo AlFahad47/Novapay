@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import T from "@/components/T";
 import {
   User,
   Shield,
@@ -137,10 +138,10 @@ export default function SettingsPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-800 pb-6">
           <div>
             <h1 className="text-3xl md:text-4xl font-black text-white">
-              Settings
+              <T>Settings</T>
             </h1>
             <p className="text-gray-400 text-sm md:text-base">
-              Manage your global profile settings
+              <T>Manage your global profile settings</T>
             </p>
           </div>
 
@@ -224,7 +225,7 @@ export default function SettingsPage() {
                         {formData.name || "User"}
                       </h2>
                       <p className="text-gray-500 text-xs md:text-sm uppercase tracking-wider font-semibold">
-                        Administrator
+                        <T>Administrator</T>
                       </p>
                     </div>
                   </div>
@@ -266,7 +267,7 @@ export default function SettingsPage() {
 
                     <div className="md:col-span-2 space-y-3">
                       <label className="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wide">
-                        Biography
+                        <T>Biography</T>
                       </label>
                       <textarea
                         value={formData.bio}
@@ -290,13 +291,13 @@ export default function SettingsPage() {
                       ) : (
                         <Save size={20} />
                       )}
-                      Save Changes
+                      <T>Save Changes</T>
                     </button>
                   </div>
                 </motion.form>
               ) : (
                 <div className="p-20 text-center opacity-50 font-bold italic">
-                  Feature coming soon...
+                  <T>Feature coming soon...</T>
                 </div>
               )}
             </AnimatePresence>
@@ -318,7 +319,7 @@ function TabButton({ active, onClick, icon, label }: any) {
           : "text-gray-500 hover:bg-gray-800 hover:text-gray-300"
       }`}
     >
-      {icon} <span className="text-sm md:text-base">{label}</span>
+      {icon} <span className="text-sm md:text-base"><T>{label}</T></span>
     </button>
   );
 }
@@ -334,7 +335,7 @@ function InputField({
   return (
     <div className="space-y-2">
       <label className="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-wide ml-1">
-        {label}
+        <T>{label}</T>
       </label>
       <div className="relative">
         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
