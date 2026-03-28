@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import T from "@/components/T";
 import {
   LayoutDashboard,
   Users,
@@ -65,7 +66,7 @@ export default function AdminLayout({
   if (status === "loading") {
     return (
       <div className="h-screen flex items-center justify-center text-gray-600 dark:text-gray-300">
-        Loading admin panel...
+        <T>Loading admin panel...</T>
       </div>
     );
   }
@@ -131,7 +132,7 @@ export default function AdminLayout({
               <item.icon size={20} className="shrink-0" />
               {!desktopCollapsed && (
                 <span className="text-sm font-medium whitespace-nowrap">
-                  {item.label}
+                  <T>{item.label}</T>
                 </span>
               )}
             </Link>
@@ -147,7 +148,7 @@ export default function AdminLayout({
         >
           <LogOut size={20} className="shrink-0" />
           {!desktopCollapsed && (
-            <span className="text-sm font-bold">Logout</span>
+            <span className="text-sm font-bold"><T>Logout</T></span>
           )}
         </button>
       </div>
@@ -185,7 +186,7 @@ export default function AdminLayout({
             </button>
 
             <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 capitalize">
-              {pageTitle}
+              <T>{pageTitle}</T>
             </h2>
           </div>
 

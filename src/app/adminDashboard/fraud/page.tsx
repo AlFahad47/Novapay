@@ -105,7 +105,7 @@ export default function FraudUsersPage() {
             }
             className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm"
           >
-            {sortOrder === "asc" ? "Newest ⬇️" : "Oldest ⬆️"}
+            {sortOrder === "asc" ? <><T>Newest</T> ⬇️</> : <><T>Oldest</T> ⬆️</>}
           </button>
         </div>
       </div>

@@ -10,6 +10,7 @@ import {
   MessageSquare // Reason icon 
 } from 'lucide-react';
 import Swal from 'sweetalert2';
+import T from "@/components/T";
 
 export default function WithdrawalsPage() {
   const [requests, setRequests] = useState([]);
@@ -116,9 +117,9 @@ export default function WithdrawalsPage() {
       {/* Header - Search removed */}
       <div className="mb-10">
         <h1 className="text-3xl font-black dark:text-white tracking-tight">
-          Admin <span className="text-blue-600">Withdrawals</span>
+          <T>Admin</T> <span className="text-blue-600"><T>Withdrawals</T></span>
         </h1>
-        <p className="text-slate-500 text-sm mt-1">Manage and review micro-saving withdrawal requests.</p>
+        <p className="text-slate-500 text-sm mt-1"><T>Manage and review micro-saving withdrawal requests.</T></p>
       </div>
 
       {/* Table Card */}
@@ -126,18 +127,18 @@ export default function WithdrawalsPage() {
         {loading ? (
           <div className="py-24 flex flex-col items-center gap-4">
             <Loader2 className="animate-spin text-blue-600" size={40} />
-            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">Fetching Records</p>
+            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest"><T>Fetching Records</T></p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-white/[0.02]">
-                  <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-slate-400">User Details</th>
-                  <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Amount</th>
-                  <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Goal & Reason (Click to view)</th>
-                  <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Status</th>
-                  <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-slate-400 text-right">Action</th>
+                  <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-slate-400"><T>User Details</T></th>
+                  <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-slate-400"><T>Amount</T></th>
+                  <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-slate-400"><T>Goal & Reason (Click to view)</T></th>
+                  <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-slate-400"><T>Status</T></th>
+                  <th className="px-8 py-5 text-[11px] font-black uppercase tracking-widest text-slate-400 text-right"><T>Action</T></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -201,13 +202,13 @@ export default function WithdrawalsPage() {
                           </button>
                         </div>
                       ) : (
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Processed</span>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter"><T>Processed</T></span>
                       )}
                     </td>
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={5} className="py-24 text-center text-slate-500 italic">No records found.</td>
+                    <td colSpan={5} className="py-24 text-center text-slate-500 italic"><T>No records found.</T></td>
                   </tr>
                 )}
               </tbody>

@@ -128,7 +128,7 @@ export default function AdminUsersPage() {
           }
           className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white"
         >
-          {sortOrder === "asc" ? "Newest ⬇️" : "Oldest ⬆️"}
+          {sortOrder === "asc" ? <><T>Newest</T> ⬇️</> : <><T>Oldest</T> ⬆️</>}
         </button>
       </div>
 

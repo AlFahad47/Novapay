@@ -279,8 +279,8 @@ export default function AdminCampaignsPage() {
                     />
                   </div>
                   <div className="flex justify-between text-xs text-gray-500 dark:text-blue-400">
-                    <span>৳{campaign.raisedAmount.toLocaleString()} raised · {campaign.donorCount} donors</span>
-                    <span>Goal: ৳{campaign.goalAmount.toLocaleString()}</span>
+                    <span>৳{campaign.raisedAmount.toLocaleString()} <T>raised</T> · {campaign.donorCount} <T>donors</T></span>
+                    <span><T>Goal</T>: ৳{campaign.goalAmount.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
