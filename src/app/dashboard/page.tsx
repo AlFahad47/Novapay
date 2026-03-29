@@ -264,7 +264,7 @@ import DashboardHome from "@/components/dashboard/DashboardHome";
 import { CreditCard, Bell, Clock, Edit, Activity, DollarSign,Info } from "lucide-react";
 import Image from "next/image";
 import Swal from "sweetalert2";
-
+import { motion } from "framer-motion";
 export default function DashboardPage() {
   const { data: session, status, update } = useSession();
 
@@ -384,6 +384,46 @@ if (data.limit !== undefined) {
     setIsCalculating(false);
   }
 };
+
+const handleInstantRepay = async (loanId: string) => {
+  const result = await Swal.fire({
+    title: "Confirm Full Repayment?",
+    text: "This will deduct the entire remaining balance from your wallet.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, Pay Now",
+    confirmButtonColor: "#4f46e5"
+  });
+
+  if (result.isConfirmed) {
+    Swal.fire({ title: "Processing...", didOpen: () => Swal.showLoading() });
+
+    const res = await fetch("/api/loan/repay", {
+      method: "POST",
+      body: JSON.stringify({ email: profile.email, loanId }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      // 1. Show success message
+      await Swal.fire("Paid!", "Your loan is cleared. AI is now recalculating your new limit...", "success");
+      
+      // 2. Refresh basic dashboard data (balance, etc.)
+      await fetchDashboard();
+
+      // 3. AUTO-TRIGGER AI REFRESH
+      // This calls your existing AI route to unlock the BDT limit automatically
+      calculateLimit(); 
+      
+    } else {
+      Swal.fire("Error", data.error, "error");
+    }
+  }
+};
+
+
+
+
   /* -------- Edit Profile -------- */
 
 
@@ -507,90 +547,109 @@ const handleApplyLoan = async () => {
         </div>
       </div>
 
-      {/* Account Summary */}
+      
 
       
-<div className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
-  <div className="flex items-center justify-between mb-4">
-    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-      Account Summary
-    </h2>
-    {/* AI Trigger Button */}
-    <button 
-      onClick={calculateLimit}
-      disabled={isCalculating}
-      className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1 cursor-pointer disabled:opacity-50"
-    >
-      <Activity size={14} />
-      {isCalculating ? "Analyzing..." : "Refresh AI Limit"}
-    </button>
-  </div>
+{/* Account Summary */}
+      <div className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Account Summary
+          </h2>
+          <button 
+            onClick={calculateLimit}
+            disabled={isCalculating}
+            className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1 cursor-pointer disabled:opacity-50"
+          >
+            <Activity size={14} />
+            {isCalculating ? "Analyzing..." : "Refresh AI Limit"}
+          </button>
+        </div>
 
- {loadingData ? (
-  <p className="text-gray-500 text-sm">Loading account data...</p>
+        {loadingData ? (
+          <p className="text-gray-500 text-sm">Loading account data...</p>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4"> 
+            <SummaryCard title="Wallet Balance" value={`$${balance}`} icon={<CreditCard size={20} />} />
+
+            {/* AI LOAN CARD */}
+            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-slate-800 p-6 rounded-2xl border border-blue-100 dark:border-slate-700 shadow-sm">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">AI Credit Line</p>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{loanLimit ?? 0} BDT</h3>
+                </div>
+                <div className="p-2 bg-white dark:bg-slate-700 rounded-lg shadow-sm">
+                  <DollarSign className="text-indigo-600 dark:text-indigo-400" size={24} />
+                </div>
+              </div>
+              
+            {isCalculating ? (
+  /* 0. LOADING STATE: Shown while AI is processing */
+  <div className="w-full py-2.5 bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400 text-[11px] font-bold text-center rounded-xl border border-gray-200 dark:border-slate-700 flex items-center justify-center gap-2">
+    <Activity size={14} className="animate-spin" />
+    AI is analyzing your profile...
+  </div>
+) : loanLimit === null ? (
+  /* 1. FRESH STATE: No limit calculated yet / Just repaid */
+  <button
+    onClick={calculateLimit}
+    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-emerald-200 dark:shadow-none cursor-pointer flex items-center justify-center gap-2 group"
+  >
+    <Activity size={16} className="group-hover:rotate-12 transition-transform" />
+    Check AI Eligibility
+  </button>
+) : loanLimit > 0 ? (
+  /* 2. APPROVED STATE: User has money available to take */
+  <button
+    onClick={handleApplyLoan}
+    className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-indigo-200 dark:shadow-none cursor-pointer flex items-center justify-center gap-2"
+  >
+    <DollarSign size={16} />
+    Get Instant Loan
+  </button>
 ) : (
-  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4"> 
-    
-    {/* 1. First Card: Wallet Balance */}
-    <SummaryCard
-      title="Wallet Balance"
-      value={`$${balance}`}
-      icon={<CreditCard size={20} />}
-    />
-
-    {/* 2. SECOND CARD:  */}
-    {/* 2. SECOND CARD: AI LOAN CARD WITH DEBT PROTECTION */}
-<div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-slate-800 p-6 rounded-2xl border border-blue-100 dark:border-slate-700 shadow-sm">
-  <div className="flex justify-between items-start mb-4">
-    <div>
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">AI Credit Line</p>
-      <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-        {loanLimit ?? 0} BDT
-      </h3>
+  /* 3. LOCKED STATE: User has an active loan (limit is 0) */
+  <div className="w-full py-2 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-[10px] font-bold text-center rounded-xl border border-amber-100 dark:border-amber-900/50 flex flex-col items-center justify-center gap-1 px-2">
+    <div className="flex items-center gap-2">
+      <Info size={12} />
+      <span>LIMIT LOCKED</span>
     </div>
-    <div className="p-2 bg-white dark:bg-slate-700 rounded-lg shadow-sm">
-      <DollarSign className="text-indigo-600 dark:text-indigo-400" size={24} />
-    </div>
-  </div>
-  
-  {/* NEW DYNAMIC BUTTON LOGIC */}
-  {loanLimit && loanLimit > 0 ? (
-    <button
-      onClick={handleApplyLoan}
-      className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-indigo-200 dark:shadow-none cursor-pointer"
-    >
-      Get Instant Loan
-    </button>
-  ) : (
-    <div className="w-full py-2.5 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-[11px] font-medium text-center rounded-xl border border-amber-100 dark:border-amber-900/50 flex items-center justify-center gap-2">
-      <Info size={14} />
+    <p className="font-medium opacity-80 leading-tight">
       {limitReason || "Repay current loan to unlock limits."}
-    </div>
-  )}
-  
-  {limitReason && loanLimit && loanLimit > 0 && (
-    <p className="mt-3 text-[10px] text-gray-400 italic text-center leading-tight">
-      *AI Suggestion: {limitReason.substring(0, 60)}...
     </p>
-  )}
-</div>
-
-    {/* 3. Third Card: Pending Requests */}
-    <SummaryCard
-      title="Pending Requests"
-      value={pending}
-      icon={<Clock size={20} />}
-    />
-
-    {/* 4. Fourth Card: Notifications */}
-    <SummaryCard
-      title="Notifications"
-      value={notifications}
-      icon={<Bell size={20} />}
-    />
   </div>
 )}
-</div>
+            </div>
+
+            <SummaryCard title="Pending Requests" value={pending} icon={<Clock size={20} />} />
+            <SummaryCard title="Notifications" value={notifications} icon={<Bell size={20} />} />
+          </div>
+        )}
+      </div>
+
+      {/* --- NEW PLACEMENT: ACTIVE LOAN DETAILS --- */}
+      {activeLoan && (
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white dark:bg-[#0c1a2b] border-2 border-indigo-100 dark:border-indigo-900/50 rounded-2xl p-6 shadow-lg max-w-md">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-bold flex items-center gap-2"><Clock className="text-indigo-500" size={18} /> Loan Progress</h3>
+            <span className="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-black tracking-tighter">AUTO-CUT ON</span>
+          </div>
+          <div className="space-y-4">
+            <div className="flex justify-between items-end">
+              <span className="text-xs text-gray-500">Debt Remaining</span>
+              <span className="text-xl font-black text-indigo-600">{Number(activeLoan.remainingAmount).toFixed(2)} BDT</span>
+            </div>
+            <div className="w-full bg-gray-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div className="bg-indigo-600 h-full transition-all duration-1000" style={{ width: `${((activeLoan.totalPayable - activeLoan.remainingAmount) / activeLoan.totalPayable) * 100}%` }} />
+            </div>
+            <p className="text-[10px] text-gray-400 text-center">Next deduction: {new Date(activeLoan.nextInstallmentDate).toLocaleDateString()}</p>
+            <button onClick={() => handleInstantRepay(activeLoan._id)} className="w-full py-2 bg-slate-900 text-white text-xs font-bold rounded-xl active:scale-95 transition-all">
+              Pay Full Amount Now
+            </button>
+          </div>
+        </motion.div>
+      )}
       {/* Recent Transactions */}
 
       <div className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
@@ -622,44 +681,7 @@ const handleApplyLoan = async () => {
     </div>
   );
 }
-{activeLoan && (
-  <div className="bg-white dark:bg-[#0c1a2b] border-2 border-indigo-100 dark:border-indigo-900/50 rounded-2xl p-6 shadow-md">
-    <div className="flex justify-between items-center mb-4">
-      <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-        <Clock className="text-indigo-500" size={18} /> Active Loan Details
-      </h3>
-      <span className="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold uppercase">
-        Auto-Cut Active
-      </span>
-    </div>
 
-    <div className="space-y-3">
-      <div className="flex justify-between text-sm">
-        <span className="text-gray-500">Remaining Debt:</span>
-        <span className="font-bold text-indigo-600">{activeLoan.remainingAmount.toFixed(2)} BDT</span>
-      </div>
-      
-      {/* Progress Bar */}
-      <div className="w-full bg-gray-100 dark:bg-slate-800 rounded-full h-2">
-        <div 
-          className="bg-indigo-600 h-2 rounded-full transition-all" 
-          style={{ width: `${((activeLoan.totalPayable - activeLoan.remainingAmount) / activeLoan.totalPayable) * 100}%` }}
-        />
-      </div>
-
-      <p className="text-[10px] text-gray-400">
-        Next Auto-Cut: {new Date(activeLoan.nextInstallmentDate).toLocaleDateString()} ({activeLoan.monthlyInstallment.toFixed(2)} BDT)
-      </p>
-
-      <button
-        onClick={() => handleInstantRepay(activeLoan._id)}
-        className="w-full mt-2 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-xs font-bold rounded-xl hover:opacity-90 transition active:scale-95"
-      >
-        Pay Full Amount Instantly
-      </button>
-    </div>
-  </div>
-)}
 /* Summary Card */
 
 function SummaryCard({ title, value, icon }: any) {
