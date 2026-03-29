@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import pusherClient from "@/lib/pusherClient";
+import T from "@/components/T";
 
 // Shape of a single chat message
 interface Message {
@@ -136,11 +137,11 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
       {/* Message list */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
         {loading && (
-          <p className="text-center text-gray-400 text-sm">Loading messages...</p>
+          <p className="text-center text-gray-400 text-sm"><T>Loading messages...</T></p>
         )}
 
         {!loading && messages.length === 0 && (
-          <p className="text-center text-gray-400 text-sm">No messages yet. Say hello!</p>
+          <p className="text-center text-gray-400 text-sm"><T>No messages yet. Say hello!</T></p>
         )}
 
         {messages.map((msg, i) => {
@@ -191,7 +192,7 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
           disabled={!inputText.trim() || sending}
           className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-full px-4 py-2 text-sm font-medium transition-colors"
         >
-          {sending ? "..." : "Send"}
+          {sending ? "..." : <T>Send</T>}
         </button>
       </div>
     </div>

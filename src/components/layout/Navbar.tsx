@@ -13,6 +13,7 @@ import RankDetailsModal from "../modals/RankDetailsModal";
 import { ThemeToggleButton2 } from "@/components/ui/skiper-ui/skiper4";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
+import T from "@/components/T";
 
 type FullUser = {
   rank?: string;
@@ -309,7 +310,7 @@ const Navbar: React.FC = () => {
                       href="/dashboard"
                       className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                     >
-                      <FaUser /> Dashboard
+                      <FaUser /> <T>Dashboard</T>
                     </Link>
                   </li>
                   <li>
@@ -317,7 +318,7 @@ const Navbar: React.FC = () => {
                       href="/dashboard/settings"
                       className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                     >
-                      <FaGear /> Settings
+                      <FaGear /> <T>Settings</T>
                     </Link>
                   </li>
                   <li>
@@ -328,7 +329,7 @@ const Navbar: React.FC = () => {
                       onClick={() => signOut({ callbackUrl: "/" })}
                       className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-600 transition-colors font-medium"
                     >
-                      <IoLogOut /> Logout
+                      <IoLogOut /> <T>Logout</T>
                     </button>
                   </li>
                 </ul>
@@ -387,7 +388,7 @@ const Navbar: React.FC = () => {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex justify-center items-center gap-2 bg-white/5 text-white px-5 py-3.5 rounded-xl text-sm font-bold border border-white/10"
                   >
-                    <FaUser size={16} /> Dashboard
+                    <FaUser size={16} /> <T>Dashboard</T>
                   </Link>
                   {/* Mobile Logout Trigger */}
                   <button
@@ -397,7 +398,7 @@ const Navbar: React.FC = () => {
                     }}
                     className="flex justify-center items-center gap-2 bg-linear-to-r from-red-500 to-red-700 text-white px-5 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_-5px_rgba(239,68,68,0.6)]"
                   >
-                    Logout <IoLogOut size={18} />
+                    <T>Logout</T> <IoLogOut size={18} />
                   </button>
                 </div>
               ) : (

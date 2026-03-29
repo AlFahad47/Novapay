@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { HandHelping, Mail, Banknote, PenLine, Loader2 } from "lucide-react";
 import Swal from "sweetalert2";
 import { Button } from "@/components/ui/button";
+import T from "@/components/T";
 
 export default function RequestMoneyForm({
   onSuccess,
@@ -120,7 +121,7 @@ export default function RequestMoneyForm({
           <Loader2 className="animate-spin" />
         ) : (
           <>
-            <HandHelping size={20} /> Send Request
+            <HandHelping size={20} /> <T>Send Request</T>
           </>
         )}
       </Button>

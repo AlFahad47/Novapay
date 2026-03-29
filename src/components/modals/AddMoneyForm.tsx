@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Swal from "sweetalert2";
 import { Button } from "@/components/ui/button";
+import T from "@/components/T";
 
 interface LinkedBank {
   id: string;
@@ -124,13 +125,13 @@ export default function AddMoneyForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-lg font-bold text-center mb-4">
-        Add Money to NovaPay
+        <T>Add Money to NovaPay</T>
       </h2>
 
       {/* Bank Selection Dropdown */}
       <div className="space-y-1">
         <label className="text-sm font-medium text-slate-400">
-          Select Bank Account
+          <T>Select Bank Account</T>
         </label>
         <select
           className="w-full p-3 border rounded-xl dark:bg-gray-800 dark:border-gray-700 outline-none focus:border-blue-500 appearance-none cursor-pointer capitalize transition-all"
@@ -138,7 +139,7 @@ export default function AddMoneyForm() {
           onChange={(e) => setSelectedBankId(e.target.value)}
           required
         >
-          <option value="">-- Choose Account --</option>
+          <option value=""><T>-- Choose Account --</T></option>
           {linkedBanks.map((bank) => (
             <option key={bank.id} value={bank.id}>
               {bank.name} (****{bank.accNo.slice(-4)}) — ৳
@@ -150,7 +151,7 @@ export default function AddMoneyForm() {
 
       {/* Amount Input */}
       <div className="space-y-1">
-        <label className="text-sm font-medium text-slate-400">Amount</label>
+        <label className="text-sm font-medium text-slate-400"><T>Amount</T></label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">
             ৳
@@ -177,7 +178,7 @@ export default function AddMoneyForm() {
             : "shadow-blue-500/20"
         }`}
       >
-        {loading ? "Verifying Transaction..." : "Confirm Add Money"}
+        {loading ? <T>Verifying Transaction...</T> : <T>Confirm Add Money</T>}
       </Button>
     </form>
   );
