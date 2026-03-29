@@ -19,6 +19,7 @@ import {
   X,
   Menu,
   Heart,
+  Crown,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -53,23 +54,10 @@ export default function DashboardLayout({
   const isSubscribed = subscriptionStatus.subscribed;
   const daysLeft = subscriptionStatus.daysLeft;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  /* ---------------- SUBSCRIPTION LOGIC ---------------- */
-  // Accessing subscription data from session (adjust based on your actual user schema)
-  const isSubscribed1 = session?.user?.isSubscribed || false;
-  const daysLeft1 = session?.user?.subscriptionDaysLeft ?? null;
-
->>>>>>> 28e132ed27e2bbd6b8fba1cb7ff3c9bfb3f9cd23
-=======
->>>>>>> 9e85ae78d17daa5d40d3bf41440845bae315f595
-  /* ---------------- PROTECT USER DASHBOARD ---------------- */
-
   useEffect(() => {
     if (status === "loading") return;
 
-    if (!session) {
+    if (!session) { 
       router.push("/login");
       return;
     }
