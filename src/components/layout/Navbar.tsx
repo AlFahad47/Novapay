@@ -12,6 +12,7 @@ import { Crown, ShieldCheck, Star, Trophy } from "lucide-react";
 import RankDetailsModal from "../modals/RankDetailsModal";
 import { ThemeToggleButton } from "@/components/ui/skiper-ui/skiper26";
 import { useTranslations } from 'next-intl';
+import LanguageSwitcher from "../LanguageSwitcher";
 
 type FullUser = {
   rank?: string;
@@ -197,7 +198,7 @@ const Navbar: React.FC = () => {
                   {link.name}
 
                   {/* Unread badge on Chat link */}
-                  {link.name === "Chat" && unreadTotal > 0 && (
+                  {link.path === "/chat" && unreadTotal > 0 && (
                     <span className="absolute -top-2.5 -right-3.5 bg-red-500 shadow-md text-white text-[10px] font-extrabold rounded-full h-4 min-w-[16px] flex items-center justify-center px-1 border border-white dark:border-slate-900">
                       {unreadTotal > 99 ? "99+" : unreadTotal}
                     </span>
@@ -207,8 +208,14 @@ const Navbar: React.FC = () => {
             })}
           </div>
 
+
           {/* Desktop Right - Theme + Auth/Get Started */}
           <div className="hidden md:flex shrink-0 items-center gap-4 z-20">
+
+            
+          <div className="">
+            <LanguageSwitcher/>
+          </div>
             {/* Theme Toggle */}
             <ThemeToggleButton
               variant="circle"

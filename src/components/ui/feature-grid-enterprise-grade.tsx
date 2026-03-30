@@ -11,6 +11,7 @@ import {
   Wallet,
   Zap,
 } from "lucide-react";
+import T from "@/components/T";
 
 // 1. Ultra-crisp, scannable copy. No fluff.
 const features = [
@@ -77,15 +78,13 @@ export default function NovaPayFeaturesSection() {
         {/* --- REFINED SECTION HEADER --- */}
         <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-14">
           <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl md:text-5xl">
-            Secure your{" "}
+            <T>Secure your</T>{" "}
             <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent drop-shadow-sm">
-              money.
+              <T>money.</T>
             </span>
           </h2>
           <p className="text-[15px] font-medium leading-relaxed text-slate-500 dark:text-slate-400 sm:text-base">
-            Get lightning fast transfers, military-grade security, and total
-            control from one app. <br className="hidden md:block" /> Fast, safe
-            and built for you.
+            <T>Get lightning fast transfers, military-grade security, and total control from one app.</T> <br className="hidden md:block" /> <T>Fast, safe and built for you.</T>
           </p>
         </div>
 
@@ -112,10 +111,10 @@ export default function NovaPayFeaturesSection() {
                 </div>
 
                 <h3 className="mb-2 text-[17px] font-bold tracking-tight text-slate-900 dark:text-white">
-                  {feature.title}
+                  <T>{feature.title}</T>
                 </h3>
                 <p className="text-[14px] font-medium leading-relaxed text-slate-500 dark:text-slate-400">
-                  {feature.description}
+                  <T>{feature.description}</T>
                 </p>
               </div>
             );

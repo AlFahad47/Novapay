@@ -1,6 +1,7 @@
 import { motion, type Variants } from "framer-motion";
 import type { StepItem } from "./types";
 import { truncate } from "./utils";
+import T from "@/components/T";
 
 interface StepCardProps {
   step: StepItem;
@@ -47,11 +48,11 @@ export function StepCard({
           </div>
 
           <h3 className="relative mb-3 text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-            {step.title}
+            <T>{step.title}</T>
           </h3>
 
           <p className="relative text-[15px] font-medium leading-relaxed text-slate-600 dark:text-slate-300">
-            {truncate(step.desc, 140)}
+            <T>{truncate(step.desc, 140)}</T>
           </p>
         </div>
       </div>

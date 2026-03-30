@@ -1,4 +1,5 @@
 import { HeroVideoDialog } from "./HeroVideoDialog";
+import T from "@/components/T";
 
 export function HeroVideoDialogDemoTopInBottomOut() {
   return (
@@ -9,11 +10,10 @@ export function HeroVideoDialogDemoTopInBottomOut() {
       <div className="home-container px-6">
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <h2 className="home-heading text-2xl md:text-4xl">
-            See <span className="home-gradient-text">NovaPay</span> In Action
+            <T>See</T> <span className="home-gradient-text">NovaPay</span> <T>In Action</T>
           </h2>
           <p className="home-body mt-3 text-sm md:text-base">
-            Secure payments, instant transfers, and smarter money tools in one
-            colorful experience.
+            <T>Secure payments, instant transfers, and smarter money tools in one colorful experience.</T>
           </p>
         </div>
 

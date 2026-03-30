@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Play, ArrowUpRight, Wallet, Wifi } from "lucide-react";
 import Link from "next/link";
 import Loader from "./Loader";
+import T from "@/components/T";
 
 const Banner: React.FC = () => {
   // --- STATES ---
@@ -179,24 +180,22 @@ const Banner: React.FC = () => {
             <Wallet size={12} className="text-white" />
           </div>
           <span className="text-blue-600 dark:text-[#4DA1FF] text-[11px] font-extrabold tracking-[0.2em] uppercase pr-2">
-            NovaPay Network
+            <T>NovaPay Network</T>
           </span>
         </div>
 
         {/* Headline */}
         <h1 className="anim-fade-up delay-txt-1 text-[2.75rem] md:text-6xl lg:text-[4.5rem] text-transparent bg-clip-text bg-gradient-to-r from-[#3d98ff] to-[#3561ff] font-extrabold tracking-tight leading-[1.1] mb-6 max-w-4xl">
-          Your Gateway to Digital
+          <T>Your Gateway to Digital</T>
           <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4598f8] to-[#446cff] drop-shadow-sm dark:drop-shadow-[0_0_25px_rgba(77,161,255,0.3)]">
-            Finance Innovation
+            <T>Finance Innovation</T>
           </span>
         </h1>
 
         {/* Subtitle */}
         <p className="anim-fade-up delay-txt-2 text-slate-600 dark:text-slate-400 text-[15px] md:text-[17px] font-medium max-w-2xl mb-10 leading-relaxed">
-          Take full control of your digital wallet. Seamless transactions, live
-          analytics, and modern bank-grade security built directly into your
-          pocket.
+          <T>Take full control of your digital wallet. Seamless transactions, live analytics, and modern bank-grade security built directly into your pocket.</T>
         </p>
 
         {/* Buttons */}
@@ -207,7 +206,7 @@ const Banner: React.FC = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] transition-transform duration-500 group-hover:scale-105"></div>
             <span className="relative text-white text-[15px] font-bold tracking-wide">
-              Get Started
+              <T>Get Started</T>
             </span>
             <ArrowUpRight
               size={18}
@@ -223,7 +222,7 @@ const Banner: React.FC = () => {
             <div className="flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 text-slate-800 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
               <Play size={10} fill="currentColor" className="ml-0.5" />
             </div>
-            Watch Demo
+            <T>Watch Demo</T>
           </a>
         </div>
       </div>

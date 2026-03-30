@@ -1,4 +1,5 @@
 import { motion, type Variants } from "framer-motion";
+import T from "@/components/T";
 
 interface HeroProps {
   accentGradient: string;
@@ -16,9 +17,9 @@ export function Hero({ accentGradient, variants }: HeroProps) {
         viewport={{ once: true, amount: 0.5 }}
         className="home-heading text-balance text-3xl font-black"
       >
-        How NovaPay{" "}
+        <T>How NovaPay</T>{" "}
         <span className={`home-gradient-text bg-linear-to-r ${accentGradient}`}>
-          Works
+          <T>Works</T>
         </span>
       </motion.h1>
 
@@ -29,8 +30,7 @@ export function Hero({ accentGradient, variants }: HeroProps) {
         viewport={{ once: true, amount: 0.5 }}
         className="home-body mx-auto max-w-2xl text-pretty text-[16px] sm:text-[17px]"
       >
-        Experience a next-generation digital wallet built with security,
-        performance, and modern architecture at its core.
+        <T>Experience a next-generation digital wallet built with security, performance, and modern architecture at its core.</T>
       </motion.p>
     </header>
   );

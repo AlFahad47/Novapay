@@ -7,6 +7,7 @@ import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
 import { TestimonialsSection } from "@/components/blocks/testimonials-with-marquee";
 import { Button } from "@/components/ui/button";
+import T from "@/components/T";
 
 type ReviewType = {
   _id: string;
@@ -79,7 +80,7 @@ export default function TopReviews() {
               transition={{ delay: 0.1 }}
               className="home-heading mt-3 text-2xl md:text-4xl"
             >
-              What Our Users <span className="home-gradient-text">Say</span>
+              <T>What Our Users</T> <span className="home-gradient-text"><T>Say</T></span>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
@@ -87,8 +88,7 @@ export default function TopReviews() {
               transition={{ delay: 0.1 }}
               className="home-body mt-3 max-w-2xl text-sm md:text-base"
             >
-              Real feedback from NovaPay users worldwide, sharing how faster
-              payments and smarter money tools improved their daily lives.
+              <T>Real feedback from NovaPay users worldwide, sharing how faster payments and smarter money tools improved their daily lives.</T>
             </motion.p>
           </div>
 
@@ -101,7 +101,7 @@ export default function TopReviews() {
                 className="group rounded-full border-slate-200 px-6 font-bold text-slate-700 hover:border-[#4DA1FF]/40 hover:text-[#1E50FF] dark:border-white/10 dark:text-slate-200"
               >
                 <Link href="/review">
-                  Share Your Experience
+                  <T>Share Your Experience</T>
                   <FaArrowRight className="transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
@@ -114,7 +114,7 @@ export default function TopReviews() {
                 aria-label="Login to Review"
               >
                 <FaLock size={14} />
-                Login to Review
+                <T>Login to Review</T>
               </Button>
             )}
           </motion.div>
@@ -138,7 +138,7 @@ export default function TopReviews() {
           </div>
         ) : (
           <div className="rounded-3xl border border-slate-200 bg-white/70 px-6 py-16 text-center text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
-            No reviews yet. Be the first to share your experience.
+            <T>No reviews yet. Be the first to share your experience.</T>
           </div>
         )}
 
@@ -148,7 +148,7 @@ export default function TopReviews() {
             href="/review"
             className="flex items-center justify-center gap-2 font-semibold text-slate-500 transition-colors hover:text-[#1E50FF]"
           >
-            See all community feedback <FaArrowRight size={12} />
+            <T>See all community feedback</T> <FaArrowRight size={12} />
           </Link>
         </div>
       </div>

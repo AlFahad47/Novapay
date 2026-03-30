@@ -23,6 +23,7 @@ import { IconType } from "react-icons";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
+import T from "@/components/T";
 
 // Modals
 import BillForm from "../modals/bill";
@@ -254,9 +255,9 @@ const QuickActionsContent = () => {
         {/* Header Area */}
         <div className="mb-7 w-full text-center">
           <h2 className="home-heading text-3xl md:text-[2.5rem]">
-            Everything You Need,{" "}
+            <T>Everything You Need,</T>{" "}
             <span className="bg-linear-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">
-              One Tap Away
+              <T>One Tap Away</T>
             </span>
           </h2>
 
@@ -264,12 +265,12 @@ const QuickActionsContent = () => {
           <div className="flex items-center justify-center">
             {isLoggedIn && kycStatus === "approved" && (
               <span className="flex items-center gap-1.5 text-sm font-semibold text-emerald-500">
-                <FaCheckCircle size={14} /> Verified Account
+                <FaCheckCircle size={14} /> <T>Verified Account</T>
               </span>
             )}
             {isLoggedIn && kycStatus === "pending" && (
               <span className="flex items-center gap-1.5 text-sm font-semibold text-amber-500 animate-pulse">
-                <FaClock size={14} /> Verification Pending
+                <FaClock size={14} /> <T>Verification Pending</T>
               </span>
             )}
             {isLoggedIn &&
@@ -281,8 +282,8 @@ const QuickActionsContent = () => {
                 >
                   <FaExclamationTriangle size={14} />
                   {kycStatus === "rejected"
-                    ? "KYC Rejected - Re-apply now"
-                    : "Complete KYC to Unlock Features"}
+                    ? <T>KYC Rejected - Re-apply now</T>
+                    : <T>Complete KYC to Unlock Features</T>}
                 </button>
               )}
           </div>
@@ -345,7 +346,7 @@ const QuickActionsContent = () => {
                     ${isCenter ? "text-[15px] text-slate-800 dark:text-slate-100" : "text-[13px] text-slate-500 dark:text-slate-400"}
                   `}
                   >
-                    {item.name}
+                    <T>{item.name}</T>
                   </span>
                 </button>
               );
@@ -372,7 +373,7 @@ const QuickActionsContent = () => {
                   ) : (
                     <FaPaperPlane className="text-blue-500" />
                   )}
-                  {activeModal}
+                  <T>{activeModal}</T>
                 </h3>
                 <button
                   onClick={() => setIsModalOpen(false)}
