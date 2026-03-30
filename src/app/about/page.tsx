@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import T from "@/components/T";
 
 // ===== Animation Counter =====
 function Counter({ value, label }: { value: number; label: string }) {
@@ -39,7 +40,7 @@ function Counter({ value, label }: { value: number; label: string }) {
         {count}+
       </h3>
 
-      <p className="text-gray-600 dark:text-white/70 mt-2">{label}</p>
+      <p className="text-gray-600 dark:text-white/70 mt-2"><T>{label}</T></p>
     </div>
   );
 }
@@ -92,14 +93,14 @@ dark:from-[#BDDD7E]/20 dark:to-[#1D4E48]/40
 text-[#1D4E48] dark:text-[#BDDD7E]
 px-4 py-2 rounded-full text-sm font-medium"
           >
-            Next-Gen Digital Wallet
+            <T>Next-Gen Digital Wallet</T>
           </motion.span>
 
           <motion.h1
             variants={fadeUp}
             className="text-4xl md:text-6xl font-extrabold leading-tight bg-gradient-to-r from-[#1D4E48] via-[#2f7c72] to-[#BDDD7E] dark:from-[#BDDD7E] dark:via-[#9FE870] bg-clip-text text-transparent"
           >
-            Professional Digital Finance Made Simple
+            <T>Professional Digital Finance Made Simple</T>
           </motion.h1>
 
           <motion.p
@@ -109,10 +110,10 @@ px-4 py-2 rounded-full text-sm font-medium"
             <span className="font-bold text-[#1D4E48] dark:text-[#94ec82]">
               NovaPay
             </span>{" "}
-            delivers a secure and intelligent digital wallet platform built for
+            <T>delivers a secure and intelligent digital wallet platform built for
             modern financial management. Experience fast transactions,
             AI-powered analytics, and enterprise-grade security in one seamless
-            ecosystem.
+            ecosystem.</T>
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex gap-4 flex-wrap">
@@ -120,14 +121,14 @@ px-4 py-2 rounded-full text-sm font-medium"
               href="/register"
               className="bg-gradient-to-r bg-[#BDDD7E] text-[#1D4E48]   dark:hover:bg-amber-400 dark:hover:text-black  hover:scale-105 font-bold px-8 py-4 rounded-2xl shadow-2xl transition-all duration-300"
             >
-              Get Started
+              <T>Get Started</T>
             </Link>
 
             <Link
               href="/login"
               className="border border-[#1D4E48] text-[#1D4E48] hover:bg-[#BDDD7E] hover:text-[#1D4E48] hover:border-0 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-amber-400 dark:hover:text-black px-8 py-4 font-bold rounded-2xl transition-all duration-300"
             >
-              Login
+              <T>Login</T>
             </Link>
           </motion.div>
         </motion.div>
@@ -156,7 +157,7 @@ px-4 py-2 rounded-full text-sm font-medium"
               {" "}
               <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[#1D4E48] to-[#BDDD7E]" />{" "}
               <p className="text-gray-700 dark:text-gray-200 font-medium">
-                {item}{" "}
+                <T>{item}</T>{" "}
               </p>
             </motion.div>
           ))}
@@ -207,7 +208,7 @@ border border-[#1D4E48]/10 dark:border-gray-700"
           transition={{ duration: 0.8 }}
           className="text-3xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-[#1D4E48] via-[#2f7c72] to-[#BDDD7E] dark:from-[#BDDD7E] dark:via-[#9FE870] dark:to-white bg-clip-text text-transparent"
         >
-          Why Professionals Choose NovaPay
+          <T>Why Professionals Choose NovaPay</T>
         </motion.h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -236,10 +237,10 @@ border border-[#1D4E48]/10 dark:border-gray-700"
               <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-gradient-to-br from-[#1D4E48] to-[#BDDD7E] transition duration-500" />
 
               <h3 className="text-xl font-semibold text-[#1D4E48] dark:text-[#BDDD7E] mb-4 relative">
-                {feature.title}
+                <T>{feature.title}</T>
               </h3>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed relative">
-                {feature.desc}
+                <T>{feature.desc}</T>
               </p>
             </motion.div>
           ))}
@@ -253,12 +254,12 @@ border border-[#1D4E48]/10 dark:border-gray-700"
         <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-6">
             <h2 className="text-3xl md:text-5xl dark:text-[#BDDD7E] font-bold">
-              Built with Modern Technology
+              <T>Built with Modern Technology</T>
             </h2>
             <p className="text-white/90 leading-relaxed max-w-xl">
-              NovaPay is engineered with TypeScript and Next.js to deliver
+              <T>NovaPay is engineered with TypeScript and Next.js to deliver
               reliability, performance, and scalability for future-ready digital
-              finance platforms.
+              finance platforms.</T>
             </p>
           </div>
 

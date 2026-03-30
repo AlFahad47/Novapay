@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Smartphone, ArrowDownLeft, ArrowUpRight, Loader2, Zap, Users } from 'lucide-react';
 import Swal from "sweetalert2";
+import T from "@/components/T";
 
 const CardsAndBanks = () => {
   const { data: session } = useSession();
@@ -137,7 +138,7 @@ const CardsAndBanks = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
           <div className="lg:col-span-6 space-y-8 md:space-y-12">
             <div className={`relative ${isMobile ? 'h-[400px]' : 'h-[520px]'} w-full`} onMouseLeave={() => setHoveredIndex(null)}>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 md:mb-2">My Cards</h3>
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 md:mb-2"><T>My Cards</T></h3>
               {banks.map((card: any, index: number) => {
                 const isSelected = selectedBankId === card.id;
                 let visualIndex = index;
@@ -185,7 +186,7 @@ const CardsAndBanks = () => {
 
           <div className="lg:col-span-6">
             <div className="bg-white dark:bg-slate-900 p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800 sticky top-12">
-              <h3 className="text-lg md:text-xl font-black mb-6 flex items-center gap-3 italic"><Zap className="text-blue-500" /> Transfer</h3>
+              <h3 className="text-lg md:text-xl font-black mb-6 flex items-center gap-3 italic"><Zap className="text-blue-500" /> <T>Transfer</T></h3>
               <div className="space-y-6">
                 <div className="relative">
                   <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-800 p-6 md:p-8 rounded-2xl md:rounded-3xl text-3xl md:text-4xl font-black outline-none border-2 border-transparent focus:border-blue-500 transition-all dark:text-white" placeholder="0" />
@@ -193,10 +194,10 @@ const CardsAndBanks = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <button onClick={() => handleTransfer('add_money')} disabled={isProcessing} className="p-6 bg-blue-600 text-white rounded-2xl font-black flex flex-col items-center gap-1 shadow-xl hover:bg-blue-700 active:scale-95 transition-all">
-                    <ArrowDownLeft /> <span className="text-[10px]">ADD MONEY</span>
+                    <ArrowDownLeft /> <span className="text-[10px]"><T>ADD MONEY</T></span>
                   </button>
                   <button onClick={() => handleTransfer('deposit_money')} disabled={isProcessing} className="p-6 bg-slate-900 dark:bg-white dark:text-black text-white rounded-2xl font-black flex flex-col items-center gap-1 active:scale-95 transition-all">
-                    <ArrowUpRight /> <span className="text-[10px]">DEPOSIT</span>
+                    <ArrowUpRight /> <span className="text-[10px]"><T>DEPOSIT</T></span>
                   </button>
                 </div>
               </div>

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
 import { User, Mail, Phone, Globe, CreditCard, Landmark, X, Lock } from "lucide-react";
+import T from "@/components/T";
 
 type UserType = {
   name?: string;
@@ -124,7 +125,7 @@ export default function UserDashboard() {
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center dark:bg-[#04090f] dark:text-white">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-      <p className="text-xl font-bold">Loading Profile...</p>
+      <p className="text-xl font-bold"><T>Loading Profile...</T></p>
     </div>
   );
 
@@ -141,7 +142,7 @@ export default function UserDashboard() {
         transition={{ delay: 0.2 }}
         className="text-3xl font-bold mb-8"
       >
-        User Dashboard
+        <T>User Dashboard</T>
       </motion.h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -173,7 +174,7 @@ export default function UserDashboard() {
               onClick={() => setIsOpen(true)}
               className="mt-4 px-4 py-2 bg-[#0095ff] hover:bg-[#0070ff] text-white rounded-xl transition shadow-lg shadow-blue-500/20"
             >
-              Edit Profile
+              <T>Edit Profile</T>
             </motion.button>
           </div>
         </Card>
@@ -181,7 +182,7 @@ export default function UserDashboard() {
         <div className="lg:col-span-2 grid gap-6">
           <Card>
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <User className="w-5 h-5 text-blue-500" /> Personal Information
+                <User className="w-5 h-5 text-blue-500" /> <T>Personal Information</T>
             </h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm">
               <Info icon={User} label="Full Name" value={userData.name || "Not provided"} />
@@ -193,7 +194,7 @@ export default function UserDashboard() {
 
           <Card>
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-blue-500" /> Financial Details
+                <CreditCard className="w-5 h-5 text-blue-500" /> <T>Financial Details</T>
             </h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm">
               <Info icon={CreditCard} label="Currency" value={userData.currency || "Not provided"} />
@@ -224,7 +225,7 @@ export default function UserDashboard() {
             >
               <div className="bg-white dark:bg-[#0c1a2b] border border-gray-200 dark:border-blue-700/50 rounded-2xl p-6 w-full max-w-md shadow-2xl pointer-events-auto overflow-y-auto max-h-[90vh]">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-gray-800 dark:text-white">Update Profile</h2>
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-white"><T>Update Profile</T></h2>
                   <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-blue-900/40 rounded-full transition">
                     <X className="w-6 h-6 text-gray-500 dark:text-blue-300" />
                   </button>
@@ -251,7 +252,7 @@ export default function UserDashboard() {
                   onClick={handleSave}
                   className="mt-8 w-full bg-[#0095ff] hover:bg-[#0070ff] text-white py-3 rounded-xl font-semibold transition shadow-lg shadow-blue-500/30"
                 >
-                  Save Changes
+                  <T>Save Changes</T>
                 </motion.button>
               </div>
             </motion.div>
@@ -269,7 +270,7 @@ function Info({ icon: Icon, label, value }: { icon: React.ElementType; label: st
         <Icon className="w-5 h-5 text-blue-500 dark:text-blue-400" />
       </div>
       <div>
-        <p className="text-gray-500 dark:text-blue-300 text-xs font-medium uppercase tracking-wider">{label}</p>
+        <p className="text-gray-500 dark:text-blue-300 text-xs font-medium uppercase tracking-wider"><T>{label}</T></p>
         <p className="font-semibold text-gray-800 dark:text-white">{value}</p>
       </div>
     </div>
@@ -279,7 +280,7 @@ function Info({ icon: Icon, label, value }: { icon: React.ElementType; label: st
 function Input({ label, name, value, onChange, readOnly = false }: { label: string; name: string; value: string; onChange: React.ChangeEventHandler<HTMLInputElement>; readOnly?: boolean }) {
   return (
     <div>
-      <label className="text-sm font-medium text-gray-600 dark:text-blue-300 mb-1 block">{label}</label>
+      <label className="text-sm font-medium text-gray-600 dark:text-blue-300 mb-1 block"><T>{label}</T></label>
       <input
         name={name}
         value={value}

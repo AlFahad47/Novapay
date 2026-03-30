@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import T from "@/components/T";
 
 const features = [
   {
@@ -34,10 +35,10 @@ export default function OfferSection() {
           className="text-center mb-12"
         >
           <h2 className="text-2xl md:text-4xl font-extrabold text-gray-800 dark:text-white">
-            What We <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent">Offer</span> 
+            <T>What We</T> <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent"><T>Offer</T></span>
           </h2>
           <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm mx-auto">
-            Everything you need to manage your money — simple, fast, and secure.
+            <T>Everything you need to manage your money — simple, fast, and secure.</T>
           </p>
         </motion.div>
 
@@ -54,8 +55,8 @@ export default function OfferSection() {
               className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md border-t-4 border-[#0061ff] dark:border-[#0095ff] hover:shadow-xl transition-shadow duration-300"
             >
               <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-[#0061ff] dark:text-[#00b4ff] mb-2">{feature.title}</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+              <h3 className="text-xl font-semibold text-[#0061ff] dark:text-[#00b4ff] mb-2"><T>{feature.title}</T></h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed"><T>{feature.description}</T></p>
             </motion.div>
           ))}
         </div>
@@ -70,17 +71,17 @@ export default function OfferSection() {
         >
           <div>
             <h3 className="text-xl font-bold text-white">
-              🎉 First 3 transfers FREE for new users!
+              🎉 <T>First 3 transfers FREE for new users!</T>
             </h3>
             <p className="text-blue-100 text-sm mt-1">
-              Sign up today and experience NovaPay with zero fees.
+              <T>Sign up today and experience NovaPay with zero fees.</T>
             </p>
           </div>
           <a
             href="/register"
             className="px-6 py-3 rounded-full bg-white text-[#0061ff] font-semibold text-sm whitespace-nowrap hover:opacity-90 transition"
           >
-            Get Started →
+            <T>Get Started</T> →
           </a>
         </motion.div>
 

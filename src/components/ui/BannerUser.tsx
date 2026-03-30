@@ -25,6 +25,10 @@ import { BsCoin } from "react-icons/bs";
 import { FaRankingStar } from "react-icons/fa6";
 import RankDetailsModal from "../modals/RankDetailsModal";
 import { Button } from "@/components/ui/button";
+import SendMoneyForm from "../modals/sendmoney";
+import AddMoneyForm from "../modals/AddMoneyForm";
+import RequestMoneyForm from "../modals/RequestMoney";
+import T from "@/components/T";
 
 const BannerUser: React.FC = () => {
   const { data: session } = useSession();
@@ -34,12 +38,14 @@ const BannerUser: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
   const [greeting, setGreeting] = useState("");
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [activeModal, setActiveModal] = useState<string | null>(null);
 
-  // নোটিফিকেশন স্টেট
+  // notification state
   const [pendingRequests, setPendingRequests] = useState<number>(0);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [notificationData, setNotificationData] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isListModalOpen, setIsListModalOpen] = useState(false);
   const [isRankModalOpen, setIsRankModalOpen] = useState(false);
 
   useEffect(() => {
@@ -78,9 +84,13 @@ const BannerUser: React.FC = () => {
           );
           const notifData = await notifRes.json();
 
-          if (notifData.success && notifData.request) {
-            setPendingRequests(1);
-            setNotificationData(notifData.request);
+          if (notifData.success) {
+            // Check if backend returns 'requests' (array) or 'request' (single object)
+            const list =
+              notifData.requests ||
+              (notifData.request ? [notifData.request] : []);
+            setNotifications(list);
+            setPendingRequests(list.length);
           } else {
             setNotifications([]);
             setPendingRequests(0);
@@ -181,34 +191,49 @@ const BannerUser: React.FC = () => {
 
   const processPayment = async (data: any) => {
     try {
+      // Determine the correct payload based on notification type
+      const isSaving = data.type === "saving_reminder";
+
+      const payload = {
+        email: session?.user?.email,
+        type: isSaving ? "micro_saving_deposit" : "send_money",
+        amount: Number(data.amount),
+        // For savings, the receiver is the user themselves (or the goal)
+        receiver: isSaving
+          ? session?.user?.email
+          : (data.from || data.senderEmail).toLowerCase().trim(),
+        description:
+          data.note ||
+          (isSaving ? "Micro-saving deposit" : "Payment for request"),
+        requestId: data._id,
+        goalId: data.goalId || null, // Pass the goalId for savings
+      };
+
       const res = await fetch("/api/transactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: session?.user?.email,
-          type: "send_money",
-          amount: Number(data.amount),
-          receiver: (data.from || data.senderEmail).toLowerCase().trim(),
-          description: `Payment for request: ${data.note || "No note"}`,
-          requestId: data._id,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const result = await res.json();
+
       if (result.success) {
         Swal.fire(
           "Success!",
-          "Payment completed and request cleared.",
+          isSaving ? "Savings updated!" : "Payment completed!",
           "success",
         );
 
-        setPendingRequests(0);
-        setNotificationData(null);
+        // Update UI
+        setNotifications((prev) => prev.filter((n) => n._id !== data._id));
+        setPendingRequests((prev) => prev - 1);
+
+        // Refresh balance
         window.dispatchEvent(new Event("balanceUpdated"));
       } else {
         Swal.fire("Error", result.message, "error");
       }
-    } catch (err) {
+    } catch (error) {
       Swal.fire("Error", "Transaction failed", "error");
     }
   };
@@ -237,7 +262,7 @@ const BannerUser: React.FC = () => {
       />
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] dark:bg-[#1E50FF] opacity-[0.18] blur-[140px] rounded-full pointer-events-none z-[-1]" />
 
-      <div className="w-11/12 mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
+      <div className="w-11/12 max-w-[1280px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
         <motion.div
           className="flex-1 flex flex-col items-start gap-6 max-w-xl"
           initial={{ opacity: 0, y: 30 }}
@@ -250,7 +275,7 @@ const BannerUser: React.FC = () => {
                 className={`w-2 h-2 rounded-full animate-pulse ${isApproved ? "bg-green-400" : "bg-orange-400"}`}
               />
               <span className="text-[#1E50FF] dark:text-[#4DA1FF] text-xs font-bold tracking-widest uppercase">
-                NovaPay · {isApproved ? "Verified Account" : "KYC Pending"}
+                NovaPay · <T>{isApproved ? "Verified Account" : "KYC Pending"}</T>
               </span>
             </div>
             <motion.button
@@ -267,7 +292,7 @@ const BannerUser: React.FC = () => {
               {/* Label & Rank */}
               <div className="flex flex-col items-start leading-tight">
                 <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-[#64748B] dark:text-[#94A3B8]">
-                  Tier Status
+                  <T>Tier Status</T>
                 </span>
                 <span className="text-sm font-semibold text-[#0F172A] dark:text-white">
                   {dbUser?.rank || "Bronze"}
@@ -284,10 +309,10 @@ const BannerUser: React.FC = () => {
 
           <div>
             <p className="text-[#64748B] dark:text-[#94A3B8] text-base mb-1">
-              {greeting},
+              <T>{greeting}</T>,
             </p>
             <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold tracking-tight leading-[1.1] text-[#0F172A] dark:text-white">
-              Welcome back,{" "}
+              <T>Welcome back,</T>{" "}
               <span
                 className="text-transparent bg-clip-text"
                 style={{ backgroundImage: hedwigGradient }}
@@ -296,11 +321,9 @@ const BannerUser: React.FC = () => {
               </span>
             </h1>
             <p className="mt-4 text-[#64748B] dark:text-[#94A3B8] text-sm md:text-base max-w-md leading-relaxed">
-              Your digital assets are{" "}
-              {isApproved ? "secure and ready" : "under review"}.{" "}
               {isApproved
-                ? "Manage transfers and track spending in real-time."
-                : "Complete your profile to unlock all features."}
+                ? <T>Your digital assets are secure and ready. Manage transfers and track spending in real-time.</T>
+                : <T>Your digital assets are under review. Complete your profile to unlock all features.</T>}
             </p>
           </div>
 
@@ -314,7 +337,7 @@ const BannerUser: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF]" />
                 <LayoutDashboard size={16} className="relative text-white" />
                 <span className="relative text-white text-sm font-semibold tracking-wide">
-                  Dashboard
+                  <T>Dashboard</T>
                 </span>
                 <ArrowUpRight
                   size={15}
@@ -329,7 +352,7 @@ const BannerUser: React.FC = () => {
               >
                 <Wallet size={15} />
                 <span className="text-sm font-semibold cursor-pointer">
-                  Wallet Account
+                  <T>Wallet Account</T>
                 </span>
               </motion.button>
             </Link>
@@ -347,7 +370,7 @@ const BannerUser: React.FC = () => {
                 <span className={stat.color}>{stat.icon}</span>
                 <div>
                   <p className="text-[10px] text-[#94A3B8] leading-none">
-                    {stat.label}
+                    <T>{stat.label}</T>
                   </p>
                   <p className="text-xs font-bold text-[#0F172A] dark:text-white mt-0.5">
                     {loading ? "..." : stat.value}
@@ -367,7 +390,7 @@ const BannerUser: React.FC = () => {
         >
           {/* ক্লিকযোগ্য এলার্ট বাটন */}
           <motion.button
-            onClick={() => pendingRequests > 0 && setIsModalOpen(true)}
+            onClick={() => pendingRequests > 0 && setIsListModalOpen(true)}
             whileHover={pendingRequests > 0 ? { scale: 1.05 } : {}}
             whileTap={{ scale: 0.95 }}
             className={`relative flex items-center gap-2 self-end px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-500 cursor-pointer ${pendingRequests > 0 ? "bg-red-50 dark:bg-red-500/10 border-red-500 shadow-lg shadow-red-500/20 active:scale-95" : "bg-white/70 dark:bg-[#0F172A]/70 border-[#4DA1FF]/20"}`}
@@ -384,8 +407,8 @@ const BannerUser: React.FC = () => {
               className={`text-xs font-medium ${pendingRequests > 0 ? "text-red-600 dark:text-red-400" : "text-[#0F172A] dark:text-white"}`}
             >
               {pendingRequests > 0
-                ? `${pendingRequests} New Request`
-                : "No Alerts"}
+                ? <>{pendingRequests} <T>New Request</T></>
+                : <T>No Alerts</T>}
             </span>
             {pendingRequests > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] text-white font-bold animate-pulse">
@@ -407,7 +430,7 @@ const BannerUser: React.FC = () => {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-white/60 text-[10px] uppercase tracking-widest font-medium">
-                    NovaPay Wallet
+                    <T>NovaPay Wallet</T>
                   </p>
                   <p className="text-white font-bold text-base mt-0.5">
                     {firstName}
@@ -421,7 +444,7 @@ const BannerUser: React.FC = () => {
               </div>
               <div>
                 <p className="text-white/60 text-[10px] uppercase tracking-widest">
-                  Available Balance
+                  <T>Available Balance</T>
                 </p>
                 <p className="text-white font-bold text-3xl tracking-tight mt-1">
                   {loading
@@ -454,7 +477,7 @@ const BannerUser: React.FC = () => {
               >
                 <span className="text-current">{action.icon}</span>
                 <span className="text-[10px] font-semibold text-[#0F172A] dark:text-white">
-                  {action.label}
+                  <T>{action.label}</T>
                 </span>
               </motion.button>
             ))}
@@ -467,7 +490,9 @@ const BannerUser: React.FC = () => {
         {isListModalOpen && (
           <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setIsListModalOpen(false)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
@@ -478,26 +503,47 @@ const BannerUser: React.FC = () => {
               className="relative w-full max-w-sm bg-white dark:bg-[#0F172A] rounded-[2.5rem] shadow-2xl border border-[#4DA1FF]/20 flex flex-col max-h-[70vh] overflow-hidden"
             >
               <div className="p-6 border-b border-[#4DA1FF]/10 flex justify-between items-center">
-                <h3 className="text-lg font-bold text-[#0F172A] dark:text-white">Recent Alerts</h3>
+                <h3 className="text-lg font-bold text-[#0F172A] dark:text-white">
+                  Recent Alerts
+                </h3>
+                <button
+                  onClick={() => setIsListModalOpen(false)}
+                  className="p-2 text-gray-500 hover:rotate-90 transition-transform"
+                >
+                  <X size={18} />
+                </button>
+                <h3 className="text-lg font-bold text-[#0F172A] dark:text-white"><T>Recent Alerts</T></h3>
                 <button onClick={() => setIsListModalOpen(false)} className="p-2 text-gray-500 hover:rotate-90 transition-transform"><X size={18} /></button>
               </div>
 
               <div className="overflow-y-auto p-4 space-y-3 custom-scrollbar">
                 {notifications.map((item, index) => (
-                  <div key={item._id || index} className="p-4 rounded-2xl bg-[#f8faff] dark:bg-white/5 border border-[#4DA1FF]/10 flex flex-col gap-3">
+                  <div
+                    key={item._id || index}
+                    className="p-4 rounded-2xl bg-[#f8faff] dark:bg-white/5 border border-[#4DA1FF]/10 flex flex-col gap-3"
+                  >
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-[#4DA1FF]/10 flex items-center justify-center">
                           <UserCircle2 size={16} className="text-[#4DA1FF]" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">Request From</p>
-                          <p className="text-xs font-bold dark:text-white truncate max-w-[120px]">{item.from || item.senderEmail}</p>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">
+                            Request From
+                          </p>
+                          <p className="text-xs font-bold dark:text-white truncate max-w-[120px]">
+                            {item.from || item.senderEmail}
+                          </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">Amount</p>
-                        <p className="text-sm font-black text-[#1E50FF] dark:text-[#4DA1FF]">{currencySymbol}{item.amount}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">
+                          Amount
+                        </p>
+                        <p className="text-sm font-black text-[#1E50FF] dark:text-[#4DA1FF]">
+                          {currencySymbol}
+                          {item.amount}
+                        </p>
                       </div>
                     </div>
                     <button
@@ -571,7 +617,7 @@ const BannerUser: React.FC = () => {
                   {notificationData.note && (
                     <div className="mt-3 pt-3 border-t border-[#4DA1FF]/10">
                       <p className="text-xs italic text-[#64748B] dark:text-[#94A3B8]">
-                        "{notificationData.note}"
+                        &ldquo;{notificationData.note}&rdquo;
                       </p>
                     </div>
                   )}
@@ -615,6 +661,46 @@ const BannerUser: React.FC = () => {
             status={dbUser?.kycStatus}
             onClose={() => setShowOnboarding(false)}
           />
+        )}
+        {activeModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-200 flex items-center justify-center p-4"
+          >
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setActiveModal(null)}
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-md bg-white dark:bg-[#0F172A] rounded-3xl p-6 shadow-2xl border border-[#4DA1FF]/20"
+            >
+              <button
+                onClick={() => setActiveModal(null)}
+                className="absolute top-5 right-5 p-2 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500 hover:rotate-90 transition-transform"
+              >
+                <X size={16} />
+              </button>
+              <h2 className="text-lg font-bold text-[#0F172A] dark:text-white mb-5">
+                {activeModal === "send"
+                  ? "Send Money"
+                  : activeModal === "add"
+                    ? "Add Money"
+                    : "Request Money"}
+              </h2>
+              {activeModal === "send" && (
+                <SendMoneyForm onSuccess={() => setActiveModal(null)} />
+              )}
+              {activeModal === "add" && <AddMoneyForm />}
+              {activeModal === "request" && (
+                <RequestMoneyForm onSuccess={() => setActiveModal(null)} />
+              )}
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </section>

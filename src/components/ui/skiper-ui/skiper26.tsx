@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { GripHorizontal } from "lucide-react";
 import { useTheme } from "next-themes";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useId, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -458,7 +458,7 @@ export const useThemeToggle = ({
   blur?: boolean;
   gifUrl?: string;
 } = {}) => {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
 
   const [isDark, setIsDark] = useState(false);
 
@@ -469,7 +469,7 @@ export const useThemeToggle = ({
 
   const styleId = "theme-transition-styles";
 
-  const updateStyles = useCallback((css: string, name: string) => {
+  const updateStyles = useCallback((css: string) => {
     if (typeof window === "undefined") return;
 
     let styleElement = document.getElementById(styleId) as HTMLStyleElement;
@@ -484,16 +484,17 @@ export const useThemeToggle = ({
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setIsDark(!isDark);
+    const nextIsDark = !(resolvedTheme === "dark");
+    setIsDark(nextIsDark);
 
     const animation = createAnimation(variant, start, blur, gifUrl);
 
-    updateStyles(animation.css, animation.name);
+    updateStyles(animation.css);
 
     if (typeof window === "undefined") return;
 
     const switchTheme = () => {
-      setTheme(theme === "light" ? "dark" : "light");
+      setTheme(nextIsDark ? "dark" : "light");
     };
 
     if (!document.startViewTransition) {
@@ -502,24 +503,14 @@ export const useThemeToggle = ({
     }
 
     document.startViewTransition(switchTheme);
-  }, [
-    theme,
-    setTheme,
-    variant,
-    start,
-    blur,
-    gifUrl,
-    updateStyles,
-    isDark,
-    setIsDark,
-  ]);
+  }, [resolvedTheme, setTheme, variant, start, blur, gifUrl, updateStyles]);
 
   const setCrazyLightTheme = useCallback(() => {
     setIsDark(false);
 
     const animation = createAnimation(variant, start, blur, gifUrl);
 
-    updateStyles(animation.css, animation.name);
+    updateStyles(animation.css);
 
     if (typeof window === "undefined") return;
 
@@ -540,7 +531,7 @@ export const useThemeToggle = ({
 
     const animation = createAnimation(variant, start, blur, gifUrl);
 
-    updateStyles(animation.css, animation.name);
+    updateStyles(animation.css);
 
     if (typeof window === "undefined") return;
 
@@ -567,7 +558,7 @@ export const useThemeToggle = ({
 
     const animation = createAnimation(variant, start, blur, gifUrl);
 
-    updateStyles(animation.css, animation.name);
+    updateStyles(animation.css);
 
     const switchTheme = () => {
       setTheme("system");
@@ -593,19 +584,96 @@ export const useThemeToggle = ({
 
 // ///////////////////////////////////////////////////////////////////////////
 
-export const ThemeToggleButton = ({
-  className = "",
-  variant = "circle",
-  start = "center",
-  blur = false,
-  gifUrl = "",
-}: {
+type ThemeToggleButtonProps = {
   className?: string;
   variant?: AnimationVariant;
   start?: AnimationStart;
   blur?: boolean;
   gifUrl?: string;
-}) => {
+};
+
+export const ThemeToggleButton2 = ({
+  className = "",
+  variant = "circle",
+  start = "center",
+  blur = false,
+  gifUrl = "",
+}: ThemeToggleButtonProps) => {
+  const { isDark, toggleTheme } = useThemeToggle({
+    variant,
+    start,
+    blur,
+    gifUrl,
+  });
+  const clipPathId = useId().replace(/:/g, "");
+
+  return (
+    <button
+      type="button"
+      className={cn(
+        "size-10 cursor-pointer rounded-full p-2 transition-all duration-300 active:scale-95",
+        isDark ? "bg-black text-white" : "bg-white text-black",
+        className,
+      )}
+      onClick={toggleTheme}
+      aria-label="Toggle theme"
+    >
+      <span className="sr-only">Toggle theme</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        fill="currentColor"
+        strokeLinecap="round"
+        viewBox="0 0 32 32"
+      >
+        <defs>
+          <clipPath id={clipPathId}>
+            <motion.path
+              animate={{ y: isDark ? 10 : 0, x: isDark ? -12 : 0 }}
+              transition={{ ease: "easeInOut", duration: 0.35 }}
+              d="M0-5h30a1 1 0 0 0 9 13v24H0Z"
+            />
+          </clipPath>
+        </defs>
+        <g clipPath={`url(#${clipPathId})`}>
+          <motion.circle
+            animate={{ r: isDark ? 10 : 8 }}
+            transition={{ ease: "easeInOut", duration: 0.35 }}
+            cx="16"
+            cy="16"
+          />
+          <motion.g
+            animate={{
+              rotate: isDark ? -100 : 0,
+              scale: isDark ? 0.5 : 1,
+              opacity: isDark ? 0 : 1,
+            }}
+            transition={{ ease: "easeInOut", duration: 0.35 }}
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <path d="M16 5.5v-4" />
+            <path d="M16 30.5v-4" />
+            <path d="M1.5 16h4" />
+            <path d="M26.5 16h4" />
+            <path d="m23.4 8.6 2.8-2.8" />
+            <path d="m5.7 26.3 2.9-2.9" />
+            <path d="m5.8 5.8 2.8 2.8" />
+            <path d="m23.4 23.4 2.9 2.9" />
+          </motion.g>
+        </g>
+      </svg>
+    </button>
+  );
+};
+
+const ThemeToggleButtonLegacy = ({
+  className = "",
+  variant = "rectangle",
+  start = "center",
+  blur = false,
+  gifUrl = "",
+}: ThemeToggleButtonProps) => {
   const { isDark, toggleTheme } = useThemeToggle({
     variant,
     start,
@@ -646,6 +714,36 @@ export const ThemeToggleButton = ({
         />
       </svg>
     </button>
+  );
+};
+
+export const ThemeToggleButton = ({
+  className = "",
+  variant = "circle",
+  start = "center",
+  blur = false,
+  gifUrl = "",
+}: ThemeToggleButtonProps) => {
+  if (variant === "circle") {
+    return (
+      <ThemeToggleButton2
+        className={className}
+        variant={variant}
+        start={start}
+        blur={blur}
+        gifUrl={gifUrl}
+      />
+    );
+  }
+
+  return (
+    <ThemeToggleButtonLegacy
+      className={className}
+      variant={variant}
+      start={start}
+      blur={blur}
+      gifUrl={gifUrl}
+    />
   );
 };
 

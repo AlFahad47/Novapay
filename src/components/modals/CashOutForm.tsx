@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import Swal from "sweetalert2";
 import { Button } from "@/components/ui/button";
+import T from "@/components/T";
 
 const CashOutForm = () => {
   const { data: session } = useSession();
@@ -70,7 +71,7 @@ const CashOutForm = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-sm font-medium mb-1">
-          Agent Number / Email
+          <T>Agent Number / Email</T>
         </label>
         <input
           name="agentNumber"
@@ -81,7 +82,7 @@ const CashOutForm = () => {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium mb-1">Amount</label>
+        <label className="block text-sm font-medium mb-1"><T>Amount</T></label>
         <input
           name="amount"
           type="number"
@@ -97,7 +98,7 @@ const CashOutForm = () => {
         size="lg"
         className="w-full rounded-xl font-bold"
       >
-        {loading ? "Processing..." : "Confirm Cash Out"}
+        {loading ? <T>Processing...</T> : <T>Confirm Cash Out</T>}
       </Button>
     </form>
   );

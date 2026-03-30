@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { HiChevronDown } from "react-icons/hi2";
 import { motion, Variants } from "framer-motion";
+import T from "@/components/T";
 
 export default function FAQPage() {
   const faqs = [
@@ -63,12 +64,12 @@ export default function FAQPage() {
           className="text-center mb-12"
         >
           <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 tracking-tight">
-            Frequently Asked Questions
+            <T>Frequently Asked Questions</T>
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">
-            Everything you need to know about the NovaPay digital wallet. Can't find the answer you're looking for?{" "}
+            <T>Everything you need to know about the NovaPay digital wallet. Can't find the answer you're looking for?</T>{" "}
             <Link href="/support" className="text-blue-600 dark:text-blue-400 font-semibold underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
-              Chat to our friendly team.
+              <T>Chat to our friendly team.</T>
             </Link>
           </p>
         </motion.div>
@@ -88,7 +89,7 @@ export default function FAQPage() {
             >
               <summary className="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900 dark:text-white">
                 <h2 className="text-lg font-semibold">
-                  {faq.question}
+                  <T>{faq.question}</T>
                 </h2>
 
                 <span className="relative size-6 shrink-0 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center transition duration-300 group-open:-rotate-180">
@@ -97,7 +98,7 @@ export default function FAQPage() {
               </summary>
 
               <p className="mt-4 leading-relaxed text-gray-600 dark:text-gray-400 border-l-4 border-blue-500 dark:border-blue-400 pl-4">
-                {faq.answer}
+                <T>{faq.answer}</T>
               </p>
             </motion.details>
           ))}
@@ -110,13 +111,13 @@ export default function FAQPage() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-12 text-center bg-gray-50/80 dark:bg-[#121928]/80 backdrop-blur-md border border-gray-200 dark:border-gray-800/60 rounded-2xl p-8 shadow-sm transition-colors"
         >
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Still have questions?</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">Our customer support is available 24/7 to assist you.</p>
-          <Link 
-            href="/support" 
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2"><T>Still have questions?</T></h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-6"><T>Our customer support is available 24/7 to assist you.</T></p>
+          <Link
+            href="/support"
             className="inline-block rounded-full bg-blue-600 dark:bg-blue-500 px-8 py-3 text-base font-semibold text-white hover:bg-blue-700 dark:hover:bg-blue-600 transition-all shadow-md hover:shadow-blue-500/25"
           >
-            Open Live Chat
+            <T>Open Live Chat</T>
           </Link>
         </motion.div>
 

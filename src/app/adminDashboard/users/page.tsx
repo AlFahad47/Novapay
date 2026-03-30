@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import T from "@/components/T";
 
 type User = {
   _id: string;
@@ -9,23 +10,41 @@ type User = {
   email: string;
   role: string;
   createdAt?: string;
+
+  image?: string;
+
+  balance?: number;
+  bank?: string;
+  bankBalance?: number;
+  currency?: string;
+  points?: number;
+  rank?: string;
+  totalXP?: number;
+  kycStatus?: string;
+  updatedAt?: string;
 };
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  // ✅ PAGINATION
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 8;
+
   useEffect(() => {
     async function fetchUsers() {
       try {
         const res = await fetch("/api/admin/users");
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch users");
-        }
+        if (!res.ok) throw new Error("Failed to fetch users");
 
         const data = await res.json();
-
         setUsers(data?.users || []);
       } catch (error) {
         console.error("Fetch users error:", error);
@@ -36,6 +55,32 @@ export default function AdminUsersPage() {
 
     fetchUsers();
   }, []);
+
+  const filteredUsers = useMemo(() => {
+    return users
+      .filter(
+        (u) =>
+          u.name.toLowerCase().includes(search.toLowerCase()) ||
+          u.email.toLowerCase().includes(search.toLowerCase()),
+      )
+      .sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+
+        return sortOrder === "asc" ? dateB - dateA : dateA - dateB;
+      });
+  }, [users, search, sortOrder]);
+
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * usersPerPage;
+    return filteredUsers.slice(start, start + usersPerPage);
+  }, [filteredUsers, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   if (loading) {
     return (
@@ -56,95 +101,223 @@ export default function AdminUsersPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      {/* PAGE TITLE */}
+      {/* TITLE */}
       <div>
         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-          Users List
+          <T>Users List</T>
         </h1>
-
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Manage all registered users
+          <T>Manage all registered users</T>
         </p>
       </div>
 
-      {/* TABLE CARD */}
-      <motion.div
-        className="w-full overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0c1a2b] shadow-lg"
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
+      {/* SEARCH + SORT */}
+      <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+        <motion.input
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          placeholder="Search by name or email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full md:w-80 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0c1a2b] focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <button
+          onClick={() =>
+            setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+          }
+          className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white"
+        >
+          {sortOrder === "asc" ? <><T>Newest</T> ⬇️</> : <><T>Oldest</T> ⬆️</>}
+        </button>
+      </div>
+
+      {/* TABLE */}
+      <motion.div className="w-full overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0c1a2b] shadow-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
-            {/* TABLE HEADER */}
-            <thead className="bg-gray-100 dark:bg-[#08111f] text-gray-700 dark:text-gray-300">
+            <thead className="bg-gray-100 dark:bg-[#08111f]">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold">Name</th>
-                <th className="px-4 py-3 text-left font-semibold">Email</th>
-                <th className="px-4 py-3 text-left font-semibold">Role</th>
-                <th className="px-4 py-3 text-left font-semibold">Created</th>
+                <th className="px-4 py-3 text-left"><T>Name</T></th>
+                <th className="px-4 py-3 text-left"><T>Email</T></th>
+                <th className="px-4 py-3 text-left"><T>Role</T></th>
+                <th className="px-4 py-3 text-left"><T>Created</T></th>
               </tr>
             </thead>
 
-            {/* TABLE BODY */}
             <tbody>
-              {users.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="text-center py-10 text-gray-500 dark:text-gray-400"
-                  >
-                    No users found
+              {paginatedUsers.map((user, index) => (
+                <motion.tr
+                  key={user._id}
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setIsOpen(true);
+                  }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.04 }}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="cursor-pointer border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#111c2d]"
+                >
+                  <td className="px-4 py-3 flex items-center gap-3">
+                    {user.image ? (
+                      <img
+                        src={user.image}
+                        className="w-9 h-9 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-white text-sm font-bold">
+                        {user.name.charAt(0)}
+                      </div>
+                    )}
+                    {user.name}
                   </td>
-                </tr>
-              ) : (
-                users.map((user, index) => (
-                  <motion.tr
-                    key={user._id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    whileHover={{ scale: 1.01 }}
-                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#111c2d] transition"
-                  >
-                    {/* NAME */}
-                    <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">
-                      {user.name}
-                    </td>
 
-                    {/* EMAIL */}
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300 whitespace-nowrap">
-                      {user.email}
-                    </td>
-
-                    {/* ROLE */}
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium
-                        ${
-                          user.role === "admin"
-                            ? "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
-                            : user.role === "Agent"
-                            ? "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                            : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200"
-                        }`}
-                      >
-                        {user.role}
-                      </span>
-                    </td>
-
-                    {/* CREATED DATE */}
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                      {user.createdAt
-                        ? new Date(user.createdAt).toLocaleDateString()
-                        : "N/A"}
-                    </td>
-                  </motion.tr>
-                ))
-              )}
+                  <td className="px-4 py-3">{user.email}</td>
+                  <td className="px-4 py-3">{user.role}</td>
+                  <td className="px-4 py-3">
+                    {user.createdAt
+                      ? new Date(user.createdAt).toLocaleDateString()
+                      : "N/A"}
+                  </td>
+                </motion.tr>
+              ))}
             </tbody>
           </table>
         </div>
       </motion.div>
+
+      {/* PAGINATION */}
+      <div className="flex justify-center items-center gap-2 flex-wrap">
+        <button
+          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+          className="px-3 py-1 rounded-lg bg-gray-200 dark:bg-[#111c2d]"
+        >
+          <T>Prev</T>
+        </button>
+
+        {[...Array(totalPages)].map((_, i) => {
+          const page = i + 1;
+          return (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-1 rounded-lg ${
+                currentPage === page
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 dark:bg-[#111c2d]"
+              }`}
+            >
+              {page}
+            </button>
+          );
+        })}
+
+        <button
+          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+          className="px-3 py-1 rounded-lg bg-gray-200 dark:bg-[#111c2d]"
+        >
+          <T>Next</T>
+        </button>
+      </div>
+
+      {/* ✅ UPDATED MODAL (YOUR OLD STYLE + IMAGE SUPPORT) */}
+      <AnimatePresence>
+        {isOpen && selectedUser && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
+            onClick={() => setIsOpen(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.6, opacity: 0, y: 80 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.6, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 120 }}
+              className="w-[95%] max-w-lg rounded-3xl bg-white dark:bg-[#0c1a2b] shadow-2xl p-6"
+            >
+              <div className="text-center mb-5">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="h-20 w-20 mx-auto rounded-full overflow-hidden bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-white text-2xl font-bold"
+                >
+                  {selectedUser.image ? (
+                    <img
+                      src={selectedUser.image}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    selectedUser.name.charAt(0)
+                  )}
+                </motion.div>
+
+                <h2 className="mt-3 text-xl font-bold">{selectedUser.name}</h2>
+                <p className="text-sm text-gray-500">{selectedUser.email}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <Info label="User ID" value={selectedUser._id.slice(-8)} />
+                <Info label="Role" value={selectedUser.role} />
+                <Info
+                  label="Balance"
+                  value={`${selectedUser.balance || 0} ${
+                    selectedUser.currency || ""
+                  }`}
+                />
+                <Info label="Bank" value={selectedUser.bank || "N/A"} />
+                <Info
+                  label="Bank Balance"
+                  value={`${selectedUser.bankBalance || 0}`}
+                />
+                <Info label="Points" value={`${selectedUser.points || 0}`} />
+                <Info label="Rank" value={selectedUser.rank || "N/A"} />
+                <Info label="XP" value={`${selectedUser.totalXP || 0}`} />
+                <Info label="KYC" value={selectedUser.kycStatus || "N/A"} />
+                <Info
+                  label="Created"
+                  value={
+                    selectedUser.createdAt
+                      ? new Date(selectedUser.createdAt).toLocaleString()
+                      : "N/A"
+                  }
+                />
+                <Info
+                  label="Updated"
+                  value={
+                    selectedUser.updatedAt
+                      ? new Date(selectedUser.updatedAt).toLocaleString()
+                      : "N/A"
+                  }
+                />
+              </div>
+
+              <button
+                onClick={() => setIsOpen(false)}
+                className="mt-6 w-full py-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white"
+              >
+                <T>Close</T>
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+function Info({ label, value }: { label: string; value: string }) {
+  return (
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      className="bg-gray-50 dark:bg-[#08111f] p-3 rounded-lg"
+    >
+      <p className="text-xs text-gray-500"><T>{label}</T></p>
+      <p className="font-medium break-words">{value}</p>
     </motion.div>
   );
 }

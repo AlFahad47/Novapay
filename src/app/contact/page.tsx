@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { Facebook, Twitter, Instagram, Youtube, Package, Clock, Headphones, Send, MapPin, Phone, Mail, Building, CalendarDays } from 'lucide-react';
+import T from "@/components/T";
 
 const ContactUs: React.FC = () => {
   return (
@@ -13,9 +14,9 @@ const ContactUs: React.FC = () => {
 
       {/* Header Banner */}
       <div className="bg-white/40 dark:bg-[#0F172A]/40 backdrop-blur-2xl py-24 text-center border-b border-slate-200 dark:border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.03)] relative z-10 transition-colors duration-700">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white mb-4 tracking-tight drop-shadow-sm">Contact Us</h1>
+        <h1 className="text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white mb-4 tracking-tight drop-shadow-sm"><T>Contact Us</T></h1>
         <p className="text-sm text-slate-500 dark:text-[#4DA1FF] font-medium tracking-widest uppercase">
-          Home <span className="mx-3 opacity-40">/</span> Contact
+          <T>Home</T> <span className="mx-3 opacity-40">/</span> <T>Contact</T>
         </p>
       </div>
 
@@ -27,22 +28,22 @@ const ContactUs: React.FC = () => {
             <div className="mb-12">
               <h2 className="text-xs font-bold text-[#2C64FF] dark:text-[#4DA1FF] tracking-[0.25em] uppercase mb-4 flex items-center gap-4">
                 <span className="w-10 h-[2px] bg-gradient-to-r from-[#2C64FF] dark:from-[#4DA1FF] to-transparent rounded-full"></span> 
-                Let's Connect
+                <T>Let's Connect</T>
               </h2>
               <h3 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-[#0F172A] dark:text-white leading-tight">
-                Get Your <span className="text-[#2C64FF] dark:text-[#4DA1FF] italic font-serif font-medium relative whitespace-nowrap px-2">
-                  Free Quote
+                <T>Get Your</T> <span className="text-[#2C64FF] dark:text-[#4DA1FF] italic font-serif font-medium relative whitespace-nowrap px-2">
+                  <T>Free Quote</T>
                   {/* Decorative underline */}
                   <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#4DA1FF]/30 dark:text-[#2C64FF]/50 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="5" fill="transparent" strokeLinecap="round"/></svg>
                 </span>
-                Today
+                <T>Today</T>
               </h3>
             </div>
 
             <form className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="group">
-                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2.5 uppercase tracking-widest transition-colors group-focus-within:text-[#2C64FF] dark:group-focus-within:text-[#4DA1FF]">Full Name *</label>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2.5 uppercase tracking-widest transition-colors group-focus-within:text-[#2C64FF] dark:group-focus-within:text-[#4DA1FF]"><T>Full Name *</T></label>
                   <input 
                     type="text" 
                     placeholder="John Doe" 
@@ -56,7 +57,7 @@ const ContactUs: React.FC = () => {
                   />
                 </div>
                 <div className="group">
-                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2.5 uppercase tracking-widest transition-colors group-focus-within:text-[#2C64FF] dark:group-focus-within:text-[#4DA1FF]">Email Address *</label>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2.5 uppercase tracking-widest transition-colors group-focus-within:text-[#2C64FF] dark:group-focus-within:text-[#4DA1FF]"><T>Email Address *</T></label>
                   <input 
                     type="email" 
                     placeholder="john@example.com" 
@@ -72,7 +73,7 @@ const ContactUs: React.FC = () => {
               </div>
               
               <div className="group">
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2.5 uppercase tracking-widest transition-colors group-focus-within:text-[#2C64FF] dark:group-focus-within:text-[#4DA1FF]">Subject *</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2.5 uppercase tracking-widest transition-colors group-focus-within:text-[#2C64FF] dark:group-focus-within:text-[#4DA1FF]"><T>Subject *</T></label>
                 <input 
                   type="text" 
                   placeholder="How can we help you?" 
@@ -87,7 +88,7 @@ const ContactUs: React.FC = () => {
               </div>
               
               <div className="group">
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2.5 uppercase tracking-widest transition-colors group-focus-within:text-[#2C64FF] dark:group-focus-within:text-[#4DA1FF]">Your Message *</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2.5 uppercase tracking-widest transition-colors group-focus-within:text-[#2C64FF] dark:group-focus-within:text-[#4DA1FF]"><T>Your Message *</T></label>
                 <textarea 
                   rows={5} 
                   placeholder="Write your message here..." 
@@ -109,7 +110,7 @@ const ContactUs: React.FC = () => {
                   <Send size={18} strokeWidth={2.5} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
                 </span>
                 <span className="ml-5 font-bold text-white text-sm tracking-widest uppercase">
-                  Send Message
+                  <T>Send Message</T>
                 </span>
               </button>
             </form>
@@ -127,7 +128,7 @@ const ContactUs: React.FC = () => {
                   <Building size={22} strokeWidth={2} />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-bold mb-1.5 text-white/50 uppercase tracking-widest">Headquarters</h4>
+                  <h4 className="text-[11px] font-bold mb-1.5 text-white/50 uppercase tracking-widest"><T>Headquarters</T></h4>
                   <p className="text-white text-[15px] font-medium leading-relaxed">
                     NovaPay Fintech Tower<br />
                     Tech Valley, Dhaka 1200
@@ -140,7 +141,7 @@ const ContactUs: React.FC = () => {
                   <Phone size={22} strokeWidth={2} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-[11px] font-bold mb-1.5 text-white/50 uppercase tracking-widest">Contact details</h4>
+                  <h4 className="text-[11px] font-bold mb-1.5 text-white/50 uppercase tracking-widest"><T>Contact details</T></h4>
                   <div className="space-y-2.5 mt-2">
                     <a href="tel:+880123456789" className="flex items-center gap-3 text-white text-[15px] font-medium hover:text-[#4DA1FF] transition-colors w-fit">
                       +880 123-456-789
@@ -157,15 +158,15 @@ const ContactUs: React.FC = () => {
                   <CalendarDays size={22} strokeWidth={2} />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-bold mb-1.5 text-white/50 uppercase tracking-widest">Business Hours</h4>
-                  <p className="text-white text-[15px] font-medium mb-1">Sun - Thu : 09:00 AM - 06:00 PM</p>
-                  <p className="text-white/50 text-[14px] font-medium">Fri - Sat : Closed</p>
+                  <h4 className="text-[11px] font-bold mb-1.5 text-white/50 uppercase tracking-widest"><T>Business Hours</T></h4>
+                  <p className="text-white text-[15px] font-medium mb-1"><T>Sun - Thu : 09:00 AM - 06:00 PM</T></p>
+                  <p className="text-white/50 text-[14px] font-medium"><T>Fri - Sat : Closed</T></p>
                 </div>
               </div>
             </div>
 
             <div className="pt-10 mt-12 border-t border-white/10 relative z-10">
-              <h4 className="text-[11px] font-bold mb-5 text-white/50 tracking-widest uppercase">Connect With Us</h4>
+              <h4 className="text-[11px] font-bold mb-5 text-white/50 tracking-widest uppercase"><T>Connect With Us</T></h4>
               <div className="flex gap-4">
                 {[Facebook, Twitter, Instagram, Youtube].map((Icon, idx) => (
                   <a key={idx} href="#" className="bg-white/5 backdrop-blur-md p-3.5 rounded-2xl text-white/80 hover:bg-[#4DA1FF] hover:text-white hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(77,161,255,0.2)] transition-all duration-300 border border-white/10">
@@ -230,9 +231,9 @@ const ContactUs: React.FC = () => {
               </div>
               <div className="pt-1">
                 <h4 className="font-extrabold text-[17px] tracking-tight mb-1.5 transition-colors
-                  text-[#0F172A] dark:text-white 
-                  group-hover:text-[#2C64FF] dark:group-hover:text-[#4DA1FF]">{feature.title}</h4>
-                <p className="text-[14px] font-medium leading-relaxed text-slate-500 dark:text-slate-400">{feature.desc}</p>
+                  text-[#0F172A] dark:text-white
+                  group-hover:text-[#2C64FF] dark:group-hover:text-[#4DA1FF]"><T>{feature.title}</T></h4>
+                <p className="text-[14px] font-medium leading-relaxed text-slate-500 dark:text-slate-400"><T>{feature.desc}</T></p>
               </div>
             </div>
           ))}

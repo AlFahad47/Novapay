@@ -1,20 +1,19 @@
 "use client"; // Ensure this is here if you're using useSession in Next.js App Router
 
 import BannerSwitch from "@/components/ui/BannerSwitch";
-import OfferSection from "@/components/ui/OfferSection";
-import ProjectDemo from "@/components/ui/ProjectDemo";
 import HowItWorksPage from "@/components/ui/HowItWorks";
 import KeyFeatures from "@/components/ui/KeyFeatures";
 import Menus from "@/components/ui/menus";
 import TopReviews from "@/components/ui/Topreviews";
 import EliteFeaturesSlider from "@/components/ui/EliteFeaturesSlider";
 import { useSession } from "next-auth/react";
+import { HeroVideoDialogDemoTopInBottomOut } from "@/components/ui/HeroVideoDialogDemoTopInBottomOut";
 
 export default function Home() {
   const { data: session } = useSession(); // Correct way to extract session
 
   return (
-    <main>
+    <main className="w-full">
       <section id="home">
         <BannerSwitch />
       </section>
@@ -30,10 +29,6 @@ export default function Home() {
         </section>
       )}
 
-      <section id="offers">
-        <OfferSection />
-      </section>
-
       <section id="features">
         <KeyFeatures />
       </section>
@@ -46,8 +41,8 @@ export default function Home() {
         <TopReviews />
       </section>
 
-      <section id="demo">
-        <ProjectDemo />
+      <section id="reviews">
+        <HeroVideoDialogDemoTopInBottomOut />
       </section>
     </main>
   );

@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { Smartphone, Banknote, CheckCircle2, Loader2 } from "lucide-react";
 import Swal from "sweetalert2";
 import { Button } from "@/components/ui/button";
+import T from "@/components/T";
 
 const OPERATORS = [
   { name: "Grameenphone", logo: "GP", color: "bg-blue-500" },
@@ -92,7 +93,7 @@ export default function MobileRecharge({
       {/* Operator Selection */}
       <div className="space-y-3">
         <label className="text-sm font-semibold text-gray-500 dark:text-gray-400 ml-1">
-          Select Operator
+          <T>Select Operator</T>
         </label>
         <div className="grid grid-cols-5 gap-2">
           {OPERATORS.map((op) => (
@@ -187,13 +188,13 @@ export default function MobileRecharge({
           {loading ? (
             <Loader2 className="animate-spin" size={22} />
           ) : (
-            "Proceed Recharge"
+            <T>Proceed Recharge</T>
           )}
         </span>
       </Button>
 
       <p className="text-center text-[11px] text-gray-400">
-        By proceeding, you agree to our Terms and Service.
+        <T>By proceeding, you agree to our Terms and Service.</T>
       </p>
     </div>
   );
