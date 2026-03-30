@@ -40,6 +40,7 @@ type MenuItem = {
   icon: IconType;
   route: string;
   requiresAuth: boolean;
+  points?: number;
 };
 
 const quickActions: MenuItem[] = [
@@ -48,39 +49,45 @@ const quickActions: MenuItem[] = [
     icon: FaPaperPlane,
     route: "/send-money",
     requiresAuth: true,
+    points: 100,
   },
   {
     name: "Request Money",
     icon: FaHandHoldingUsd,
     route: "/request-money",
     requiresAuth: true,
+    points: 20,
   },
   {
     name: "Cash Out",
     icon: FaMoneyBillWave,
     route: "/cash-out",
     requiresAuth: true,
+    points: 50,
   },
   {
     name: "Add Money",
     icon: FaWallet,
     route: "/add-money",
     requiresAuth: true,
+    points: 100,
   },
   {
     name: "Mobile Recharge",
     icon: FaMobileAlt,
     route: "/mobile-recharge",
     requiresAuth: false,
+    points: 20,
   },
   {
     name: "Pay Bill",
     icon: FaReceipt,
     route: "/pay-bill",
     requiresAuth: false,
+    points: 25,
   },
   {
-    name: "Transactions",
+    name: "Transaction History",
     icon: FaHistory,
     route: "/dashboard/transactions",
     requiresAuth: true,
@@ -93,7 +100,7 @@ const quickActions: MenuItem[] = [
     requiresAuth: true,
   },
   {
-    name: "Global Pay",
+    name: "International Pay",
     icon: FaGlobe,
     route: "/international",
     requiresAuth: true,
@@ -334,6 +341,32 @@ const QuickActionsContent = () => {
                   className="absolute left-1/2 top-1/2 flex w-35 flex-col items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] md:w-45 focus:outline-none group"
                   style={getItemStyles(index)}
                 >
+                  {item.points && (
+                    <div
+                      className={`absolute -top-10 left-1/2 -translate-x-1/2 z-30 transition-all duration-500 ease-out
+                      ${isCenter ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-2 scale-90"}`}
+                    >
+                      <div className="relative group">
+                        <div className="absolute inset-0 bg-amber-400/20 blur-xl rounded-full animate-pulse" />
+
+                        <div className="relative flex flex-col items-center justify-center min-w-[50px] px-3 py-1.5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border border-amber-200/50 dark:border-amber-500/30 rounded-2xl shadow-[0_8px_16px_-3px_rgba(0,0,0,0.1),0_4px_6px_-2px_rgba(0,0,0,0.05)]">
+                          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-amber-300/50 to-transparent" />
+
+                          <div className="flex items-center gap-1">
+                            <span className="text-[12px] font-black bg-gradient-to-br from-amber-500 to-orange-600 bg-clip-text text-transparent">
+                              +{item.points}
+                            </span>
+                            <span className="text-[9px] font-bold text-amber-600/80 dark:text-amber-400/80 tracking-tighter uppercase">
+                              <T>Points</T>
+                            </span>
+                          </div>
+
+                          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 bg-white/80 dark:bg-gray-900/80 border-r border-b border-amber-200/50 dark:border-amber-500/30" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div
                     className={`relative mb-3 flex items-center justify-center rounded-[1.5rem] transition-all duration-500
                     ${isCenter ? "h-20 w-20 md:h-24 md:w-24 bg-white dark:bg-[#17304f] shadow-[0_8px_24px_rgba(29,78,216,0.14)] border border-blue-100/90 dark:border-blue-300/35" : "h-16 w-16 md:h-22 md:w-22 bg-slate-200/80 dark:bg-slate-700/40"}

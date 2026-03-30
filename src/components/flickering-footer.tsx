@@ -1146,24 +1146,6 @@ export const siteConfig = {
 export type SiteConfig = typeof siteConfig;
 
 export const Component = () => {
-  const tablet = useMediaQuery("(max-width: 1280px)");
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    const root = document.documentElement;
-
-    const updateThemeState = () => {
-      setIsDarkMode(root.classList.contains("dark"));
-    };
-
-    updateThemeState();
-
-    const observer = new MutationObserver(updateThemeState);
-    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <footer
       id="footer"
@@ -1206,20 +1188,10 @@ export const Component = () => {
           </div>
         </div>
       </div>
-      <div className="relative z-0 mt-8 h-44 w-full md:h-56">
-        <div className="absolute inset-0 bg-linear-to-t from-transparent to-background z-10 from-40%" />
-        <div className="absolute inset-0">
-          <FlickeringGrid
-            text={tablet ? "NovaPay" : "Move Better With NovaPay"}
-            fontSize={tablet ? 70 : 90}
-            className="h-full w-full"
-            squareSize={2}
-            gridGap={tablet ? 2 : 3}
-            color={isDarkMode ? "#4777fc" : "#01103b"}
-            maxOpacity={0.3}
-            flickerChance={0.1}
-          />
-        </div>
+      <div className="relative z-0 mt-8 w-full border-t border-border/40 bg-transparent py-6 md:py-8">
+        <p className="pointer-events-none mx-auto w-full max-w-7xl px-4 text-center text-[clamp(1.35rem,6vw,4.5rem)] leading-tight font-black tracking-tight text-slate-900/12 dark:text-white/12 select-none">
+          Move Better With NovaPay
+        </p>
       </div>
     </footer>
   );
