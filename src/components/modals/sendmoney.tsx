@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Send, User, Banknote, Loader2, Info, XCircle, CheckCircle2 } from "lucide-react";
 import Swal from "sweetalert2";
+import T from "@/components/T";
 
 export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void }) {
   const { data: session } = useSession();
@@ -137,18 +138,18 @@ const handleSend = async () => {
       <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl flex items-start gap-3 border border-blue-100 dark:border-blue-900/30">
         <Info className="text-blue-500 mt-0.5" size={18} />
         <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
-          Ensure the recipient's email is correct. Once sent, money transfers cannot be reversed.
+          <T>Ensure the recipient's email is correct. Once sent, money transfers cannot be reversed.</T>
         </p>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
   <div className="flex justify-between items-end ml-1">
-    <label className="text-sm font-semibold text-gray-500">Recipient Email</label>
+    <label className="text-sm font-semibold text-gray-500"><T>Recipient Email</T></label>
     {/* Real-time Name Show */}
     {recipientName && (
       <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-lg animate-in fade-in slide-in-from-right-2">
-        Pay to: {recipientName}
+        <T>Pay to:</T> {recipientName}
       </span>
     )}
   </div>
@@ -189,13 +190,13 @@ const handleSend = async () => {
   {/* Subtle bottom error if user not found */}
   {isValidUser === false && (
     <p className="text-[11px] text-red-500 font-medium ml-1 animate-in fade-in">
-      This user is not registered on NovaPay.
+      <T>This user is not registered on NovaPay.</T>
     </p>
   )}
 </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-500 ml-1">Transfer Amount</label>
+          <label className="text-sm font-semibold text-gray-500 ml-1"><T>Transfer Amount</T></label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-emerald-500 transition-colors">
               <Banknote size={20} />
@@ -236,14 +237,14 @@ const handleSend = async () => {
             <Loader2 className="animate-spin" size={22} />
           ) : (
             <>
-              <Send size={18} /> Send Money Now
+              <Send size={18} /> <T>Send Money Now</T>
             </>
           )}
         </span>
       </button>
 
       <p className="text-center text-[11px] text-gray-400 font-medium">
-        Secure Transaction Powered by NovaPay Engine
+        <T>Secure Transaction Powered by NovaPay Engine</T>
       </p>
     </div>
   );

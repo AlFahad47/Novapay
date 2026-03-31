@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Play, ArrowUpRight, Wallet, Wifi, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import T from "@/components/T";
 
 const Banner: React.FC = () => {
   // --- STATES ---
@@ -209,25 +210,23 @@ const Banner: React.FC = () => {
             <Wallet size={12} className="text-white" />
           </div>
           <span className="text-white dark:text-[#4DA1FF] text-xs font-bold tracking-widest uppercase pr-2">
-            NovaPay Network
+            <T>NovaPay Network</T>
           </span>
         </div>
 
         <h1 className="anim-fade-up delay-txt-1 text-[2.5rem] md:text-5xl lg:text-[4rem] text-[#4DA1FF] dark:text-white font-bold tracking-tight leading-[1.1] mb-5 max-w-3xl">
-          Your Gateway to Digital
+          <T>Your Gateway to Digital</T>
           <br />
           <span
             className="text-transparent bg-clip-text drop-shadow-[0_0_25px_rgba(77,161,255,0.4)]"
             style={{ backgroundImage: hedwigGradient }}
           >
-            Finance Innovation
+            <T>Finance Innovation</T>
           </span>
         </h1>
 
         <p className="anim-fade-up delay-txt-2 text-[#64748B] text-sm md:text-base max-w-xl mb-8">
-          Take full control of your digital wallet. Seamless transactions, live
-          analytics, and modern bank-grade security built directly into your
-          pocket.
+          <T>Take full control of your digital wallet. Seamless transactions, live analytics, and modern bank-grade security built directly into your pocket.</T>
         </p>
 
         <div className="anim-fade-up delay-txt-3 flex items-center justify-center gap-4">
@@ -238,7 +237,7 @@ const Banner: React.FC = () => {
             className="group border border-white/10 text-sm font-semibold tracking-wide"
           >
             <Link href={"/register"}>
-              Get Started
+              <T>Get Started</T>
               <ArrowUpRight
                 size={16}
                 strokeWidth={2.5}
@@ -255,7 +254,7 @@ const Banner: React.FC = () => {
           >
             <a href="#demo">
               <Play size={12} fill="currentColor" />
-              Watch Demo
+              <T>Watch Demo</T>
             </a>
           </Button>
         </div>
