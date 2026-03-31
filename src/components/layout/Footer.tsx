@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { Sparkles, Twitter, Linkedin, Github, Mail, Phone } from "lucide-react";
+import { Sparkles, Linkedin, Github, Mail, Phone } from "lucide-react";
+import { FaXTwitter } from "react-icons/fa6";
 import T from "@/components/T";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
@@ -24,7 +25,7 @@ const Footer: React.FC = () => {
             </p>
             <div className="flex items-center gap-3 mt-6">
               <a href="#" className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all">
-                <Twitter size={14} className="text-slate-400 hover:text-white" />
+                <FaXTwitter size={14} className="text-slate-400 hover:text-white" />
               </a>
               <a href="#" className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all">
                 <Linkedin size={14} className="text-slate-400 hover:text-white" />
