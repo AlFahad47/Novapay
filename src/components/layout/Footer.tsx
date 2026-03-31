@@ -3,6 +3,7 @@ import React from "react";
 import Link from "next/link";
 import { Sparkles, Twitter, Linkedin, Github, Mail, Phone } from "lucide-react";
 import T from "@/components/T";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Footer: React.FC = () => {
   return (
@@ -83,6 +84,7 @@ const Footer: React.FC = () => {
             <Link href="#" className="hover:text-slate-400 transition-colors"><T>Privacy Policy</T></Link>
             <Link href="#" className="hover:text-slate-400 transition-colors"><T>Terms of Service</T></Link>
             <Link href="/faq" className="hover:text-slate-400 transition-colors"><T>FAQ</T></Link>
+            <LanguageSwitcher />
           </div>
         </div>
 
