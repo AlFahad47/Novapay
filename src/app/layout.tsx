@@ -8,7 +8,8 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import NavbarWrapper from "@/components/layout/NavbarWrapper";
 import LocaleProvider from "@/providers/LocaleProvider";
-import ChatBotAI from "./components/ChatBotAI";
+import ChatBotAI from "@/app/components/ChatBotAI";
+import AuthModal from "@/components/auth/AuthModal";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -35,6 +36,7 @@ export default function RootLayout({
           <LocaleProvider>
             <AuthProvider>
               <NavbarWrapper />
+              <AuthModal />
               <main>               
                 {children}
               </main>

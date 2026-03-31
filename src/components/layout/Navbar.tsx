@@ -13,6 +13,7 @@ import RankDetailsModal from "../modals/RankDetailsModal";
 import { ThemeToggleButton } from "@/components/ui/skiper-ui/skiper26";
 import { useTranslations } from 'next-intl';
 import LanguageSwitcher from "../LanguageSwitcher";
+import { openAuthModal } from "@/components/auth/authModalEvents";
 
 type FullUser = {
   rank?: string;
@@ -28,6 +29,7 @@ const Navbar: React.FC = () => {
   const [isRankModalOpen, setIsRankModalOpen] = useState(false);
   const [activeHash, setActiveHash] = useState("");
   const [unreadTotal, setUnreadTotal] = useState(0);
+  const [failedAvatarSrc, setFailedAvatarSrc] = useState<string | null>(null);
 
   const pathname = usePathname();
   const user = session?.user;
@@ -138,8 +140,21 @@ const Navbar: React.FC = () => {
         { name: t("reviews"), path: "/#reviews" },
       ];
 
+  const normalizeAvatarUrl = (url?: string | null) => {
+    const value = url?.trim();
+    if (!value) return "";
+    // Some providers may return http links; use https to avoid blocked mixed-content images.
+    if (value.startsWith("http://")) return value.replace("http://", "https://");
+    return value;
+  };
+
+  const preferredAvatarSrc =
+    normalizeAvatarUrl(fullUser?.image) ||
+    normalizeAvatarUrl(user?.image) ||
+    "/user.jfif";
+
   const avatarSrc =
-    fullUser?.image?.trim() || user?.image?.trim() || "/user.jfif";
+    failedAvatarSrc === preferredAvatarSrc ? "/user.jfif" : preferredAvatarSrc;
 
   return (
     <>
@@ -275,6 +290,7 @@ const Navbar: React.FC = () => {
                       alt="User Avatar"
                       referrerPolicy="no-referrer"
                       src={avatarSrc}
+                      onError={() => setFailedAvatarSrc(preferredAvatarSrc)}
                       className="w-full h-full object-cover"
                     />
                     {/* Online Dot */}
@@ -324,8 +340,9 @@ const Navbar: React.FC = () => {
                 )}
               </div>
             ) : (
-              <Link
-                href="/login"
+              <button
+                type="button"
+                onClick={() => openAuthModal("login")}
                 className="group relative flex items-center gap-2 px-6 py-2.5 rounded-full overflow-hidden border border-transparent shadow-[0_4px_14px_0_rgba(59,130,246,0.39)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.23)] hover:-translate-y-0.5 transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 group-hover:from-blue-600 group-hover:to-blue-700 transition-all duration-500"></div>
@@ -338,7 +355,7 @@ const Navbar: React.FC = () => {
                   strokeWidth={3}
                   className="relative text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
                 />
-              </Link>
+              </button>
             )}
           </div>
 
@@ -409,13 +426,16 @@ const Navbar: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <Link
-                href="/login"
-                onClick={() => setIsMobileMenuOpen(false)}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  openAuthModal("login");
+                }}
                 className="mt-4 flex justify-center items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-4 rounded-xl text-[15px] font-bold shadow-lg shadow-blue-500/30"
               >
                 Get Started <ArrowUpRight size={20} strokeWidth={3} />
-              </Link>
+              </button>
             )}
           </div>
         )}

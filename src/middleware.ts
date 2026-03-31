@@ -9,9 +9,22 @@ export async function middleware(request: NextRequest) {
   });
 
   const { pathname } = request.nextUrl;
+  const search = request.nextUrl.searchParams;
 
   // পাবলিক পাথ চেক (home path '/' কে আলাদাভাবে হ্যান্ডেল করা ভালো)
   const isPublicPath = pathname === '/login' || pathname === '/register';
+
+  if (!token && pathname === '/login') {
+    const url = new URL('/', request.url);
+    url.searchParams.set('auth', 'login');
+    return NextResponse.redirect(url);
+  }
+
+  if (!token && pathname === '/register') {
+    const url = new URL('/', request.url);
+    url.searchParams.set('auth', 'register');
+    return NextResponse.redirect(url);
+  }
 
   // ১. যদি ইউজার লগইন করা থাকে এবং সে লগইন/রেজিস্টার পেজে যেতে চায়
   if (isPublicPath && token) {
@@ -20,7 +33,11 @@ export async function middleware(request: NextRequest) {
 
   // ২. যদি ইউজার লগইন করা না থাকে এবং প্রটেক্টেড পাথে যেতে চায়
   if (!isPublicPath && !token && pathname !== '/') {
-    return NextResponse.redirect(new URL('/login', request.url));
+    const url = new URL('/', request.url);
+    if (search.get('auth') !== 'login') {
+      url.searchParams.set('auth', 'login');
+    }
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();

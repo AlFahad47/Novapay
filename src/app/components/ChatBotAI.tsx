@@ -78,14 +78,14 @@ useEffect(() => {
   };
 
   return (
-    <div className="fixed bottom-6 right-24 z-50">
+    <div className="fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6">
   <AnimatePresence>
     {isOpen && (
       <motion.div 
         initial={{ opacity: 0, scale: 0.9, y: 20 }} 
         animate={{ opacity: 1, scale: 1, y: 0 }} 
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="bg-white/90 dark:bg-[#121928]/90 backdrop-blur-xl border border-gray-200 dark:border-gray-800/60 w-80 h-[450px] rounded-2xl shadow-2xl flex flex-col mb-4 overflow-hidden"
+        className="bg-white/90 dark:bg-[#121928]/90 backdrop-blur-xl border border-gray-200 dark:border-gray-800/60 w-[calc(100vw-2rem)] max-w-80 h-[70vh] max-h-[500px] sm:w-80 sm:h-[450px] rounded-2xl shadow-2xl flex flex-col mb-4 overflow-hidden"
       >
         {/* Header - Matching FAQ Blue Gradient */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-4 text-white flex justify-between items-center shadow-md">
