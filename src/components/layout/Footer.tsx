@@ -2,6 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { Sparkles, Twitter, Linkedin, Github, Mail, Phone } from "lucide-react";
+import T from "@/components/T";
 
 const Footer: React.FC = () => {
   return (
@@ -18,7 +19,7 @@ const Footer: React.FC = () => {
               <span className="text-white font-black text-xl tracking-wide">NovaPay</span>
             </div>
             <p className="text-sm leading-relaxed text-slate-500">
-              Secure. Fast. Simple. Your all-in-one digital wallet for modern finance.
+              <T>Secure. Fast. Simple. Your all-in-one digital wallet for modern finance.</T>
             </p>
             <div className="flex items-center gap-3 mt-6">
               <a href="#" className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all">
@@ -35,34 +36,34 @@ const Footer: React.FC = () => {
 
           {/* Product */}
           <div>
-            <h4 className="text-white font-bold text-sm mb-4 uppercase tracking-widest">Product</h4>
+            <h4 className="text-white font-bold text-sm mb-4 uppercase tracking-widest"><T>Product</T></h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/dashboard" className="hover:text-white transition-colors">Send Money</Link></li>
-              <li><Link href="/donation" className="hover:text-white transition-colors">Donate</Link></li>
-              <li><Link href="/dashboard/international" className="hover:text-white transition-colors">International Pay</Link></li>
-              <li><Link href="/micro-savings" className="hover:text-white transition-colors">Micro Saving</Link></li>
-              <li><Link href="/split-bill" className="hover:text-white transition-colors">Split Bill</Link></li>
+              <li><Link href="/dashboard" className="hover:text-white transition-colors"><T>Send Money</T></Link></li>
+              <li><Link href="/donation" className="hover:text-white transition-colors"><T>Donate</T></Link></li>
+              <li><Link href="/dashboard/international" className="hover:text-white transition-colors"><T>International Pay</T></Link></li>
+              <li><Link href="/micro-savings" className="hover:text-white transition-colors"><T>Micro Saving</T></Link></li>
+              <li><Link href="/split-bill" className="hover:text-white transition-colors"><T>Split Bill</T></Link></li>
             </ul>
           </div>
 
           {/* Company */}
           <div>
-            <h4 className="text-white font-bold text-sm mb-4 uppercase tracking-widest">Company</h4>
+            <h4 className="text-white font-bold text-sm mb-4 uppercase tracking-widest"><T>Company</T></h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/about" className="hover:text-white transition-colors">About</Link></li>
-              <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
-              <li><Link href="/review" className="hover:text-white transition-colors">Reviews</Link></li>
-              <li><Link href="/chat" className="hover:text-white transition-colors">Chat</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors"><T>About</T></Link></li>
+              <li><Link href="/blog" className="hover:text-white transition-colors"><T>Blog</T></Link></li>
+              <li><Link href="/review" className="hover:text-white transition-colors"><T>Reviews</T></Link></li>
+              <li><Link href="/chat" className="hover:text-white transition-colors"><T>Chat</T></Link></li>
             </ul>
           </div>
 
           {/* Support */}
           <div>
-            <h4 className="text-white font-bold text-sm mb-4 uppercase tracking-widest">Support</h4>
+            <h4 className="text-white font-bold text-sm mb-4 uppercase tracking-widest"><T>Support</T></h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
-              <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-              <li><Link href="/chat/support" className="hover:text-white transition-colors">Live Chat</Link></li>
+              <li><Link href="/faq" className="hover:text-white transition-colors"><T>FAQ</T></Link></li>
+              <li><Link href="/contact" className="hover:text-white transition-colors"><T>Contact</T></Link></li>
+              <li><Link href="/chat/support" className="hover:text-white transition-colors"><T>Live Chat</T></Link></li>
             </ul>
             <div className="mt-6 space-y-2 text-xs text-slate-500">
               <div className="flex items-center gap-2">
@@ -77,11 +78,11 @@ const Footer: React.FC = () => {
 
         {/* Divider */}
         <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
-          <p>© {new Date().getFullYear()} NovaPay. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} NovaPay. <T>All rights reserved.</T></p>
           <div className="flex items-center gap-5">
-            <Link href="#" className="hover:text-slate-400 transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-slate-400 transition-colors">Terms of Service</Link>
-            <Link href="/faq" className="hover:text-slate-400 transition-colors">FAQ</Link>
+            <Link href="#" className="hover:text-slate-400 transition-colors"><T>Privacy Policy</T></Link>
+            <Link href="#" className="hover:text-slate-400 transition-colors"><T>Terms of Service</T></Link>
+            <Link href="/faq" className="hover:text-slate-400 transition-colors"><T>FAQ</T></Link>
           </div>
         </div>
 
