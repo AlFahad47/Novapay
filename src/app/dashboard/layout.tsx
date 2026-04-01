@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -43,8 +43,8 @@ export default function DashboardLayout({
     { icon: CreditCard, label: t("transactions"), path: "/dashboard/transactions" },
     { icon: BarChart3, label: t("analytics"), path: "/dashboard/analytics" },
     { icon: FileCheck, label: t("kyc"), path: "/dashboard/kyc" },
-    { icon: Crown, label: t("subscription"), path: "dashboard/subscription" },
-    { icon: MessageSquare, label: t("support"), path: "/chat/support" },
+    { icon: Crown, label: t("subscription"), path: "/dashboard/subscription" },
+    { icon: MessageSquare, label: t("support"), path: "/chat" },
     { icon: Settings, label: t("settings"), path: "/dashboard/settings" },
   ];
 
@@ -210,7 +210,7 @@ export default function DashboardLayout({
           );
         })}
 
-        {/* Donate — Elite subscribers only */}
+        {/* Donate - Elite subscribers only */}
         {isSubscribed && (
           <Link
             href="/donation"
@@ -333,3 +333,4 @@ export default function DashboardLayout({
     </div>
   );
 }
+

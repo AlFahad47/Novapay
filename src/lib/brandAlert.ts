@@ -23,4 +23,3 @@ const brandAlert = Swal.mixin({
 });
 
 export default brandAlert;
-

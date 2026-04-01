@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSession } from "next-auth/react";
@@ -10,8 +10,9 @@ import {
   TrendingUp, ShieldCheck, Lightbulb, Activity, Loader2
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 const WalletAccountPage = () => {
   const { data: session } = useSession();
@@ -219,18 +220,18 @@ const WalletAccountPage = () => {
                 <div>
                   <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1"><T>Available Pocket Cash</T></h2>
                   <p className="text-5xl font-black tracking-tighter tabular-nums">
-                    {currency}{dbUser?.bankBalance?.toLocaleString() || "0"}
+                    {currency}{formatAmount(dbUser?.bankBalance)}
                   </p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
                     <p className="text-[9px] font-black text-blue-500 uppercase mb-1"><T>Total In</T></p>
-                    <p className="text-lg font-bold">{currency}{wealthStats.totalIn.toLocaleString()}</p>
+                    <p className="text-lg font-bold">{currency}{formatAmount(wealthStats.totalIn)}</p>
                   </div>
                   <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
                     <p className="text-[9px] font-black text-rose-500 uppercase mb-1"><T>Total Out</T></p>
-                    <p className="text-lg font-bold">{currency}{wealthStats.totalOut.toLocaleString()}</p>
+                    <p className="text-lg font-bold">{currency}{formatAmount(wealthStats.totalOut)}</p>
                   </div>
                 </div>
               </div>
@@ -293,7 +294,7 @@ const WalletAccountPage = () => {
                                     </div>
                                 </div>
                                 <p className={`text-sm font-black ${tx.type === 'income' ? 'text-emerald-500' : 'text-slate-900 dark:text-white'}`}>
-                                    {tx.type === 'income' ? '+' : '-'}{currency}{tx.amount.toLocaleString()}
+                                  {tx.type === 'income' ? '+' : '-'}{currency}{formatAmount(tx.amount)}
                                 </p>
                             </motion.div>
                         ))}
@@ -340,3 +341,4 @@ const WalletAccountPage = () => {
 };
 
 export default WalletAccountPage;
+

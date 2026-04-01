@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import { Button } from "@/components/ui/button";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 interface LinkedBank {
   id: string;
@@ -60,7 +61,7 @@ export default function AddMoneyForm() {
       return Swal.fire({
         icon: "error",
         title: "Insufficient Balance",
-        text: `You only have ৳${selectedBank.balance.toLocaleString()} in this account.`,
+        text: `You only have ৳${formatAmount(selectedBank.balance)} in this account.`,
         confirmButtonColor: "#3b82f6",
       });
     }
@@ -142,8 +143,8 @@ export default function AddMoneyForm() {
           <option value=""><T>-- Choose Account --</T></option>
           {linkedBanks.map((bank) => (
             <option key={bank.id} value={bank.id}>
-              {bank.name} (****{bank.accNo.slice(-4)}) — ৳
-              {bank.balance.toLocaleString()}
+              {bank.name} (****{bank.accNo.slice(-4)}) - ৳
+              {formatAmount(bank.balance)}
             </option>
           ))}
         </select>
@@ -183,3 +184,5 @@ export default function AddMoneyForm() {
     </form>
   );
 }
+
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import React, { useState } from 'react';
 import { Chrome, Facebook, Linkedin, Eye, EyeOff, Shield, Unlock, Lock } from 'lucide-react';
 import Link from 'next/link';
@@ -65,7 +65,7 @@ const PandaRegister: React.FC = () => {
     e.preventDefault();
     
     if(!nameInput || !emailInput || !passwordInput) {
-        // ❌ Validation Error
+      // Validation Error
         toast.custom((t) => (
             <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-sm w-full bg-[#0F172A]/95 backdrop-blur-xl border border-red-500/30 shadow-[0_0_40px_-10px_rgba(239,68,68,0.4)] rounded-[1.2rem] pointer-events-auto overflow-hidden relative p-4 flex items-center gap-5`}>
               <div className="absolute -right-4 -top-4 w-24 h-24 bg-red-500/20 blur-2xl rounded-full z-0"></div>
@@ -270,7 +270,7 @@ const PandaRegister: React.FC = () => {
             <div className="relative mb-[1em]">
               <label htmlFor="password" className="absolute -top-[0.6em] left-[1em] bg-white px-1 text-[0.7em] font-bold text-[#2C64FF] z-10"><T>Password</T></label>
               <div className="relative w-full border border-slate-300 rounded-[0.5em] focus-within:border-[#2C64FF] focus-within:ring-1 focus-within:ring-[#2C64FF]/20 transition-all bg-transparent">
-                <input type={showPassword ? "text" : "password"} id="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="••••••••" onFocus={() => setActiveField('password')} onBlur={() => setActiveField('none')} className="text-[0.9em] font-medium text-[#0F172A] p-[1em] pr-[2.5em] w-full bg-transparent outline-none tracking-widest" />
+                <input type={showPassword ? "text" : "password"} id="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="********" onFocus={() => setActiveField('password')} onBlur={() => setActiveField('none')} className="text-[0.9em] font-medium text-[#0F172A] p-[1em] pr-[2.5em] w-full bg-transparent outline-none tracking-widest" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-[0.8em] top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#2C64FF] transition-colors z-10">
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>

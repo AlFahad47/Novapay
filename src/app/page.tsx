@@ -8,6 +8,7 @@ import TopReviews from "@/components/ui/Topreviews";
 import EliteFeaturesSlider from "@/components/ui/EliteFeaturesSlider";
 import { useSession } from "next-auth/react";
 import { HeroVideoDialogDemoTopInBottomOut } from "@/components/ui/HeroVideoDialogDemoTopInBottomOut";
+import HandCardCtaSection from "@/components/ui/HandCardCtaSection";
 
 export default function Home() {
   const { data: session } = useSession(); // Correct way to extract session
@@ -43,6 +44,10 @@ export default function Home() {
 
       <section id="reviews">
         <HeroVideoDialogDemoTopInBottomOut />
+      </section>
+
+      <section id="hand-card-cta">
+        <HandCardCtaSection />
       </section>
     </main>
   );

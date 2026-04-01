@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useLocale } from "@/providers/LocaleProvider";
@@ -150,3 +150,4 @@ export default function T({ children }: { children: string }) {
 
   return <>{text}</>;
 }
+

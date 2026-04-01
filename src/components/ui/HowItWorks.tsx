@@ -35,7 +35,7 @@ export function HowItWorksSection({
         <div className="hiw-blob hiw-blob-right absolute -bottom-[18%] -right-[12%] h-105 w-105 rounded-full bg-cyan-500/10 blur-[120px] dark:bg-cyan-500/20" />
       </div>
 
-      <div className="home-container px-6 lg:px-8">
+      <div className="home-container">
         <Hero accentGradient={accentGradient} variants={variants.hero} />
 
         {hasSteps ? (

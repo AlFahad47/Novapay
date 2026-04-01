@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -36,7 +36,7 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
 
-  // This ref points to the bottom of the message list — used for auto-scroll
+  // This ref points to the bottom of the message list - used for auto-scroll
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // ─── Step 1: Load past messages when the component first mounts ───────────
@@ -61,7 +61,7 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
   useEffect(() => {
     const channel = pusherClient.subscribe(channelId);
 
-    // Listen for the "new-message" event — triggered by /api/chat/send
+    // Listen for the "new-message" event - triggered by /api/chat/send
     channel.bind("new-message", (data: Message) => {
       // Add the new message to the end of the list
       setMessages((prev) => [...prev, data]);
@@ -87,7 +87,7 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
     setSending(true);
     setInputText("");
 
-    // Optimistic update — show the message instantly for the sender
+    // Optimistic update - show the message instantly for the sender
     // without waiting for Pusher to deliver it back
     const optimisticMessage: Message = {
       senderId: currentUser.id,
@@ -120,7 +120,7 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
 
-      {/* Header — shows who you are chatting with */}
+      {/* Header - shows who you are chatting with */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
         {otherUser?.image ? (
           <Image src={otherUser.image} alt={otherUser.name} width={36} height={36} className="rounded-full" />
@@ -173,7 +173,7 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
           );
         })}
 
-        {/* Invisible div at the bottom — scrolled into view on new message */}
+        {/* Invisible div at the bottom - scrolled into view on new message */}
         <div ref={bottomRef} />
       </div>
 
@@ -198,3 +198,4 @@ export default function ChatWindow({ channelId, type, currentUser, otherUser }: 
     </div>
   );
 }
+

@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
 import T from "@/components/T";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 
 type KycDetails = {
   phone?: string;
@@ -317,3 +317,4 @@ function Info({ label, value }: { label: string; value: string }) {
     </motion.div>
   );
 }
+

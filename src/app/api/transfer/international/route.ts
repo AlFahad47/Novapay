@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { FX_FEE_PERCENT, SupportedCurrency } from "@/types/international";
 
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Recipient is not KYC verified." }, { status: 403 });
     }
 
-    // Elite check — sender must have International Pay (via subscription or unlockedFeatures)
+    // Elite check - sender must have International Pay (via subscription or unlockedFeatures)
     const senderSubscribed = sender.subscription?.active && new Date(sender.subscription.expiresAt) > new Date();
     const senderFeatures: string[] = sender.unlockedFeatures || [];
     if (!senderSubscribed && !senderFeatures.includes("International Pay")) {
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
       }, { status: 403 });
     }
 
-    // Elite check — recipient must have International Pay (via subscription or unlockedFeatures)
+    // Elite check - recipient must have International Pay (via subscription or unlockedFeatures)
     const recipientSubscribed = recipient.subscription?.active && new Date(recipient.subscription.expiresAt) > new Date();
     const recipientFeatures: string[] = recipient.unlockedFeatures || [];
     if (!recipientSubscribed && !recipientFeatures.includes("International Pay")) {
@@ -173,3 +173,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Internal Server Error." }, { status: 500 });
   }
 }
+

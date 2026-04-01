@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
-// POST /api/admin/campaigns — create a new campaign
-// PATCH /api/admin/campaigns — toggle active/inactive
+// POST /api/admin/campaigns - create a new campaign
+// PATCH /api/admin/campaigns - toggle active/inactive
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   }
 }
 
-// PATCH — toggle campaign active status
+// PATCH - toggle campaign active status
 export async function PATCH(request: Request) {
   try {
     const body = await request.json();
@@ -83,3 +83,4 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ message: "Internal Server Error." }, { status: 500 });
   }
 }
+

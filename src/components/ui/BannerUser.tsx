@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -20,7 +20,7 @@ import {
   X,
   UserCircle2,
 } from "lucide-react";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import StatusOnboarding from "../../components/StatusOnboarding";
 import { BsCoin } from "react-icons/bs";
 import { FaRankingStar } from "react-icons/fa6";
@@ -113,7 +113,23 @@ const BannerUser: React.FC = () => {
   const firstName =
     dbUser?.name?.split(" ")[0] || session?.user?.name?.split(" ")[0] || "User";
   const currencySymbol = dbUser?.currency === "BDT" ? "৳" : "$";
-  const isApproved = true;
+  const isApproved = dbUser?.kycStatus === "approved";
+
+  const handleLockedAction = () => {
+    Swal.fire({
+      title: "KYC Required",
+      text: "Complete KYC to unlock Send, Add, and History.",
+      icon: "info",
+      confirmButtonText: "Complete KYC",
+      confirmButtonColor: "#1E50FF",
+      showCancelButton: true,
+      cancelButtonText: "Later",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push("/dashboard/kyc");
+      }
+    });
+  };
 
   const stats = [
     {
@@ -158,23 +174,23 @@ const BannerUser: React.FC = () => {
     {
       label: "Send",
       icon: <Send size={15} />,
-      onClick: () => setActiveModal("send"),
+      onClick: () =>
+        isApproved ? setActiveModal("send") : handleLockedAction(),
     },
     {
       label: "Add",
       icon: <Plus size={15} />,
-      onClick: () => setActiveModal("add"),
+      onClick: () => (isApproved ? setActiveModal("add") : handleLockedAction()),
     },
     {
       label: "History",
       icon: <TrendingUp size={15} />,
-      onClick: () => router.push("/dashboard/transactions"),
+      onClick: () =>
+        isApproved ? router.push("/dashboard/transactions") : handleLockedAction(),
     },
   ];
 
-  const hedwigGradient = "linear-gradient(to right, #4DA1FF, #1E50FF)";
-
-  // এই ফাংশনটি BannerUser কম্পোনেন্টের ভেতরে যোগ করুন
+  const hedwigGradient = "linear-gradient(to right, #4DA1FF, #1E50FF)";
   const confirmPayment = async (data: any) => {
     Swal.fire({
       title: "Confirm Payment",
@@ -184,8 +200,7 @@ const BannerUser: React.FC = () => {
       confirmButtonText: "Yes, Pay Now",
       confirmButtonColor: "#1E50FF",
     }).then(async (result) => {
-      if (result.isConfirmed) {
-        // এখানে সরাসরি API কল করুন
+      if (result.isConfirmed) {
         processPayment(data);
       }
     });
@@ -264,7 +279,7 @@ const BannerUser: React.FC = () => {
       />
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] dark:bg-[#1E50FF] opacity-[0.18] blur-[140px] rounded-full pointer-events-none z-[-1]" />
 
-      <div className="w-11/12 max-w-[1280px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
+      <div className="home-container flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
         <motion.div
           className="flex-1 flex flex-col items-start gap-6 max-w-xl"
           initial={{ opacity: 0, y: 30 }}
@@ -390,7 +405,7 @@ const BannerUser: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.15 }}
         >
-          {/* ক্লিকযোগ্য এলার্ট বাটন */}
+          {/* cleaned comment */}
           <motion.button
             onClick={() => pendingRequests > 0 && setIsListModalOpen(true)}
             whileHover={pendingRequests > 0 ? { scale: 1.05 } : {}}
@@ -453,7 +468,7 @@ const BannerUser: React.FC = () => {
                     ? "..."
                     : isApproved
                       ? `${currencySymbol}${dbUser?.balance || "0.00"}`
-                      : `${currencySymbol} ••••`}
+                      : `${currencySymbol} ****`}
                 </p>
               </div>
               <div className="flex justify-between items-end">
@@ -474,14 +489,23 @@ const BannerUser: React.FC = () => {
               <motion.button
                 key={action.label}
                 onClick={action.onClick}
-                whileHover={{ y: -2 }}
+                whileHover={isApproved ? { y: -2 } : {}}
                 whileTap={{ scale: 0.95 }}
-                className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl bg-white/70 dark:bg-white/[0.04] border border-[#4DA1FF]/15 backdrop-blur-sm hover:bg-[#4DA1FF]/10 text-[#1E50FF] dark:text-[#4DA1FF]"
+                className={`relative flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border border-[#4DA1FF]/15 backdrop-blur-sm text-[#1E50FF] dark:text-[#4DA1FF] transition-opacity ${
+                  isApproved
+                    ? "bg-white/70 dark:bg-white/[0.04] hover:bg-[#4DA1FF]/10"
+                    : "bg-white/50 dark:bg-white/[0.03] opacity-70"
+                }`}
               >
                 <span className="text-current">{action.icon}</span>
                 <span className="text-[10px] font-semibold text-[#0F172A] dark:text-white">
                   <T>{action.label}</T>
                 </span>
+                {!isApproved && (
+                  <span className="absolute top-2 right-2 text-[#1E50FF] dark:text-[#4DA1FF]">
+                    <Lock size={12} />
+                  </span>
+                )}
               </motion.button>
             ))}
           </div>
@@ -711,3 +735,5 @@ const BannerUser: React.FC = () => {
 };
 
 export default BannerUser;
+
+

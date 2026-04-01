@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 
-// GET /api/donation/campaigns — returns all active campaigns
+// GET /api/donation/campaigns - returns all active campaigns
 export async function GET() {
   try {
     const client = await clientPromise;
@@ -19,3 +19,4 @@ export async function GET() {
     return NextResponse.json({ message: "Internal Server Error." }, { status: 500 });
   }
 }
+

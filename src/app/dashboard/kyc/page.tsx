@@ -1,8 +1,8 @@
-// "use client";
+﻿// "use client";
 
 // import { useState, useEffect } from "react";
 // import { motion, AnimatePresence } from "framer-motion";
-// import Swal from "sweetalert2";
+// import Swal from "@/lib/brandAlert";
 // import { useSession } from "next-auth/react";
 
 // export default function KYCPage() {
@@ -202,7 +202,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import { useSession } from "next-auth/react";
 import T from "@/components/T";
 
@@ -279,7 +279,7 @@ export default function KYCPage() {
           <StatusCard
             title="Account Verified"
             desc="Congratulations! Your identity has been verified. Welcome to NovaPay Wallet."
-            icon="✅"
+            icon="…"
             color="text-green-500"
           />
         )}
@@ -367,7 +367,7 @@ export default function KYCPage() {
                 </Section>
 
                 <motion.button disabled={isSubmitting} type="submit" className="w-full mt-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#0095ff] to-[#0061ff] shadow-lg disabled:opacity-50">
-                  {isSubmitting ? <T>Submitting...</T> : <><T>Submit</T> {role} <T>KYC</T></>}
+                  {isSubmitting ? <T>Submitting...</T> : <><T>Submit User KYC</T></>}
                 </motion.button>
               </motion.form>
             </AnimatePresence>
@@ -449,3 +449,4 @@ function FileInput({ label, name }: any) {
     </div>
   );
 }
+

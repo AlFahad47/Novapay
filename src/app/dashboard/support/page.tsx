@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ export default function AdminSupportInbox() {
   const [loading, setLoading] = useState(true);
 
   // Redirect if not logged in or not admin
-  // Note: we check that role is defined before redirecting — avoids false redirect while session is hydrating
+  // Note: we check that role is defined before redirecting - avoids false redirect while session is hydrating
   useEffect(() => {
     if (status === "loading") return;
     if (status === "unauthenticated") {
@@ -66,7 +66,7 @@ export default function AdminSupportInbox() {
         {/* Header */}
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1"><T>Support Inbox</T></h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-          <T>All user support conversations — click to reply.</T>
+          <T>All user support conversations - click to reply.</T>
         </p>
 
         {/* Conversation list */}
@@ -119,3 +119,4 @@ export default function AdminSupportInbox() {
     </div>
   );
 }
+

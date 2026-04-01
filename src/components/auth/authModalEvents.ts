@@ -1,6 +1,6 @@
 "use client";
 
-export type AuthView = "login" | "register";
+export type AuthView = "login" | "register" | "forgot";
 
 export const AUTH_MODAL_EVENT = "open-auth-modal";
 

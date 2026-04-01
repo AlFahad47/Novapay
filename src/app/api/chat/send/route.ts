@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import clientPromise from "@/lib/mongodb";
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     senderImage: session.user.image ?? null,
     text,
     timestamp: new Date(),
-    read: false,            // unread by default — used for notification badges later
+    read: false,            // unread by default - used for notification badges later
   };
 
   // 4. Save the message to MongoDB (messages collection)
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   const db = client.db("novapay_db");
   await db.collection("messages").insertOne(message);
 
-  // 5. Trigger Pusher — this pushes the message to all browsers subscribed to this channel
+  // 5. Trigger Pusher - this pushes the message to all browsers subscribed to this channel
   await pusherServer.trigger(channelId, "new-message", {
     senderId: session.user.id,
     senderName: session.user.name,
@@ -47,3 +47,4 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ success: true });
 }
+

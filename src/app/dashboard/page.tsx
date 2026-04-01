@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import DashboardHome from "@/components/dashboard/DashboardHome";
 import { CreditCard, Bell, Clock, Edit, Activity, DollarSign,Info } from "lucide-react";
 import Image from "next/image";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import { motion } from "framer-motion";
 import T from "@/components/T";
 
@@ -429,3 +429,4 @@ function TransactionItem({ name, amount, time }: any) {
     </li>
   );
 }
+

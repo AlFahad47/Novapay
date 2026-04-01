@@ -7,7 +7,7 @@ export function HeroVideoDialogDemoTopInBottomOut() {
       <div className="absolute top-0 right-1/4 h-96 w-96 rounded-full bg-blue-500/10 blur-[120px]" />
       <div className="absolute left-1/4 bottom-0 h-96 w-96 rounded-full bg-indigo-500/10 blur-[120px]" />
 
-      <div className="home-container px-6">
+      <div className="home-container">
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <h2 className="home-heading text-2xl md:text-4xl">
             <T>See</T> <span className="home-gradient-text">NovaPay</span> <T>In Action</T>

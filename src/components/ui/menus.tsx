@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, Suspense, useMemo } from "react";
 import { createPortal } from "react-dom";
@@ -23,7 +23,7 @@ import {
 import { IconType } from "react-icons";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import T from "@/components/T";
 
 // Modals
@@ -275,7 +275,7 @@ const QuickActionsContent = () => {
       {/* Ambient Glow Background */}
       <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-100 w-120 -translate-x-1/2 rounded-full bg-[#4DA1FF]/10 blur-[110px] dark:bg-[#4DA1FF]/16"></div>
 
-      <div className="home-container flex flex-col items-center px-4">
+      <div className="home-container flex flex-col items-center">
         {/* Header Area */}
         <div className="mb-7 w-full text-center">
           <h2 className="home-heading text-3xl md:text-[2.5rem]">
@@ -461,3 +461,4 @@ export default function QuickActions() {
     </Suspense>
   );
 }
+

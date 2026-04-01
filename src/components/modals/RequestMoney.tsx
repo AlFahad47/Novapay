@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { HandHelping, Mail, Banknote, PenLine, Loader2 } from "lucide-react";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import { Button } from "@/components/ui/button";
 import T from "@/components/T";
 
@@ -128,3 +128,5 @@ export default function RequestMoneyForm({
     </div>
   );
 }
+
+

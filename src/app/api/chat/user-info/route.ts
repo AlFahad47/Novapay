@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import clientPromise from "@/lib/mongodb";
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   // Find user by their MongoDB _id
   const user = await db.collection("users").findOne(
     { _id: new ObjectId(userId) },
-    { projection: { name: 1, email: 1, image: 1 } } // only return name, email, image — not password etc.
+    { projection: { name: 1, email: 1, image: 1 } } // only return name, email, image - not password etc.
   );
 
   if (!user) {
@@ -40,3 +40,4 @@ export async function GET(req: NextRequest) {
     },
   });
 }
+

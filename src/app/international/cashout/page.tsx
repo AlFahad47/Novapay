@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Wallet, RefreshCw, CheckCircle2, AlertCircle, ArrowDownCircle } from "lucide-react";
 import { CURRENCY_META, SupportedCurrency } from "@/types/international";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 type Step = "form" | "success";
 
@@ -201,7 +202,7 @@ export default function CashOutPage() {
             <div>
               <p className="text-xs text-gray-400 dark:text-blue-400"><T>Main BDT Balance</T></p>
               <p className="text-lg font-bold text-gray-800 dark:text-blue-100">
-                ৳{mainBalance.toLocaleString()} <span className="text-sm font-medium text-gray-400">BDT</span>
+                ৳{formatAmount(mainBalance)} <span className="text-sm font-medium text-gray-400">BDT</span>
               </p>
             </div>
           </div>
@@ -264,7 +265,7 @@ export default function CashOutPage() {
                       if (!meta) return null;
                       return (
                         <option key={currency} value={currency}>
-                          {meta.flag} {currency} — Balance: {meta.symbol}{(balance as number).toFixed(2)}
+                          {meta.flag} {currency} - Balance: {meta.symbol}{(balance as number).toFixed(2)}
                         </option>
                       );
                     })}
@@ -325,7 +326,7 @@ export default function CashOutPage() {
                         </div>
                         <div className="flex justify-between text-gray-600 dark:text-blue-300">
                           <span><T>You will receive</T></span>
-                          <span className="font-semibold text-green-500">+৳{estimatedBDT?.toLocaleString()} BDT</span>
+                          <span className="font-semibold text-green-500">+৳{formatAmount(estimatedBDT)} BDT</span>
                         </div>
                       </>
                     )}
@@ -376,7 +377,7 @@ export default function CashOutPage() {
                   <div className="flex justify-between border-t border-gray-200 dark:border-blue-800 pt-2">
                     <span className="text-gray-500 dark:text-blue-400"><T>New BDT balance</T></span>
                     <span className="font-bold text-gray-800 dark:text-blue-100">
-                      ৳{successSummary.newBalance.toLocaleString()} BDT
+                      ৳{formatAmount(successSummary.newBalance)} BDT
                     </span>
                   </div>
                 </div>
@@ -407,3 +408,4 @@ export default function CashOutPage() {
     </div>
   );
 }
+

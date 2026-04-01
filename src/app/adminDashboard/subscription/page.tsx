@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Crown, Loader2, Users, TrendingUp } from "lucide-react";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 export default function SubscriptionPage() {
   const { data: session } = useSession();
@@ -77,7 +78,7 @@ export default function SubscriptionPage() {
           <div>
             <p className="text-sm text-blue-400"><T>Subscription Revenue</T></p>
             <p className="text-3xl font-bold text-blue-900 dark:text-blue-100">
-              ৳{(adminStats?.revenue ?? 0).toLocaleString()}
+              ৳{formatAmount(adminStats?.revenue ?? 0)}
             </p>
           </div>
         </div>

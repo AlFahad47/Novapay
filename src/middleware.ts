@@ -11,8 +11,13 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const search = request.nextUrl.searchParams;
 
-  // পাবলিক পাথ চেক (home path '/' কে আলাদাভাবে হ্যান্ডেল করা ভালো)
-  const isPublicPath = pathname === '/login' || pathname === '/register';
+  // Public routes that should be accessible without auth
+  const isPublicPath = [
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+  ].includes(pathname);
 
   if (!token && pathname === '/login') {
     const url = new URL('/', request.url);
@@ -52,6 +57,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)',
   ],
 };

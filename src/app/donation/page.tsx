@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -7,6 +7,7 @@ import { Heart, Users, Target, CheckCircle2, AlertCircle, RefreshCw, ArrowLeft, 
 import T from "@/components/T";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { formatAmount } from "@/lib/utils";
 
 interface Campaign {
   _id: string;
@@ -271,16 +272,16 @@ export default function DonationPage() {
                       </div>
                       <div className="flex justify-between text-xs text-gray-500 dark:text-blue-400">
                         <span className="font-semibold text-[#e63b60]">
-                          ৳{campaign.raisedAmount.toLocaleString()} <T>raised</T>
+                          ৳{formatAmount(campaign.raisedAmount)} <T>raised</T>
                         </span>
-                        <span><T>of</T> ৳{campaign.goalAmount.toLocaleString()}</span>
+                        <span><T>of</T> ৳{formatAmount(campaign.goalAmount)}</span>
                       </div>
                     </div>
 
                     {/* Donor count */}
                     <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-blue-500">
                       <Users size={12} />
-                      <span>{campaign.donorCount.toLocaleString()} <T>people donated</T></span>
+                      <span>{formatAmount(campaign.donorCount)} <T>people donated</T></span>
                     </div>
 
                     {/* Donate button */}
@@ -323,7 +324,7 @@ export default function DonationPage() {
                     <T>{selectedCampaign.title}</T>
                   </h2>
                   <p className="text-xs text-gray-400 dark:text-blue-400 mt-0.5">
-                    ৳{selectedCampaign.raisedAmount.toLocaleString()} <T>raised so far</T>
+                    ৳{formatAmount(selectedCampaign.raisedAmount)} <T>raised so far</T>
                   </p>
                 </div>
                 <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 dark:hover:text-blue-200 transition">
@@ -381,7 +382,7 @@ export default function DonationPage() {
                   {/* BDT Balance info */}
                   <div className="flex items-center justify-between bg-gray-50 dark:bg-[#071120] rounded-xl px-3 py-2.5 border border-gray-200 dark:border-blue-900">
                     <span className="text-xs text-gray-500 dark:text-blue-400"><T>Your BDT Balance</T></span>
-                    <span className="text-sm font-bold text-gray-800 dark:text-blue-100">৳{userBalance.toLocaleString()}</span>
+                    <span className="text-sm font-bold text-gray-800 dark:text-blue-100">৳{formatAmount(userBalance)}</span>
                   </div>
 
                   {/* Quick amounts */}
@@ -423,9 +424,9 @@ export default function DonationPage() {
                   {/* Goal info */}
                   <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-blue-500 bg-gray-50 dark:bg-[#071120] rounded-xl p-3">
                     <Target size={13} />
-                    <span><T>Goal</T>: ৳{selectedCampaign.goalAmount.toLocaleString()}</span>
+                    <span><T>Goal</T>: ৳{formatAmount(selectedCampaign.goalAmount)}</span>
                     <span>·</span>
-                    <span>{selectedCampaign.donorCount.toLocaleString()} <T>donors</T></span>
+                    <span>{formatAmount(selectedCampaign.donorCount)} <T>donors</T></span>
                   </div>
 
                   <motion.button
@@ -447,3 +448,4 @@ export default function DonationPage() {
     </div>
   );
 }
+

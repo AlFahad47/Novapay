@@ -1,12 +1,11 @@
-"use client";
+﻿"use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Eye, EyeOff, Lock, Shield, Unlock, X } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, Shield, Unlock, X } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import toast from "react-hot-toast";
-import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import T from "@/components/T";
 import { AUTH_MODAL_EVENT, AuthView } from "./authModalEvents";
@@ -46,11 +45,15 @@ const AuthModal: React.FC = () => {
   const [registerPassword, setRegisterPassword] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
   const [activeField, setActiveField] = useState<ActiveField>("none");
 
   const queryView = searchParams.get("auth");
   const routeAuthView: AuthView | null =
-    queryView === "login" || queryView === "register" ? queryView : null;
+    queryView === "login" || queryView === "register" || queryView === "forgot"
+      ? queryView
+      : null;
 
   const registerStrength = useMemo(
     () => calculateStrength(registerPassword),
@@ -73,7 +76,11 @@ const AuthModal: React.FC = () => {
   useEffect(() => {
     const handleOpen = (event: Event) => {
       const customEvent = event as CustomEvent<{ view?: AuthView }>;
-      setView(customEvent.detail?.view === "register" ? "register" : "login");
+      setView(
+        customEvent.detail?.view === "register" || customEvent.detail?.view === "forgot"
+          ? customEvent.detail.view
+          : "login",
+      );
       setIsOpen(true);
     };
 
@@ -248,6 +255,46 @@ const AuthModal: React.FC = () => {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail) {
+      toast.error("Please enter your email.");
+      return;
+    }
+
+    setForgotLoading(true);
+
+    try {
+      const res = await fetch("/api/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message || "Could not send reset code.");
+        return;
+      }
+
+      toast.success(data.message || "Reset code sent.");
+
+      if (data.resetToken) {
+        toast.success(`Reset Code: ${data.resetToken}`, { duration: 10000 });
+      }
+
+      closeModal();
+      setTimeout(() => {
+        router.push(`/reset-password?email=${encodeURIComponent(forgotEmail)}`);
+      }, 500);
+    } catch {
+      toast.error("A server error occurred!");
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
   const isModalOpen = isOpen || Boolean(routeAuthView);
   const currentView = routeAuthView ?? view;
 
@@ -259,10 +306,10 @@ const AuthModal: React.FC = () => {
         type="button"
         aria-label="Close auth modal"
         onClick={closeModal}
-        className="absolute inset-0 bg-linear-to-br from-[#02050b]/80 via-[#0b1220]/70 to-[#1f2937]/70 backdrop-blur-md"
+        className="absolute inset-0 z-0 bg-linear-to-br from-[#02050b]/80 via-[#0b1220]/70 to-[#1f2937]/70 backdrop-blur-md"
       />
 
-      <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-slate-200/80 bg-linear-to-b from-[#ffffff] to-[#f2f7ff] p-6 text-slate-900 shadow-[0_30px_100px_rgba(2,6,23,0.45)] animate-in fade-in zoom-in-95 duration-300 dark:border-slate-700/70 dark:from-[#0b1220] dark:to-[#0f172a] dark:text-slate-100">
+      <div className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-slate-200/80 bg-linear-to-b from-[#ffffff] to-[#f2f7ff] p-6 text-slate-900 shadow-[0_30px_100px_rgba(2,6,23,0.45)] animate-in fade-in zoom-in-95 duration-300 dark:border-slate-700/70 dark:from-[#0b1220] dark:to-[#0f172a] dark:text-slate-100">
         <div className="pointer-events-none absolute -left-20 -top-24 h-64 w-64 rounded-full bg-[#7aa2ff]/25 blur-3xl dark:bg-[#3b82f6]/20" />
         <div className="pointer-events-none absolute -bottom-24 -right-20 h-64 w-64 rounded-full bg-[#22d3ee]/20 blur-3xl dark:bg-[#38bdf8]/10" />
 
@@ -270,7 +317,7 @@ const AuthModal: React.FC = () => {
           type="button"
           onClick={closeModal}
           aria-label="Close"
-          className="absolute right-4 top-4 rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700/60 dark:hover:text-white"
+          className="absolute right-4 top-4 z-20 rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700/60 dark:hover:text-white"
         >
           <X size={16} />
         </button>
@@ -280,41 +327,61 @@ const AuthModal: React.FC = () => {
             <Shield className="text-white" size={26} />
           </div>
           <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
-            {currentView === "login" ? <T>Welcome back</T> : <T>Create Account</T>}
+            {currentView === "login" ? (
+              <T>Welcome back</T>
+            ) : currentView === "register" ? (
+              <T>Create Account</T>
+            ) : (
+              <T>Forgot your password?</T>
+            )}
           </h2>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
             {currentView === "login" ? (
               <T>Please enter your details to sign in.</T>
-            ) : (
+            ) : currentView === "register" ? (
               <T>Join NovaPay with your email and password.</T>
+            ) : (
+              <T>Enter your email and we will send a reset code.</T>
             )}
           </p>
         </div>
 
-        <div className="mb-6 grid grid-cols-2 gap-2 rounded-xl bg-slate-200/80 p-1 dark:bg-slate-800/70">
-          <button
-            type="button"
-            onClick={() => setView("login")}
-            className={`rounded-lg px-4 py-2 text-sm font-bold transition-all ${
-              currentView === "login"
-                ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-white"
-                : "text-slate-600 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white"
-            }`}
-          >
-            <T>Sign In</T>
-          </button>
-          <button
-            type="button"
-            onClick={() => setView("register")}
-            className={`rounded-lg px-4 py-2 text-sm font-bold transition-all ${
-              currentView === "register"
-                ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-white"
-                : "text-slate-600 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white"
-            }`}
-          >
-            <T>Sign Up</T>
-          </button>
-        </div>
+        {currentView !== "forgot" ? (
+          <div className="mb-6 grid grid-cols-2 gap-2 rounded-xl bg-slate-200/80 p-1 dark:bg-slate-800/70">
+            <button
+              type="button"
+              onClick={() => setView("login")}
+              className={`rounded-lg px-4 py-2 text-sm font-bold transition-all ${
+                currentView === "login"
+                  ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-white"
+                  : "text-slate-600 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white"
+              }`}
+            >
+              <T>Sign In</T>
+            </button>
+            <button
+              type="button"
+              onClick={() => setView("register")}
+              className={`rounded-lg px-4 py-2 text-sm font-bold transition-all ${
+                currentView === "register"
+                  ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-white"
+                  : "text-slate-600 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white"
+              }`}
+            >
+              <T>Sign Up</T>
+            </button>
+          </div>
+        ) : (
+          <div className="mb-6 text-center">
+            <button
+              type="button"
+              onClick={() => setView("login")}
+              className="text-sm font-semibold text-slate-700 underline underline-offset-4 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+            >
+              <T>Back to Sign In</T>
+            </button>
+          </div>
+        )}
 
         {currentView === "login" ? (
           <form onSubmit={handleLogin} className="space-y-4">
@@ -364,9 +431,16 @@ const AuthModal: React.FC = () => {
                 <input type="checkbox" className="h-4 w-4 rounded border-slate-300 dark:border-slate-600" />
                 <T>Remember me</T>
               </label>
-              <Link href="/forgot-password" className="font-semibold text-slate-800 hover:underline dark:text-slate-100">
+              <button
+                type="button"
+                onClick={() => {
+                  setForgotEmail(loginEmail);
+                  setView("forgot");
+                }}
+                className="font-semibold text-slate-800 hover:underline dark:text-slate-100"
+              >
                 <T>Forgot password?</T>
-              </Link>
+              </button>
             </div>
 
             <button
@@ -376,7 +450,7 @@ const AuthModal: React.FC = () => {
               <T>Sign In</T>
             </button>
           </form>
-        ) : (
+        ) : currentView === "register" ? (
           <form onSubmit={handleRegister} className="space-y-4">
             <button
               type="button"
@@ -449,6 +523,31 @@ const AuthModal: React.FC = () => {
               <T>Create account</T>
             </button>
           </form>
+        ) : (
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <div className="relative">
+              <Mail
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                size={18}
+              />
+              <input
+                type="email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="w-full rounded-xl border border-slate-300 bg-white/90 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#2C64FF] focus:ring-2 focus:ring-[#2C64FF]/20 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100 dark:placeholder:text-slate-400"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={forgotLoading}
+              className="w-full rounded-xl bg-linear-to-r from-[#2c64ff] via-[#3b82f6] to-[#4d84ff] py-3 text-base font-semibold text-white shadow-[0_10px_25px_rgba(44,100,255,0.35)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(44,100,255,0.5)] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {forgotLoading ? <T>Sending...</T> : <T>Send Reset Code</T>}
+            </button>
+          </form>
         )}
       </div>
     </div>
@@ -456,3 +555,4 @@ const AuthModal: React.FC = () => {
 };
 
 export default AuthModal;
+

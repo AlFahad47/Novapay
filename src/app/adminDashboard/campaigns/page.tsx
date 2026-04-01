@@ -1,10 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Plus, RefreshCw, CheckCircle2, AlertCircle, ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 interface Campaign {
   _id: string;
@@ -279,8 +280,8 @@ export default function AdminCampaignsPage() {
                     />
                   </div>
                   <div className="flex justify-between text-xs text-gray-500 dark:text-blue-400">
-                    <span>৳{campaign.raisedAmount.toLocaleString()} <T>raised</T> · {campaign.donorCount} <T>donors</T></span>
-                    <span><T>Goal</T>: ৳{campaign.goalAmount.toLocaleString()}</span>
+                    <span>৳{formatAmount(campaign.raisedAmount)} <T>raised</T> · {formatAmount(campaign.donorCount)} <T>donors</T></span>
+                    <span><T>Goal</T>: ৳{formatAmount(campaign.goalAmount)}</span>
                   </div>
                 </div>
               </div>
@@ -291,3 +292,4 @@ export default function AdminCampaignsPage() {
     </div>
   );
 }
+

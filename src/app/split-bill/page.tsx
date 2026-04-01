@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { UserPlus, Search, X, Sun, Moon, Loader2, Send } from 'lucide-react';
 import { useSession } from "next-auth/react";
-import Swal from 'sweetalert2';
+import Swal from "@/lib/brandAlert";
 import T from "@/components/T";
 
 interface User {
@@ -124,7 +124,7 @@ const SplitBill = () => {
 
   return (
     <div className={`${isDarkMode ? 'dark' : ''}`}>
-      <div className="min-h-screen bg-[#F5F5F7] dark:bg-black py-12 px-4 transition-colors duration-500 font-sans text-[#1D1D1F] dark:text-[#F5F5F7]">
+      <div className="min-h-screen pt-50 bg-[#F5F5F7] dark:bg-black py-12 px-4 transition-colors duration-500 font-sans text-[#1D1D1F] dark:text-[#F5F5F7]">
         
         <button onClick={() => setIsDarkMode(!isDarkMode)} className="fixed top-6 right-6 p-3 rounded-full bg-white dark:bg-[#1C1C1E] shadow-sm border border-gray-100 dark:border-white/10 z-50">
           {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -253,3 +253,4 @@ const SplitBill = () => {
 };
 
 export default SplitBill;
+

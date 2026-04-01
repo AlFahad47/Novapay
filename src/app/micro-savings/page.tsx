@@ -1,11 +1,12 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, CalendarDays, Wallet, X, Sparkles, TrendingUp, AlertCircle, Info, Plus, BellRing, ChevronRight, ArrowUpRight, HandCoins, MessageSquare, CheckCircle2 } from 'lucide-react';
 import { useSession } from "next-auth/react";
-import Swal from 'sweetalert2';
+import Swal from "@/lib/brandAlert";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 export default function SmartSavingGoal() {
   const { data: session } = useSession();
@@ -310,7 +311,7 @@ export default function SmartSavingGoal() {
                 </div>
 
                 <h3 className="text-xl font-bold mb-1 truncate">{goal.goalName}</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mb-5 font-medium"><T>Target:</T> {currencySymbol}{goal.targetAmount.toLocaleString()}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-5 font-medium"><T>Target:</T> {currencySymbol}{formatAmount(goal.targetAmount)}</p>
                 
                 <div className="space-y-3">
                   <div className="flex justify-between text-xs font-bold dark:text-slate-300">
@@ -371,7 +372,7 @@ export default function SmartSavingGoal() {
                   <h3 className="text-xl font-bold flex items-center gap-2 dark:text-white"><Info size={20} className="text-blue-500" /> <T>AI Plan</T></h3>
                   <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-blue-600/10">
                     <p className="text-slate-500 dark:text-slate-400 text-sm font-medium"><T>Monthly Deposit</T></p>
-                    <p className="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">{currencySymbol}{monthlySavingNeeded.toLocaleString()}</p>
+                    <p className="text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">{currencySymbol}{formatAmount(monthlySavingNeeded)}</p>
                   </div>
                   <div className={`p-5 rounded-2xl text-xs font-semibold flex gap-3 items-start ${isFeasible ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
                     <BellRing size={18} className="shrink-0 mt-0.5"/>
@@ -411,7 +412,7 @@ export default function SmartSavingGoal() {
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
                     <span className="text-slate-500 dark:text-slate-400 font-medium"><T>Total Saved</T></span>
-                    <span className="font-bold text-green-600 dark:text-green-500">{currencySymbol}{(selectedGoal.currentSaved || 0).toLocaleString()} / {currencySymbol}{selectedGoal.targetAmount.toLocaleString()}</span>
+                  <span className="font-bold text-green-600 dark:text-green-500">{currencySymbol}{formatAmount(selectedGoal.currentSaved || 0)} / {currencySymbol}{formatAmount(selectedGoal.targetAmount)}</span>
                 </div>
                 
                 <div className="p-5 bg-blue-50/50 dark:bg-blue-500/5 rounded-2xl border border-blue-100 dark:border-blue-500/10">
@@ -511,3 +512,4 @@ function InputField({ label, icon, ...props }: any) {
     </div>
   );
 }
+

@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Send, User, Banknote, Loader2, Info, XCircle, CheckCircle2 } from "lucide-react";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 
 export default function SendMoneyForm({ onSuccess }: { onSuccess?: () => void }) {
   const { data: session } = useSession();
@@ -248,3 +248,4 @@ const handleSend = async () => {
     </div>
   );
 }
+

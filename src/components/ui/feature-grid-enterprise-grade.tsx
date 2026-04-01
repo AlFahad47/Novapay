@@ -74,7 +74,7 @@ export default function NovaPayFeaturesSection() {
         <div className="absolute top-0 h-[400px] w-[800px] -translate-y-[30%] rounded-full bg-[#4DA1FF]/10 blur-[100px] dark:bg-[#1E50FF]/15" />
       </div>
 
-      <div className="relative mx-auto max-w-[1100px] px-6 lg:px-8">
+      <div className="home-container">
         {/* --- REFINED SECTION HEADER --- */}
         <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-14">
           <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl md:text-5xl">

@@ -1,4 +1,4 @@
- "use client";
+﻿ "use client";
 
   import { useSession } from "next-auth/react";
   import Banner from "./Banner";
@@ -7,7 +7,7 @@
   const BannerSwitch: React.FC = () => {
     const { data: session, status } = useSession();
 
-    // Still loading — show nothing to avoid flash
+    // Still loading - show nothing to avoid flash
     if (status === "loading") {
       return (
         <div className="w-full min-h-[88vh] bg-[#f0f7ff] dark:bg-[#050B14] flex items-center justify-center">
@@ -26,3 +26,4 @@
   };
 
   export default BannerSwitch;
+

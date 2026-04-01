@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from 'react';
 import { 
@@ -9,8 +9,9 @@ import {
   Banknote,
   MessageSquare // Reason icon 
 } from 'lucide-react';
-import Swal from 'sweetalert2';
+import Swal from "@/lib/brandAlert";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 export default function WithdrawalsPage() {
   const [requests, setRequests] = useState([]);
@@ -161,7 +162,7 @@ export default function WithdrawalsPage() {
                       <div className="flex items-center gap-2">
                         <Banknote size={16} className="text-emerald-500" />
                         <span className="font-black text-xl dark:text-white">
-                          ৳{req.amount?.toLocaleString() || 0}
+                          ৳{formatAmount(req.amount)}
                         </span>
                       </div>
                     </td>
@@ -219,3 +220,4 @@ export default function WithdrawalsPage() {
     </div>
   );
 }
+

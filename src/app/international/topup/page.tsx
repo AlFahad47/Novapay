@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Wallet, RefreshCw, CheckCircle2, AlertCircle, PlusCircle } from "lucide-react";
 import { CURRENCY_META, SupportedCurrency } from "@/types/international";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 const CURRENCIES = Object.keys(CURRENCY_META) as SupportedCurrency[];
 
@@ -197,7 +198,7 @@ export default function TopUpPage() {
             <div>
               <p className="text-xs text-gray-400 dark:text-blue-400"><T>Main Balance</T></p>
               <p className="text-lg font-bold text-gray-800 dark:text-blue-100">
-                {mainBalance.toLocaleString()} <span className="text-sm font-medium text-gray-400">{mainCurrency}</span>
+                {formatAmount(mainBalance)} <span className="text-sm font-medium text-gray-400">{mainCurrency}</span>
               </p>
             </div>
           </div>
@@ -267,7 +268,7 @@ export default function TopUpPage() {
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c} value={c}>
-                      {CURRENCY_META[c].flag} {c} — {CURRENCY_META[c].name}
+                      {CURRENCY_META[c].flag} {c} - {CURRENCY_META[c].name}
                     </option>
                   ))}
                 </select>
@@ -312,7 +313,7 @@ export default function TopUpPage() {
                       </div>
                       <div className="flex justify-between text-gray-600 dark:text-blue-300">
                         <span><T>Deducted from main balance</T></span>
-                        <span className="font-semibold text-red-500">−{estimatedDeduction?.toLocaleString()} {mainCurrency}</span>
+                        <span className="font-semibold text-red-500">−{formatAmount(estimatedDeduction)} {mainCurrency}</span>
                       </div>
                     </>
                   )}
@@ -362,7 +363,7 @@ export default function TopUpPage() {
                 </div>
                 <div className="flex justify-between border-t border-gray-200 dark:border-blue-800 pt-2">
                   <span className="text-gray-500 dark:text-blue-400"><T>New main balance</T></span>
-                  <span className="font-bold text-gray-800 dark:text-blue-100">{successSummary.newBalance.toLocaleString()} {mainCurrency}</span>
+                  <span className="font-bold text-gray-800 dark:text-blue-100">{formatAmount(successSummary.newBalance)} {mainCurrency}</span>
                 </div>
               </div>
 
@@ -391,3 +392,4 @@ export default function TopUpPage() {
     </div>
   );
 }
+

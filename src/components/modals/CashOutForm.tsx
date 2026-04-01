@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import { Button } from "@/components/ui/button";
 import T from "@/components/T";
 
@@ -105,3 +105,4 @@ const CashOutForm = () => {
 };
 
 export default CashOutForm;
+

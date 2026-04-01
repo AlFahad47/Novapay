@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
@@ -27,7 +27,7 @@ export default function DMChatPage() {
 
     // channelId format: "dm-{id1}-{id2}"
     const withoutPrefix = channelId.replace(/^dm-/, "");
-    // MongoDB ObjectIds are 24-char hex — split at the hyphen between them
+    // MongoDB ObjectIds are 24-char hex - split at the hyphen between them
     const otherId = withoutPrefix
       .split("-")
       .filter((part) => part !== session.user.id)
@@ -92,3 +92,4 @@ export default function DMChatPage() {
     </div>
   );
 }
+

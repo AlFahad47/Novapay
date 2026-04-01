@@ -1,4 +1,4 @@
-// "use client";
+﻿// "use client";
 
 // import React, { useState } from "react";
 
@@ -385,7 +385,7 @@
 //                   id="password"
 //                   value={passwordInput}
 //                   onChange={(e) => setPasswordInput(e.target.value)}
-//                   placeholder="••••••••"
+//                   placeholder="********"
 //                   onFocus={() => setActiveField("password")}
 //                   onBlur={() => setActiveField("none")}
 //                   className="text-[0.9em] font-medium text-[#0F172A] p-[1em] pr-[2.5em] w-full bg-transparent outline-none tracking-widest"
@@ -541,8 +541,9 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import T from "@/components/T";
+import { openAuthModal } from "@/components/auth/authModalEvents";
 
 const PandaLogin: React.FC = () => {
   const [activeField, setActiveField] = useState<
@@ -860,7 +861,7 @@ const PandaLogin: React.FC = () => {
                   id="password"
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="********"
                   onFocus={() => setActiveField("password")}
                   onBlur={() => setActiveField("none")}
                   className="text-[0.9em] font-medium text-[#0F172A] p-[1em] pr-[2.5em] w-full bg-transparent outline-none tracking-widest"
@@ -886,13 +887,13 @@ const PandaLogin: React.FC = () => {
                   <T>Remember me</T>{" "}
                 </span>
               </label>
-              <Link
-                href="/forgot-password"
+              <button
+                type="button"
+                onClick={() => openAuthModal("forgot")}
                 className="text-[0.8em] font-bold text-[#64748B] hover:text-[#2C64FF] transition-colors"
               >
-                {" "}
-                <T>Forgot Password?</T>{" "}
-              </Link>
+                <T>Forgot Password?</T>
+              </button>
             </div>
 
             <button
@@ -927,3 +928,5 @@ const PandaLogin: React.FC = () => {
 };
 
 export default PandaLogin;
+
+

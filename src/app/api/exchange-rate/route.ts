@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 
 // Supported currencies in our app
-// Note: BDT is NOT supported by frankfurter.app — removed from list
+// Note: BDT is NOT supported by frankfurter.app - removed from list
 const SUPPORTED_CURRENCIES = ["USD", "EUR", "GBP", "PHP", "INR", "SGD", "AUD", "JPY", "CAD"];
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const from = searchParams.get("from") || "USD";
-    const to = searchParams.get("to"); // optional — if not given, fetch all
+    const to = searchParams.get("to"); // optional - if not given, fetch all
 
     // Validate the "from" currency
     if (!SUPPORTED_CURRENCIES.includes(from.toUpperCase())) {
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     const apiUrl = `https://api.frankfurter.app/latest?from=${from.toUpperCase()}&to=${toCurrencies}`;
 
     const response = await fetch(apiUrl, {
-      // Cache for 10 minutes — rates don't change every second
+      // Cache for 10 minutes - rates don't change every second
       next: { revalidate: 600 },
     });
 
@@ -52,3 +52,4 @@ export async function GET(request: Request) {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import T from "@/components/T";
@@ -12,7 +12,7 @@ const features = [
   {
     icon: "⚡",
     title: "Instant Transfers",
-    description: "Send and receive money in seconds — anytime, anywhere across Bangladesh.",
+    description: "Send and receive money in seconds - anytime, anywhere across Bangladesh.",
   },
   {
     icon: "💳",
@@ -38,7 +38,7 @@ export default function OfferSection() {
             <T>What We</T> <span className="bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] bg-clip-text text-transparent"><T>Offer</T></span>
           </h2>
           <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm mx-auto">
-            <T>Everything you need to manage your money — simple, fast, and secure.</T>
+            <T>Everything you need to manage your money - simple, fast, and secure.</T>
           </p>
         </motion.div>
 
@@ -89,3 +89,4 @@ export default function OfferSection() {
     </section>
   );
 }
+

@@ -1,8 +1,8 @@
-import Pusher from "pusher";
+﻿import Pusher from "pusher";
 
 // Server-side Pusher instance
 // Used ONLY in API routes to trigger (send) events to Pusher cloud
-// PUSHER_SECRET must never be exposed to the browser — this file is safe because
+// PUSHER_SECRET must never be exposed to the browser - this file is safe because
 // it only runs on the server (Next.js API routes)
 
 const pusherServer = new Pusher({
@@ -14,3 +14,4 @@ const pusherServer = new Pusher({
 });
 
 export default pusherServer;
+

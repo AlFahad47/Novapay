@@ -1,11 +1,12 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Smartphone, ArrowDownLeft, ArrowUpRight, Loader2, Zap, Users } from 'lucide-react';
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 const CardsAndBanks = () => {
   const { data: session } = useSession();
@@ -111,7 +112,7 @@ const CardsAndBanks = () => {
         Swal.fire({ 
           icon: 'success', 
           title: type === 'add_money' ? 'Topped Up!' : 'Deposited!', 
-          text: `$${numAmount.toLocaleString()} processed.`,
+          text: `$${formatAmount(numAmount)} processed.`,
         });
       } else {
         Swal.fire("Error", data.error || "Transaction failed", "error");
@@ -128,10 +129,10 @@ const CardsAndBanks = () => {
   const banks = dbUser?.linkedBanks || [];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-white p-4 md:p-12 overflow-x-hidden">
+    <div className="min-h-screen md:pt-30 bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-white p-4 md:p-12 overflow-x-hidden">
       <div className="max-w-6xl mx-auto">
         <header className="mb-8 md:mb-12 flex justify-between items-center">
-          <h1 className="text-2xl md:text-3xl font-black">NovaPay <span className="text-blue-500">{currencySymbol}{(dbUser?.balance || 0).toLocaleString()}</span></h1>
+          <h1 className="text-2xl md:text-3xl font-black">NovaPay <span className="text-blue-500">{currencySymbol}{formatAmount(dbUser?.balance || 0)}</span></h1>
           <button onClick={handleLinkBank} className="h-10 w-10 md:h-12 md:w-12 rounded-full border-2 border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all"><Plus size={20} /></button>
         </header>
 
@@ -172,7 +173,7 @@ const CardsAndBanks = () => {
                     </div>
                     <div className="mt-4 md:mt-8">
                        <p className="text-[9px] text-white/40 uppercase font-bold">Bank Balance</p>
-                       <p className="text-2xl md:text-4xl font-black text-white italic">{currencySymbol}{(card.balance || 0).toLocaleString()}</p>
+                        <p className="text-2xl md:text-4xl font-black text-white italic">{currencySymbol}{formatAmount(card.balance || 0)}</p>
                     </div>
                     <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end italic">
                        <p className="text-xs font-bold text-white uppercase">{card.name}</p>
@@ -210,3 +211,4 @@ const CardsAndBanks = () => {
 };
 
 export default CardsAndBanks;
+

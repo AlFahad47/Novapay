@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 import React, { useState } from "react";
 import { FaLightbulb, FaWater, FaWifi, FaTv } from "react-icons/fa";
 import { useSession } from "next-auth/react";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import { Button } from "@/components/ui/button";
 import T from "@/components/T";
 
@@ -147,3 +147,5 @@ const BillForm = () => {
 };
 
 export default BillForm;
+
+

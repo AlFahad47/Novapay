@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -256,7 +256,7 @@ export default function InternationalTransferPage() {
           </motion.div>
         )}
 
-        {/* No wallets yet — prompt to top up */}
+        {/* No wallets yet - prompt to top up */}
         {Object.keys(wallets).length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -317,7 +317,7 @@ export default function InternationalTransferPage() {
                   >
                     {CURRENCIES.map((c) => (
                       <option key={c} value={c}>
-                        {CURRENCY_META[c].flag} {c} — {CURRENCY_META[c].name}
+                        {CURRENCY_META[c].flag} {c} - {CURRENCY_META[c].name}
                       </option>
                     ))}
                   </select>
@@ -334,7 +334,7 @@ export default function InternationalTransferPage() {
                   >
                     {CURRENCIES.map((c) => (
                       <option key={c} value={c}>
-                        {CURRENCY_META[c].flag} {c} — {CURRENCY_META[c].name}
+                        {CURRENCY_META[c].flag} {c} - {CURRENCY_META[c].name}
                       </option>
                     ))}
                   </select>
@@ -521,3 +521,4 @@ function Row({ label, value, highlight }: { label: string; value: string; highli
     </div>
   );
 }
+

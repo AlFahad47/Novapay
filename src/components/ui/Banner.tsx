@@ -171,7 +171,7 @@ const Banner: React.FC = () => {
 
       {/* --- TOP CONTENT SECTION --- */}
       <div
-        className="mx-auto w-full max-w-[1280px] flex flex-col items-center text-center px-4 mb-12 z-10"
+        className="home-container flex flex-col items-center text-center mb-12 z-10"
         style={{ opacity: Math.max(0, 1 - scatterProgress * 2.5) }}
       >
         {/* Badge */}

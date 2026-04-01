@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
@@ -9,7 +9,7 @@ const blogPosts = [
     id: 1,
     title: "How to use AI-Powered Expense Analytics to Save More",
     excerpt: "Discover how NovaPay's new AI features categorize your spending and help you identify where you can cut back this month.",
-    content: "Understanding your spending habits is the first step to financial freedom. With NovaPay's new AI-Powered Expense Analytics, every transaction you make is automatically categorized—whether it's groceries, entertainment, or bills. \n\nOur AI doesn't just stop at categorizing; it analyzes your historical data to predict future spending and alerts you when you're about to exceed your monthly budget. Try setting up a custom alert today and watch your savings grow!",
+    content: "Understanding your spending habits is the first step to financial freedom. With NovaPay's new AI-Powered Expense Analytics, every transaction you make is automatically categorized-whether it's groceries, entertainment, or bills. \n\nOur AI doesn't just stop at categorizing; it analyzes your historical data to predict future spending and alerts you when you're about to exceed your monthly budget. Try setting up a custom alert today and watch your savings grow!",
     category: "Product Updates",
     date: "Oct 12, 2023",
     readTime: "5 min read",
@@ -49,7 +49,7 @@ const blogPosts = [
     id: 6,
     title: "Never Run Out of Balance: Setting Up One-Tap Mobile Recharge",
     excerpt: "Recharge your phone or send balance to family members instantly using your favorite contacts list.",
-    content: "Running out of mobile data in the middle of a meeting or dropping a call because your balance hit zero is incredibly frustrating. With NovaPay's Mobile Recharge feature, you can top up any local operator instantly.\n\nTo make it even faster, you can save your family and friends to your 'Favorite Contacts' list. Next time you need to send your mom mobile balance, you won't need to type out her number—just tap her profile, enter the amount, and the top-up is processed instantly.",
+    content: "Running out of mobile data in the middle of a meeting or dropping a call because your balance hit zero is incredibly frustrating. With NovaPay's Mobile Recharge feature, you can top up any local operator instantly.\n\nTo make it even faster, you can save your family and friends to your 'Favorite Contacts' list. Next time you need to send your mom mobile balance, you won't need to type out her number-just tap her profile, enter the amount, and the top-up is processed instantly.",
     category: "Features",
     date: "Aug 22, 2023",
     readTime: "3 min read",
@@ -217,7 +217,7 @@ export default function BlogPage() {
                 onClick={closeModal}
                 className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white backdrop-blur-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors shadow-sm"
               >
-                ✕
+              •
               </button>
 
               {/* Modal Image */}

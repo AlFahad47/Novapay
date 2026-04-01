@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import React from "react";
@@ -248,10 +248,10 @@ const Link005 = ({
 };
 
 /**
- * Skiper 40 Animated Link — React
+ * Skiper 40 Animated Link - React
  * Inspired by and adapted from https://cursor.com/?from=home
  * We respect the original creators. This is an inspired rebuild with our own taste and does not claim any ownership.
- * These animations aren’t associated with the cursor.com . They’re independent recreations meant to study interaction design
+ * These animations aren't associated with the cursor.com . They're independent recreations meant to study interaction design
  *
  * License & Usage:
  * - Free to use and modify in both personal and commercial projects.
@@ -264,3 +264,5 @@ const Link005 = ({
  * Website: https://gxuri.in
  * Twitter: https://x.com/Gur__vi
  */
+
+

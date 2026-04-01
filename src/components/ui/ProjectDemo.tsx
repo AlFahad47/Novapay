@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -26,7 +26,7 @@ export default function ProjectDemo() {
           </h2>
           <p className="mt-4 text-gray-500 dark:text-gray-400 text-base leading-relaxed max-w-md">
             <T>With NovaPay, you get a real-time view of your wallet balance,
-            transaction history, and spending patterns — all in one place.</T>
+            transaction history, and spending patterns - all in one place.</T>
           </p>
 
           <ul className="mt-6 space-y-3">
@@ -37,7 +37,7 @@ export default function ProjectDemo() {
               "Instant alerts for every transaction",
             ].map((item) => (
               <li key={item} className="flex items-center gap-3 text-gray-600 dark:text-gray-300 text-sm">
-                <span className="w-5 h-5 rounded-full bg-[#0061ff] flex items-center justify-center text-white font-bold text-xs">✓</span>
+                <span className="w-5 h-5 rounded-full bg-[#0061ff] flex items-center justify-center text-white font-bold text-xs">.</span>
                 <T>{item}</T>
               </li>
             ))}
@@ -84,3 +84,4 @@ export default function ProjectDemo() {
     </section>
   );
 }
+

@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import { useSession } from "next-auth/react";
 import { User, Mail, Phone, Globe, CreditCard, Landmark, X, Lock } from "lucide-react";
 import T from "@/components/T";
