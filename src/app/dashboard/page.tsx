@@ -112,7 +112,7 @@ if (data.limit !== undefined) {
   Swal.fire({
     icon: "success",
     title: "Limit Updated!",
-    text: `Based on your usage, your new limit is ${data.limit} {currency}.`,
+    text: `Based on your usage, your new limit is ${data.limit} ${currency}.`,
     footer: `Reason: ${data.reason || "High trust score based on account activity"}` 
   });
 }
@@ -225,7 +225,7 @@ const handleApplyLoan = async () => {
         Swal.fire({
           icon: "success",
           title: "Limit Updated!",
-          text: `Based on your usage, your new limit is ${data.limit} {currency}.`,
+          text: `Based on your usage, your new limit is ${data.limit} ${currency}.`,
           footer: `Reason: ${
             data.reason || "High trust score based on account activity"
           }`,

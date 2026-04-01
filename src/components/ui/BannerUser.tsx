@@ -539,8 +539,6 @@ const BannerUser: React.FC = () => {
                 >
                   <X size={18} />
                 </button>
-                <h3 className="text-lg font-bold text-[#0F172A] dark:text-white"><T>Recent Alerts</T></h3>
-                <button onClick={() => setIsListModalOpen(false)} className="p-2 text-gray-500 hover:rotate-90 transition-transform"><X size={18} /></button>
               </div>
 
               <div className="overflow-y-auto p-4 space-y-3 custom-scrollbar">
