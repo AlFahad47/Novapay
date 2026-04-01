@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,7 +11,7 @@ import {
   Shield,
   User as UserIcon,
 } from "lucide-react";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import { Button } from "@/components/ui/button";
 
 type User = {
@@ -258,3 +258,4 @@ export default function UserRequestsSection() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { GripHorizontal } from "lucide-react";
@@ -1296,11 +1296,11 @@ export const createAnimation = (
 };
 
 /**
- * Skiper 26 Theme_buttons_002 — React + CSS + transition view api  https://developer.chrome.com/docs/web-platform/view-transitions/
+ * Skiper 26 Theme_buttons_002 - React + CSS + transition view api  https://developer.chrome.com/docs/web-platform/view-transitions/
  * Orignal concept from rudrodip
  * Inspired by from https://github.com/rudrodip/theme-toggle-effect
  * We respect the original creators. This is an inspired rebuild with our own taste and does not claim any ownership.
- * These animations aren’t associated with the rudrodip . They’re independent recreations meant to study interaction design
+ * These animations aren't associated with the rudrodip . They're independent recreations meant to study interaction design
  *
  * License & Usage:
  * - Free to use and modify in both personal and commercial projects.
@@ -1313,3 +1313,5 @@ export const createAnimation = (
  * Website: https://gxuri.in
  * Twitter: https://x.com/Gur__vi
  */
+
+

@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Crown, ShieldCheck, Star, ArrowRight, Zap, Target, CheckCircle2 } from 'lucide-react';
+import T from "@/components/T";
 
 const RANK_LEVELS = {
   PLATINUM: 5000,
@@ -54,8 +55,8 @@ const RankDetailsModal = ({ isOpen, onClose, points, currentRank }: RankModalPro
             {/* Minimalist Header */}
             <div className="pt-8 px-8 pb-4 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Status</h2>
-                <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">NovaPay Elite</p>
+                <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight"><T>Status</T></h2>
+                <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest"><T>NovaPay Elite</T></p>
               </div>
               <motion.div 
                 whileHover={{ rotate: 15 }}
@@ -71,13 +72,13 @@ const RankDetailsModal = ({ isOpen, onClose, points, currentRank }: RankModalPro
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-slate-400">
                     <Zap size={12} className="text-amber-500 fill-current" />
-                    <span className="text-[9px] font-black uppercase tracking-tighter">Current Points</span>
+                    <span className="text-[9px] font-black uppercase tracking-tighter"><T>Current Points</T></span>
                   </div>
                   <p className="text-3xl font-black text-slate-900 dark:text-white tabular-nums">{points.toLocaleString()}</p>
                 </div>
                 <div className="text-right">
                    <div className="inline-flex items-center gap-1 bg-green-500/10 text-green-500 px-2 py-1 rounded-full text-[9px] font-bold mb-2">
-                    <CheckCircle2 size={10} /> KYC OK
+                    <CheckCircle2 size={10} /> <T>KYC OK</T>
                   </div>
                   <p className="text-sm font-black text-slate-500 dark:text-slate-400 uppercase">{currentRank || 'Bronze'}</p>
                 </div>
@@ -86,8 +87,8 @@ const RankDetailsModal = ({ isOpen, onClose, points, currentRank }: RankModalPro
               {/* Progress Bar (Compact) */}
               <div className="px-2">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">To {rankInfo.next}</span>
-                  <span className="text-[10px] font-black text-blue-500">{rankInfo.needed} more points</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase"><T>To</T> {rankInfo.next}</span>
+                  <span className="text-[10px] font-black text-blue-500">{rankInfo.needed} <T>more points</T></span>
                 </div>
                 <div className="h-2 w-full bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
                   <motion.div 
@@ -137,7 +138,7 @@ const RankDetailsModal = ({ isOpen, onClose, points, currentRank }: RankModalPro
                 onClick={onClose}
                 className="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all"
               >
-                Dismiss <ArrowRight size={14} />
+                <T>Dismiss</T> <ArrowRight size={14} />
               </button>
             </div>
           </motion.div>

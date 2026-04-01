@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
@@ -63,7 +63,7 @@ export default function AdminReplyPage() {
 
   const admin = session.user;
 
-  // Same channelId as the user's support page — both sides subscribe to the same channel
+  // Same channelId as the user's support page - both sides subscribe to the same channel
   const channelId = `support-${userId}`;
 
   return (
@@ -85,7 +85,7 @@ export default function AdminReplyPage() {
         </p>
       </div>
 
-      {/* Chat window — admin and user share the same channelId */}
+      {/* Chat window - admin and user share the same channelId */}
       <div className="max-w-3xl mx-auto w-full px-4 pb-8 flex-1 flex flex-col" style={{ minHeight: "60vh" }}>
         <ChatWindow
           channelId={channelId}
@@ -105,3 +105,4 @@ export default function AdminReplyPage() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { SupportedCurrency } from "@/types/international";
 
@@ -34,10 +34,10 @@ export async function POST(request: Request) {
     let amountDeductedFromBalance: number;
 
     if (localCurrency === targetCurrency) {
-      // Same currency — no conversion needed, 1:1
+      // Same currency - no conversion needed, 1:1
       amountDeductedFromBalance = amountRequested;
     } else {
-      // Use open.er-api.com — supports BDT and all major currencies, free, no API key
+      // Use open.er-api.com - supports BDT and all major currencies, free, no API key
       // Fetch: how much 1 targetCurrency = X localCurrency
       const rateRes = await fetch(
         `https://open.er-api.com/v6/latest/${targetCurrency}`,
@@ -110,3 +110,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Internal Server Error." }, { status: 500 });
   }
 }
+

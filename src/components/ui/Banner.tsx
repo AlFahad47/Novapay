@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Play, ArrowUpRight, Wallet, Wifi } from "lucide-react";
 import Link from "next/link";
 import Loader from "./Loader";
+import T from "@/components/T";
 
 const Banner: React.FC = () => {
   // --- STATES ---
@@ -170,7 +171,7 @@ const Banner: React.FC = () => {
 
       {/* --- TOP CONTENT SECTION --- */}
       <div
-        className="flex flex-col items-center text-center px-4 mb-12 z-10"
+        className="home-container flex flex-col items-center text-center mb-12 z-10"
         style={{ opacity: Math.max(0, 1 - scatterProgress * 2.5) }}
       >
         {/* Badge */}
@@ -179,24 +180,22 @@ const Banner: React.FC = () => {
             <Wallet size={12} className="text-white" />
           </div>
           <span className="text-blue-600 dark:text-[#4DA1FF] text-[11px] font-extrabold tracking-[0.2em] uppercase pr-2">
-            NovaPay Network
+            <T>NovaPay Network</T>
           </span>
         </div>
 
         {/* Headline */}
         <h1 className="anim-fade-up delay-txt-1 text-[2.75rem] md:text-6xl lg:text-[4.5rem] text-transparent bg-clip-text bg-gradient-to-r from-[#3d98ff] to-[#3561ff] font-extrabold tracking-tight leading-[1.1] mb-6 max-w-4xl">
-          Your Gateway to Digital
+          <T>Your Gateway to Digital</T>
           <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4598f8] to-[#446cff] drop-shadow-sm dark:drop-shadow-[0_0_25px_rgba(77,161,255,0.3)]">
-            Finance Innovation
+            <T>Finance Innovation</T>
           </span>
         </h1>
 
         {/* Subtitle */}
         <p className="anim-fade-up delay-txt-2 text-slate-600 dark:text-slate-400 text-[15px] md:text-[17px] font-medium max-w-2xl mb-10 leading-relaxed">
-          Take full control of your digital wallet. Seamless transactions, live
-          analytics, and modern bank-grade security built directly into your
-          pocket.
+          <T>Take full control of your digital wallet. Seamless transactions, live analytics, and modern bank-grade security built directly into your pocket.</T>
         </p>
 
         {/* Buttons */}
@@ -207,7 +206,7 @@ const Banner: React.FC = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] transition-transform duration-500 group-hover:scale-105"></div>
             <span className="relative text-white text-[15px] font-bold tracking-wide">
-              Get Started
+              <T>Get Started</T>
             </span>
             <ArrowUpRight
               size={18}
@@ -223,7 +222,7 @@ const Banner: React.FC = () => {
             <div className="flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 text-slate-800 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
               <Play size={10} fill="currentColor" className="ml-0.5" />
             </div>
-            Watch Demo
+            <T>Watch Demo</T>
           </a>
         </div>
       </div>
@@ -268,8 +267,12 @@ const Banner: React.FC = () => {
                 </div>
                 <div className="flex items-center w-full pl-12 md:pl-16 mt-0.5">
                   <div className="flex flex-col items-start leading-[0.8] mr-1.5 opacity-60">
-                    <span className="text-[5px] md:text-[6px] text-slate-600 font-bold uppercase">Valid</span>
-                    <span className="text-[5px] md:text-[6px] text-slate-600 font-bold uppercase">Thru</span>
+                    <span className="text-[5px] md:text-[6px] text-slate-600 font-bold uppercase">
+                      Valid
+                    </span>
+                    <span className="text-[5px] md:text-[6px] text-slate-600 font-bold uppercase">
+                      Thru
+                    </span>
                   </div>
                   <span className="font-mono text-[12px] md:text-[14px] font-semibold text-slate-600">
                     08/22
@@ -287,7 +290,7 @@ const Banner: React.FC = () => {
           >
             <div className="relative w-[280px] h-[175px] md:w-[320px] md:h-[200px] rounded-[1.25rem] border border-slate-700/80 bg-gradient-to-br from-[#1e293b] to-[#0f172a] p-5 md:p-6 flex flex-col justify-between overflow-hidden transition-all duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.05),transparent_50%)] pointer-events-none"></div>
-              
+
               {/* Top Right: Bank Name */}
               <div className="flex justify-end w-full z-10 relative">
                 <span className="text-slate-300 text-[13px] md:text-[14px] font-medium tracking-widest uppercase">
@@ -317,8 +320,12 @@ const Banner: React.FC = () => {
                 </div>
                 <div className="flex items-center w-full pl-12 md:pl-16 mt-0.5">
                   <div className="flex flex-col items-start leading-[0.8] mr-1.5 opacity-60">
-                    <span className="text-[5px] md:text-[6px] text-slate-300 font-bold uppercase">Valid</span>
-                    <span className="text-[5px] md:text-[6px] text-slate-300 font-bold uppercase">Thru</span>
+                    <span className="text-[5px] md:text-[6px] text-slate-300 font-bold uppercase">
+                      Valid
+                    </span>
+                    <span className="text-[5px] md:text-[6px] text-slate-300 font-bold uppercase">
+                      Thru
+                    </span>
                   </div>
                   <span className="font-mono text-[12px] md:text-[14px] font-semibold text-slate-200">
                     08/22
@@ -346,7 +353,9 @@ const Banner: React.FC = () => {
 
               <div
                 className={`w-full h-full flex flex-col justify-between z-10 relative ${
-                  isSwipingMainToBase && activeCard === 1 ? "animate-swipe-main-to-base" : ""
+                  isSwipingMainToBase && activeCard === 1
+                    ? "animate-swipe-main-to-base"
+                    : ""
                 }`}
               >
                 {/* Top Left: Minimalist Logo */}
@@ -361,7 +370,7 @@ const Banner: React.FC = () => {
                   <span className="text-white/95 text-[15px] md:text-[17px] font-medium tracking-wide">
                     debit
                   </span>
-                  
+
                   {/* Overlapping Circles (Mastercard aesthetic) */}
                   <div className="relative flex items-center h-8 w-[52px] md:h-10 md:w-[65px]">
                     <div className="absolute left-0 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#EB001B] z-10 shadow-sm"></div>

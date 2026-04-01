@@ -1,10 +1,11 @@
-"use client";
+﻿"use client";
 import React, { useState } from 'react';
 import { Chrome, Facebook, Linkedin, Eye, EyeOff, Shield, Unlock, Lock } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import T from '@/components/T';
 
 const PandaRegister: React.FC = () => {
   const router = useRouter();
@@ -64,7 +65,7 @@ const PandaRegister: React.FC = () => {
     e.preventDefault();
     
     if(!nameInput || !emailInput || !passwordInput) {
-        // ❌ Validation Error
+      // Validation Error
         toast.custom((t) => (
             <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-sm w-full bg-[#0F172A]/95 backdrop-blur-xl border border-red-500/30 shadow-[0_0_40px_-10px_rgba(239,68,68,0.4)] rounded-[1.2rem] pointer-events-auto overflow-hidden relative p-4 flex items-center gap-5`}>
               <div className="absolute -right-4 -top-4 w-24 h-24 bg-red-500/20 blur-2xl rounded-full z-0"></div>
@@ -231,7 +232,7 @@ const PandaRegister: React.FC = () => {
         {/* --- FORM SECTION --- */}
         <form onSubmit={handleRegister} className="absolute top-[9.35em] left-1/2 -translate-x-1/2 w-[25em] h-[37em] bg-[#FFFFFF] px-[2.5em] py-[2em] flex flex-col rounded-[1em] z-10 shadow-[0_30px_60px_rgba(5,11,20,0.6)] border border-slate-200">
           <div className="text-center w-full mt-1">
-            <h2 className="text-[1.8em] font-extrabold text-[#0F172A] tracking-tight">Create Account</h2>
+            <h2 className="text-[1.8em] font-extrabold text-[#0F172A] tracking-tight"><T>Create Account</T></h2>
             <div className="w-[3em] h-[0.25em] bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] mx-auto mt-2 mb-3 rounded-full"></div>
             
             <div className="flex justify-center gap-4 mb-3">
@@ -247,7 +248,7 @@ const PandaRegister: React.FC = () => {
             </div>
             
             <p className="text-[0.8em] font-medium text-slate-500 mb-4">
-              Already have an account? <Link href="/login" className="text-[#2C64FF] font-bold hover:underline">Log in</Link>
+              <T>Already have an account?</T> <Link href="/login" className="text-[#2C64FF] font-bold hover:underline"><T>Log in</T></Link>
             </p>
           </div>
 
@@ -255,21 +256,21 @@ const PandaRegister: React.FC = () => {
             
             {/* Name Field */}
             <div className="relative mb-[1.2em]">
-              <label htmlFor="name" className="absolute -top-[0.6em] left-[1em] bg-white px-1 text-[0.7em] font-bold text-[#2C64FF] z-10">Full Name</label>
+              <label htmlFor="name" className="absolute -top-[0.6em] left-[1em] bg-white px-1 text-[0.7em] font-bold text-[#2C64FF] z-10"><T>Full Name</T></label>
               <input type="text" id="name" value={nameInput} onChange={(e) => setNameInput(e.target.value)} placeholder="John Doe" onFocus={() => setActiveField('text')} onBlur={() => setActiveField('none')} className="text-[0.9em] font-medium text-[#0F172A] p-[1em] border border-slate-300 rounded-[0.5em] bg-transparent focus:border-[#2C64FF] focus:ring-1 focus:ring-[#2C64FF]/20 outline-none transition-all w-full" />
             </div>
 
             {/* Email Field */}
             <div className="relative mb-[1.2em]">
-              <label htmlFor="email" className="absolute -top-[0.6em] left-[1em] bg-white px-1 text-[0.7em] font-bold text-[#2C64FF] z-10">Email</label>
+              <label htmlFor="email" className="absolute -top-[0.6em] left-[1em] bg-white px-1 text-[0.7em] font-bold text-[#2C64FF] z-10"><T>Email</T></label>
               <input type="email" id="email" value={emailInput} onChange={(e) => setEmailInput(e.target.value)} placeholder="example@email.com" onFocus={() => setActiveField('text')} onBlur={() => setActiveField('none')} className="text-[0.9em] font-medium text-[#0F172A] p-[1em] border border-slate-300 rounded-[0.5em] bg-transparent focus:border-[#2C64FF] focus:ring-1 focus:ring-[#2C64FF]/20 outline-none transition-all w-full" />
             </div>
             
             {/* Password Field */}
             <div className="relative mb-[1em]">
-              <label htmlFor="password" className="absolute -top-[0.6em] left-[1em] bg-white px-1 text-[0.7em] font-bold text-[#2C64FF] z-10">Password</label>
+              <label htmlFor="password" className="absolute -top-[0.6em] left-[1em] bg-white px-1 text-[0.7em] font-bold text-[#2C64FF] z-10"><T>Password</T></label>
               <div className="relative w-full border border-slate-300 rounded-[0.5em] focus-within:border-[#2C64FF] focus-within:ring-1 focus-within:ring-[#2C64FF]/20 transition-all bg-transparent">
-                <input type={showPassword ? "text" : "password"} id="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="••••••••" onFocus={() => setActiveField('password')} onBlur={() => setActiveField('none')} className="text-[0.9em] font-medium text-[#0F172A] p-[1em] pr-[2.5em] w-full bg-transparent outline-none tracking-widest" />
+                <input type={showPassword ? "text" : "password"} id="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} placeholder="********" onFocus={() => setActiveField('password')} onBlur={() => setActiveField('none')} className="text-[0.9em] font-medium text-[#0F172A] p-[1em] pr-[2.5em] w-full bg-transparent outline-none tracking-widest" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-[0.8em] top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#2C64FF] transition-colors z-10">
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -285,7 +286,7 @@ const PandaRegister: React.FC = () => {
                     <div className={`h-1 flex-1 rounded-full ${strength >= 4 ? 'bg-green-600' : 'bg-slate-200'}`}></div>
                   </div>
                   <span className="text-[0.6em] font-bold whitespace-nowrap" style={{ color: strength <= 1 ? '#f87171' : strength === 2 ? '#facc15' : '#22c55e' }}>
-                    {strength <= 1 ? 'Weak' : strength === 2 ? 'Fair' : strength === 3 ? 'Good' : 'Strong'}
+                    <T>{strength <= 1 ? 'Weak' : strength === 2 ? 'Fair' : strength === 3 ? 'Good' : 'Strong'}</T>
                   </span>
                 </div>
               )}
@@ -293,7 +294,7 @@ const PandaRegister: React.FC = () => {
 
             {/* Profile Photo Field */}
             <div className="relative mb-[1.2em] mt-[1.6em]">
-              <label htmlFor="profilePhoto" className="absolute -top-[0.6em] left-[1em] bg-white px-1 text-[0.7em] font-bold text-[#2C64FF] z-10">Profile Photo</label>
+              <label htmlFor="profilePhoto" className="absolute -top-[0.6em] left-[1em] bg-white px-1 text-[0.7em] font-bold text-[#2C64FF] z-10"><T>Profile Photo</T></label>
               <input
                 type="file"
                 id="profilePhoto"
@@ -309,7 +310,7 @@ const PandaRegister: React.FC = () => {
             <div className="flex items-center mb-5 px-1 mt-[1.2em]">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" className="w-[1.1em] h-[1.1em] rounded border-slate-300 text-[#2C64FF] focus:ring-[#2C64FF]" />
-                <span className="text-[0.75em] font-bold text-slate-500">I accept the <Link href="#" className="text-[#2C64FF] hover:underline">Terms & Conditions</Link></span>
+                <span className="text-[0.75em] font-bold text-slate-500"><T>I accept the</T> <Link href="#" className="text-[#2C64FF] hover:underline"><T>Terms & Conditions</T></Link></span>
               </label>
             </div>
             
@@ -317,7 +318,7 @@ const PandaRegister: React.FC = () => {
             <button type="submit" className="relative overflow-hidden text-[0.95em] py-[1em] rounded-[2em] border-none outline-none text-white font-bold tracking-[0.05em] cursor-pointer transition-all duration-300 hover:-translate-y-[2px] shadow-[0_8px_20px_-5px_rgba(44,100,255,0.4)] hover:shadow-[0_12px_25px_-5px_rgba(44,100,255,0.6)] w-full group">
               <div className="absolute inset-0 bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF] transition-transform duration-500 ease-out group-hover:scale-[1.05]"></div>
               <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/30 to-transparent opacity-30 rounded-t-full pointer-events-none"></div>
-              <span className="relative z-10 drop-shadow-sm">Sign Up</span>
+              <span className="relative z-10 drop-shadow-sm"><T>Sign Up</T></span>
             </button>
           </div>
         </form>

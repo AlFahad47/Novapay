@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import clientPromise from "@/lib/mongodb";
@@ -22,7 +22,7 @@ export async function GET() {
     // Step 2: Sort by timestamp so latest message comes last in each group
     { $sort: { timestamp: 1 } },
 
-    // Step 3: Group by channelId — keep only the LAST message per channel
+    // Step 3: Group by channelId - keep only the LAST message per channel
     {
       $group: {
         _id: "$channelId",                     // group key
@@ -43,3 +43,4 @@ export async function GET() {
 
   return NextResponse.json({ conversations });
 }
+

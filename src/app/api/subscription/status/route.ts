@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 
 export async function GET(request: Request) {
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     const now = new Date();
 
     if (expiresAt <= now) {
-      // Expired — mark inactive in DB
+      // Expired - mark inactive in DB
       await db.collection("users").updateOne(
         { email },
         { $set: { "subscription.active": false } }
@@ -48,3 +48,4 @@ export async function GET(request: Request) {
     return NextResponse.json({ message: "Internal server error." }, { status: 500 });
   }
 }
+

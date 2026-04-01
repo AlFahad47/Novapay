@@ -1,11 +1,12 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Globe, Wallet, RefreshCw, CheckCircle2, AlertCircle, ArrowLeft, PlusCircle, Crown, Lock } from "lucide-react";
+import { ArrowRight, Globe, Wallet, RefreshCw, CheckCircle2, AlertCircle, ArrowLeft, PlusCircle, ArrowDownCircle, Crown, Lock } from "lucide-react";
+import T from "@/components/T";
 import { CURRENCY_META, SupportedCurrency, TransferPreview } from "@/types/international";
 
 type Step = "form" | "preview" | "success";
@@ -160,7 +161,7 @@ export default function InternationalTransferPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#04090f]">
         <div className="flex flex-col items-center gap-4 text-gray-400">
           <RefreshCw size={32} className="animate-spin text-[#0070ff]" />
-          <p className="text-sm">Verifying access...</p>
+          <p className="text-sm"><T>Verifying access...</T></p>
         </div>
       </div>
     );
@@ -174,9 +175,9 @@ export default function InternationalTransferPage() {
           <div className="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
             <Lock size={28} className="text-blue-400" />
           </div>
-          <h2 className="text-xl font-bold text-gray-800 dark:text-blue-100">Elite Feature</h2>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-blue-100"><T>Elite Feature</T></h2>
           <p className="text-sm text-gray-500 dark:text-blue-400">
-            International Pay is available for Elite subscribers or users who have unlocked this feature.
+            <T>International Pay is available for Elite subscribers or users who have unlocked this feature.</T>
           </p>
           <Link
             href="/dashboard/subscription"
@@ -199,7 +200,7 @@ export default function InternationalTransferPage() {
           onClick={() => router.push("/")}
           className="flex items-center gap-2 text-sm text-gray-500 dark:text-blue-400 hover:text-[#0070ff] transition"
         >
-          <ArrowLeft size={16} /> Back to Home
+          <ArrowLeft size={16} /> <T>Back to Home</T>
         </button>
 
         {/* Header */}
@@ -211,8 +212,8 @@ export default function InternationalTransferPage() {
           <div className="flex items-center gap-3">
             <Globe size={28} />
             <div>
-              <h1 className="text-2xl font-bold">International Transfer</h1>
-              <p className="text-sm opacity-80">Send money across borders with live exchange rates</p>
+              <h1 className="text-2xl font-bold"><T>International Transfer</T></h1>
+              <p className="text-sm opacity-80"><T>Send money across borders with live exchange rates</T></p>
             </div>
           </div>
         </motion.div>
@@ -225,10 +226,15 @@ export default function InternationalTransferPage() {
             className="bg-white dark:bg-[#0c1a2b] rounded-2xl p-5 border border-gray-200 dark:border-blue-800 space-y-3"
           >
             <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-blue-400">Your Wallets</p>
-              <Link href="/international/topup" className="text-xs text-[#0070ff] font-semibold hover:underline flex items-center gap-1">
-                <PlusCircle size={13} /> Top Up
-              </Link>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-blue-400"><T>Your Wallets</T></p>
+              <div className="flex items-center gap-3">
+                <Link href="/international/topup" className="text-xs text-[#0070ff] font-semibold hover:underline flex items-center gap-1">
+                  <PlusCircle size={13} /> Top Up
+                </Link>
+                <Link href="/international/cashout" className="text-xs text-[#7c3aed] font-semibold hover:underline flex items-center gap-1">
+                  <ArrowDownCircle size={13} /> Cash Out
+                </Link>
+              </div>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {Object.entries(wallets).map(([currency, balance]) => {
@@ -250,7 +256,7 @@ export default function InternationalTransferPage() {
           </motion.div>
         )}
 
-        {/* No wallets yet — prompt to top up */}
+        {/* No wallets yet - prompt to top up */}
         {Object.keys(wallets).length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -259,7 +265,7 @@ export default function InternationalTransferPage() {
           >
             <div className="flex items-center gap-2 text-sm text-yellow-700 dark:text-yellow-400">
               <Wallet size={16} />
-              <span>You have no international wallet balance yet.</span>
+              <span><T>You have no international wallet balance yet.</T></span>
             </div>
             <Link href="/international/topup" className="text-xs font-bold text-[#0070ff] hover:underline whitespace-nowrap flex items-center gap-1">
               <PlusCircle size={13} /> Top Up Now
@@ -287,7 +293,7 @@ export default function InternationalTransferPage() {
               {/* Recipient */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-blue-300 mb-1">
-                  Recipient Email
+                  <T>Recipient Email</T>
                 </label>
                 <input
                   type="email"
@@ -302,7 +308,7 @@ export default function InternationalTransferPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-blue-300 mb-1">
-                    From Currency
+                    <T>From Currency</T>
                   </label>
                   <select
                     value={fromCurrency}
@@ -311,7 +317,7 @@ export default function InternationalTransferPage() {
                   >
                     {CURRENCIES.map((c) => (
                       <option key={c} value={c}>
-                        {CURRENCY_META[c].flag} {c} — {CURRENCY_META[c].name}
+                        {CURRENCY_META[c].flag} {c} - {CURRENCY_META[c].name}
                       </option>
                     ))}
                   </select>
@@ -319,7 +325,7 @@ export default function InternationalTransferPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-blue-300 mb-1">
-                    To Currency
+                    <T>To Currency</T>
                   </label>
                   <select
                     value={toCurrency}
@@ -328,7 +334,7 @@ export default function InternationalTransferPage() {
                   >
                     {CURRENCIES.map((c) => (
                       <option key={c} value={c}>
-                        {CURRENCY_META[c].flag} {c} — {CURRENCY_META[c].name}
+                        {CURRENCY_META[c].flag} {c} - {CURRENCY_META[c].name}
                       </option>
                     ))}
                   </select>
@@ -338,7 +344,7 @@ export default function InternationalTransferPage() {
               {/* Amount */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-blue-300 mb-1">
-                  Amount ({fromCurrency})
+                  <T>Amount</T> ({fromCurrency})
                 </label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
@@ -358,7 +364,7 @@ export default function InternationalTransferPage() {
               {/* Description (optional) */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-blue-300 mb-1">
-                  Note <span className="text-gray-400">(optional)</span>
+                  <T>Note</T> <span className="text-gray-400">(<T>optional</T>)</span>
                 </label>
                 <input
                   type="text"
@@ -377,7 +383,7 @@ export default function InternationalTransferPage() {
                 className="w-full flex items-center justify-center gap-2 bg-[#0070ff] hover:bg-[#0061ff] text-white font-semibold py-3 rounded-xl transition disabled:opacity-60"
               >
                 {loading ? <RefreshCw size={18} className="animate-spin" /> : <ArrowRight size={18} />}
-                {loading ? "Fetching Rate..." : "Preview Transfer"}
+                {loading ? <T>Fetching Rate...</T> : <T>Preview Transfer</T>}
               </motion.button>
             </motion.div>
           )}
@@ -391,7 +397,7 @@ export default function InternationalTransferPage() {
               exit={{ opacity: 0, x: -30 }}
               className="bg-white dark:bg-[#0c1a2b] rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-blue-800 space-y-4"
             >
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-blue-200">Confirm Transfer</h2>
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-blue-200"><T>Confirm Transfer</T></h2>
 
               {error && (
                 <div className="flex items-center gap-2 text-red-500 bg-red-50 dark:bg-red-900/20 p-3 rounded-xl text-sm">
@@ -416,7 +422,7 @@ export default function InternationalTransferPage() {
                   onClick={() => setStep("form")}
                   className="flex-1 py-3 rounded-xl border border-gray-200 dark:border-blue-800 text-gray-600 dark:text-blue-300 font-medium hover:bg-gray-50 dark:hover:bg-blue-900/30 transition"
                 >
-                  Back
+                  <T>Back</T>
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -426,7 +432,7 @@ export default function InternationalTransferPage() {
                   className="flex-1 flex items-center justify-center gap-2 bg-[#0070ff] hover:bg-[#0061ff] text-white font-semibold py-3 rounded-xl transition disabled:opacity-60"
                 >
                   {loading ? <RefreshCw size={18} className="animate-spin" /> : <CheckCircle2 size={18} />}
-                  {loading ? "Processing..." : "Confirm & Send"}
+                  {loading ? <T>Processing...</T> : <T>Confirm & Send</T>}
                 </motion.button>
               </div>
             </motion.div>
@@ -449,9 +455,9 @@ export default function InternationalTransferPage() {
                 <CheckCircle2 size={36} className="text-green-500" />
               </motion.div>
 
-              <h2 className="text-xl font-bold text-gray-800 dark:text-blue-100">Transfer Successful!</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-blue-100"><T>Transfer Successful!</T></h2>
               <p className="text-gray-500 dark:text-blue-300 text-sm">
-                You sent <strong>{CURRENCY_META[preview.fromCurrency].symbol}{preview.amountSent} {preview.fromCurrency}</strong> →{" "}
+                <T>You sent</T> <strong>{CURRENCY_META[preview.fromCurrency].symbol}{preview.amountSent} {preview.fromCurrency}</strong> →{" "}
                 <strong>{CURRENCY_META[preview.toCurrency].symbol}{preview.amountReceived} {preview.toCurrency}</strong>
               </p>
 
@@ -465,14 +471,14 @@ export default function InternationalTransferPage() {
                 onClick={handleReset}
                 className="w-full bg-[#0070ff] hover:bg-[#0061ff] text-white font-semibold py-3 rounded-xl transition"
               >
-                Make Another Transfer
+                <T>Make Another Transfer</T>
               </motion.button>
             </motion.div>
           )}
 
         </AnimatePresence>
 
-        {/* Wallet info hint + Top Up link */}
+        {/* Wallet info hint + Top Up / Cash Out links */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -481,14 +487,22 @@ export default function InternationalTransferPage() {
         >
           <div className="flex items-center gap-2">
             <Wallet size={16} />
-            <span>Need to fund your wallet first?</span>
+            <span><T>Need to fund your wallet first?</T></span>
           </div>
-          <Link
-            href="/international/topup"
-            className="flex items-center gap-1 text-[#0070ff] font-semibold hover:underline whitespace-nowrap"
-          >
-            <PlusCircle size={15} /> Top Up
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/international/topup"
+              className="flex items-center gap-1 text-[#0070ff] font-semibold hover:underline whitespace-nowrap text-sm"
+            >
+              <PlusCircle size={15} /> Top Up
+            </Link>
+            <Link
+              href="/international/cashout"
+              className="flex items-center gap-1 text-[#7c3aed] font-semibold hover:underline whitespace-nowrap text-sm"
+            >
+              <ArrowDownCircle size={15} /> Cash Out
+            </Link>
+          </div>
         </motion.div>
 
       </div>
@@ -500,10 +514,11 @@ export default function InternationalTransferPage() {
 function Row({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="flex justify-between items-center">
-      <span className="text-gray-500 dark:text-blue-400">{label}</span>
+      <span className="text-gray-500 dark:text-blue-400"><T>{label}</T></span>
       <span className={`font-medium ${highlight ? "text-[#0070ff] dark:text-[#00b4ff] text-base" : "text-gray-800 dark:text-blue-100"}`}>
         {value}
       </span>
     </div>
   );
 }
+

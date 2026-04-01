@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google"; // বা তোমার যে ফন্ট আছে
+import { Suspense } from "react";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import { Toaster } from "react-hot-toast"; // Toast notifications
 import Footer from "@/components/layout/Footer";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
-import Navbar from "@/components/layout/Navbar";
+import NavbarWrapper from "@/components/layout/NavbarWrapper";
+import LocaleProvider from "@/providers/LocaleProvider";
+import ChatBotAI from "@/app/components/ChatBotAI";
+import AuthModal from "@/components/auth/AuthModal";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -30,11 +34,19 @@ export default function RootLayout({
     >
       <body suppressHydrationWarning className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <AuthProvider>
-            <Navbar />
-            {children}
-            <Footer></Footer>
-          </AuthProvider>
+          <LocaleProvider>
+            <AuthProvider>
+              <NavbarWrapper />
+              <Suspense fallback={null}>
+                <AuthModal />
+              </Suspense>
+              <main>               
+                {children}
+              </main>
+              <ChatBotAI />
+              <Footer />
+            </AuthProvider>
+          </LocaleProvider>
         </ThemeProvider>
 
         {/* Place toaster near the end of body */}

@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 import React, { useState } from "react";
 import { FaLightbulb, FaWater, FaWifi, FaTv } from "react-icons/fa";
 import { useSession } from "next-auth/react";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import { Button } from "@/components/ui/button";
+import T from "@/components/T";
 
 const BillForm = () => {
   const { data: session } = useSession();
@@ -106,7 +107,7 @@ const BillForm = () => {
           >
             <bill.icon className={`text-xl mb-2 ${bill.color}`} />
             <span className="text-xs font-medium dark:text-gray-200">
-              {bill.name}
+              <T>{bill.name}</T>
             </span>
           </Button>
         ))}
@@ -138,7 +139,7 @@ const BillForm = () => {
             loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
           }`}
         >
-          {loading ? "Processing..." : `Pay ${selectedType} Bill`}
+          {loading ? <T>Processing...</T> : <><T>Pay</T> {selectedType} <T>Bill</T></>}
         </Button>
       </div>
     </div>
@@ -146,3 +147,5 @@ const BillForm = () => {
 };
 
 export default BillForm;
+
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Wallet, RefreshCw, CheckCircle2, AlertCircle, PlusCircle } from "lucide-react";
 import { CURRENCY_META, SupportedCurrency } from "@/types/international";
+import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 const CURRENCIES = Object.keys(CURRENCY_META) as SupportedCurrency[];
 
@@ -150,7 +152,7 @@ export default function TopUpPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#04090f]">
         <div className="flex flex-col items-center gap-4 text-gray-400">
           <RefreshCw size={32} className="animate-spin text-[#0070ff]" />
-          <p className="text-sm">Verifying access...</p>
+          <p className="text-sm"><T>Verifying access...</T></p>
         </div>
       </div>
     );
@@ -165,7 +167,7 @@ export default function TopUpPage() {
           onClick={() => router.push("/international")}
           className="flex items-center gap-2 text-sm text-gray-500 dark:text-blue-400 hover:text-[#0070ff] transition"
         >
-          <ArrowLeft size={16} /> Back to International Transfer
+          <ArrowLeft size={16} /> <T>Back to International Transfer</T>
         </button>
 
         {/* Header */}
@@ -177,8 +179,8 @@ export default function TopUpPage() {
           <div className="flex items-center gap-3">
             <PlusCircle size={28} />
             <div>
-              <h1 className="text-2xl font-bold">Top Up Wallet</h1>
-              <p className="text-sm opacity-80">Fund your international wallet from your main balance</p>
+              <h1 className="text-2xl font-bold"><T>Top Up Wallet</T></h1>
+              <p className="text-sm opacity-80"><T>Fund your international wallet from your main balance</T></p>
             </div>
           </div>
         </motion.div>
@@ -194,9 +196,9 @@ export default function TopUpPage() {
               <Wallet size={20} className="text-[#0070ff]" />
             </div>
             <div>
-              <p className="text-xs text-gray-400 dark:text-blue-400">Main Balance</p>
+              <p className="text-xs text-gray-400 dark:text-blue-400"><T>Main Balance</T></p>
               <p className="text-lg font-bold text-gray-800 dark:text-blue-100">
-                {mainBalance.toLocaleString()} <span className="text-sm font-medium text-gray-400">{mainCurrency}</span>
+                {formatAmount(mainBalance)} <span className="text-sm font-medium text-gray-400">{mainCurrency}</span>
               </p>
             </div>
           </div>
@@ -209,7 +211,7 @@ export default function TopUpPage() {
             animate={{ opacity: 1 }}
             className="bg-white dark:bg-[#0c1a2b] rounded-2xl p-5 border border-gray-200 dark:border-blue-800 space-y-3"
           >
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-blue-400">Your Wallets</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-blue-400"><T>Your Wallets</T></p>
             <div className="grid grid-cols-2 gap-3">
               {Object.entries(wallets).map(([currency, balance]) => {
                 const meta = CURRENCY_META[currency as SupportedCurrency];
@@ -254,7 +256,7 @@ export default function TopUpPage() {
               {/* Currency selector */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-blue-300 mb-1">
-                  Select Currency to Top Up
+                  <T>Select Currency to Top Up</T>
                 </label>
                 <select
                   value={targetCurrency}
@@ -266,7 +268,7 @@ export default function TopUpPage() {
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c} value={c}>
-                      {CURRENCY_META[c].flag} {c} — {CURRENCY_META[c].name}
+                      {CURRENCY_META[c].flag} {c} - {CURRENCY_META[c].name}
                     </option>
                   ))}
                 </select>
@@ -275,7 +277,7 @@ export default function TopUpPage() {
               {/* Amount */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-blue-300 mb-1">
-                  Amount ({targetCurrency})
+                  <T>Amount</T> ({targetCurrency})
                 </label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
@@ -301,17 +303,17 @@ export default function TopUpPage() {
                 >
                   {rateLoading ? (
                     <div className="flex items-center gap-2 text-blue-400">
-                      <RefreshCw size={14} className="animate-spin" /> Calculating...
+                      <RefreshCw size={14} className="animate-spin" /> <T>Calculating...</T>
                     </div>
                   ) : (
                     <>
                       <div className="flex justify-between text-gray-600 dark:text-blue-300">
-                        <span>You will receive</span>
+                        <span><T>You will receive</T></span>
                         <span className="font-semibold text-[#0070ff]">{CURRENCY_META[targetCurrency].symbol}{Number(amount).toFixed(2)} {targetCurrency}</span>
                       </div>
                       <div className="flex justify-between text-gray-600 dark:text-blue-300">
-                        <span>Deducted from main balance</span>
-                        <span className="font-semibold text-red-500">−{estimatedDeduction?.toLocaleString()} {mainCurrency}</span>
+                        <span><T>Deducted from main balance</T></span>
+                        <span className="font-semibold text-red-500">−{formatAmount(estimatedDeduction)} {mainCurrency}</span>
                       </div>
                     </>
                   )}
@@ -326,7 +328,7 @@ export default function TopUpPage() {
                 className="w-full flex items-center justify-center gap-2 bg-[#0070ff] hover:bg-[#0061ff] text-white font-semibold py-3 rounded-xl transition disabled:opacity-60"
               >
                 {loading ? <RefreshCw size={18} className="animate-spin" /> : <PlusCircle size={18} />}
-                {loading ? "Processing..." : `Top Up ${targetCurrency} Wallet`}
+                {loading ? <T>Processing...</T> : <><T>Top Up</T> {targetCurrency} <T>Wallet</T></>}
               </motion.button>
             </motion.div>
           )}
@@ -348,20 +350,20 @@ export default function TopUpPage() {
                 <CheckCircle2 size={36} className="text-green-500" />
               </motion.div>
 
-              <h2 className="text-xl font-bold text-gray-800 dark:text-blue-100">Top Up Successful!</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-blue-100"><T>Top Up Successful!</T></h2>
 
               <div className="bg-gray-50 dark:bg-[#071120] rounded-xl p-4 text-sm space-y-2 text-left">
                 <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-blue-400">Added to wallet</span>
+                  <span className="text-gray-500 dark:text-blue-400"><T>Added to wallet</T></span>
                   <span className="font-semibold text-green-500">{successSummary.added}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-blue-400">Deducted from balance</span>
+                  <span className="text-gray-500 dark:text-blue-400"><T>Deducted from balance</T></span>
                   <span className="font-semibold text-red-400">{successSummary.deducted}</span>
                 </div>
                 <div className="flex justify-between border-t border-gray-200 dark:border-blue-800 pt-2">
-                  <span className="text-gray-500 dark:text-blue-400">New main balance</span>
-                  <span className="font-bold text-gray-800 dark:text-blue-100">{successSummary.newBalance.toLocaleString()} {mainCurrency}</span>
+                  <span className="text-gray-500 dark:text-blue-400"><T>New main balance</T></span>
+                  <span className="font-bold text-gray-800 dark:text-blue-100">{formatAmount(successSummary.newBalance)} {mainCurrency}</span>
                 </div>
               </div>
 
@@ -371,7 +373,7 @@ export default function TopUpPage() {
                   onClick={handleReset}
                   className="flex-1 py-3 rounded-xl border border-gray-200 dark:border-blue-800 text-gray-600 dark:text-blue-300 font-medium hover:bg-gray-50 dark:hover:bg-blue-900/30 transition"
                 >
-                  Top Up Again
+                  <T>Top Up Again</T>
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -379,7 +381,7 @@ export default function TopUpPage() {
                   onClick={() => router.push("/international")}
                   className="flex-1 bg-[#0070ff] hover:bg-[#0061ff] text-white font-semibold py-3 rounded-xl transition"
                 >
-                  Send Transfer
+                  <T>Send Transfer</T>
                 </motion.button>
               </div>
             </motion.div>
@@ -390,3 +392,4 @@ export default function TopUpPage() {
     </div>
   );
 }
+

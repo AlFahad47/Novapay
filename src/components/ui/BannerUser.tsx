@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -19,14 +20,19 @@ import {
   X,
   UserCircle2,
 } from "lucide-react";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 import StatusOnboarding from "../../components/StatusOnboarding";
 import { BsCoin } from "react-icons/bs";
 import { FaRankingStar } from "react-icons/fa6";
 import RankDetailsModal from "../modals/RankDetailsModal";
 import { Button } from "@/components/ui/button";
+import SendMoneyForm from "../modals/sendmoney";
+import AddMoneyForm from "../modals/AddMoneyForm";
+import RequestMoneyForm from "../modals/RequestMoney";
+import T from "@/components/T";
 
 const BannerUser: React.FC = () => {
+  const router = useRouter();
   const { data: session } = useSession();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [dbUser, setDbUser] = useState<any>(null);
@@ -34,8 +40,9 @@ const BannerUser: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
   const [greeting, setGreeting] = useState("");
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [activeModal, setActiveModal] = useState<string | null>(null);
 
-  // নোটিফিকেশন স্টেট
+  // notification state
   const [pendingRequests, setPendingRequests] = useState<number>(0);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [notificationData, setNotificationData] = useState<any>(null);
@@ -79,9 +86,13 @@ const BannerUser: React.FC = () => {
           );
           const notifData = await notifRes.json();
 
-          if (notifData.success && notifData.request) {
-            setPendingRequests(1);
-            setNotificationData(notifData.request);
+          if (notifData.success) {
+            // Check if backend returns 'requests' (array) or 'request' (single object)
+            const list =
+              notifData.requests ||
+              (notifData.request ? [notifData.request] : []);
+            setNotifications(list);
+            setPendingRequests(list.length);
           } else {
             setNotifications([]);
             setPendingRequests(0);
@@ -102,7 +113,23 @@ const BannerUser: React.FC = () => {
   const firstName =
     dbUser?.name?.split(" ")[0] || session?.user?.name?.split(" ")[0] || "User";
   const currencySymbol = dbUser?.currency === "BDT" ? "৳" : "$";
-  const isApproved = true;
+  const isApproved = dbUser?.kycStatus === "approved";
+
+  const handleLockedAction = () => {
+    Swal.fire({
+      title: "KYC Required",
+      text: "Complete KYC to unlock Send, Add, and History.",
+      icon: "info",
+      confirmButtonText: "Complete KYC",
+      confirmButtonColor: "#1E50FF",
+      showCancelButton: true,
+      cancelButtonText: "Later",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push("/dashboard/kyc");
+      }
+    });
+  };
 
   const stats = [
     {
@@ -147,23 +174,23 @@ const BannerUser: React.FC = () => {
     {
       label: "Send",
       icon: <Send size={15} />,
-      onClick: () => setActiveModal("send"),
+      onClick: () =>
+        isApproved ? setActiveModal("send") : handleLockedAction(),
     },
     {
       label: "Add",
       icon: <Plus size={15} />,
-      onClick: () => setActiveModal("add"),
+      onClick: () => (isApproved ? setActiveModal("add") : handleLockedAction()),
     },
     {
       label: "History",
       icon: <TrendingUp size={15} />,
-      onClick: () => console.log("Navigate to history"),
+      onClick: () =>
+        isApproved ? router.push("/dashboard/transactions") : handleLockedAction(),
     },
   ];
 
-  const hedwigGradient = "linear-gradient(to right, #4DA1FF, #1E50FF)";
-
-  // এই ফাংশনটি BannerUser কম্পোনেন্টের ভেতরে যোগ করুন
+  const hedwigGradient = "linear-gradient(to right, #4DA1FF, #1E50FF)";
   const confirmPayment = async (data: any) => {
     Swal.fire({
       title: "Confirm Payment",
@@ -173,8 +200,7 @@ const BannerUser: React.FC = () => {
       confirmButtonText: "Yes, Pay Now",
       confirmButtonColor: "#1E50FF",
     }).then(async (result) => {
-      if (result.isConfirmed) {
-        // এখানে সরাসরি API কল করুন
+      if (result.isConfirmed) {
         processPayment(data);
       }
     });
@@ -182,34 +208,49 @@ const BannerUser: React.FC = () => {
 
   const processPayment = async (data: any) => {
     try {
+      // Determine the correct payload based on notification type
+      const isSaving = data.type === "saving_reminder";
+
+      const payload = {
+        email: session?.user?.email,
+        type: isSaving ? "micro_saving_deposit" : "send_money",
+        amount: Number(data.amount),
+        // For savings, the receiver is the user themselves (or the goal)
+        receiver: isSaving
+          ? session?.user?.email
+          : (data.from || data.senderEmail).toLowerCase().trim(),
+        description:
+          data.note ||
+          (isSaving ? "Micro-saving deposit" : "Payment for request"),
+        requestId: data._id,
+        goalId: data.goalId || null, // Pass the goalId for savings
+      };
+
       const res = await fetch("/api/transactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: session?.user?.email,
-          type: "send_money",
-          amount: Number(data.amount),
-          receiver: (data.from || data.senderEmail).toLowerCase().trim(),
-          description: `Payment for request: ${data.note || "No note"}`,
-          requestId: data._id,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const result = await res.json();
+
       if (result.success) {
         Swal.fire(
           "Success!",
-          "Payment completed and request cleared.",
+          isSaving ? "Savings updated!" : "Payment completed!",
           "success",
         );
 
-        setPendingRequests(0);
-        setNotificationData(null);
+        // Update UI
+        setNotifications((prev) => prev.filter((n) => n._id !== data._id));
+        setPendingRequests((prev) => prev - 1);
+
+        // Refresh balance
         window.dispatchEvent(new Event("balanceUpdated"));
       } else {
         Swal.fire("Error", result.message, "error");
       }
-    } catch (err) {
+    } catch (error) {
       Swal.fire("Error", "Transaction failed", "error");
     }
   };
@@ -238,7 +279,7 @@ const BannerUser: React.FC = () => {
       />
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] dark:bg-[#1E50FF] opacity-[0.18] blur-[140px] rounded-full pointer-events-none z-[-1]" />
 
-      <div className="w-11/12 mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
+      <div className="home-container flex flex-col lg:flex-row items-center justify-between gap-12 z-10">
         <motion.div
           className="flex-1 flex flex-col items-start gap-6 max-w-xl"
           initial={{ opacity: 0, y: 30 }}
@@ -251,7 +292,7 @@ const BannerUser: React.FC = () => {
                 className={`w-2 h-2 rounded-full animate-pulse ${isApproved ? "bg-green-400" : "bg-orange-400"}`}
               />
               <span className="text-[#1E50FF] dark:text-[#4DA1FF] text-xs font-bold tracking-widest uppercase">
-                NovaPay · {isApproved ? "Verified Account" : "KYC Pending"}
+                NovaPay · <T>{isApproved ? "Verified Account" : "KYC Pending"}</T>
               </span>
             </div>
             <motion.button
@@ -268,7 +309,7 @@ const BannerUser: React.FC = () => {
               {/* Label & Rank */}
               <div className="flex flex-col items-start leading-tight">
                 <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-[#64748B] dark:text-[#94A3B8]">
-                  Tier Status
+                  <T>Tier Status</T>
                 </span>
                 <span className="text-sm font-semibold text-[#0F172A] dark:text-white">
                   {dbUser?.rank || "Bronze"}
@@ -285,10 +326,10 @@ const BannerUser: React.FC = () => {
 
           <div>
             <p className="text-[#64748B] dark:text-[#94A3B8] text-base mb-1">
-              {greeting},
+              <T>{greeting}</T>,
             </p>
             <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold tracking-tight leading-[1.1] text-[#0F172A] dark:text-white">
-              Welcome back,{" "}
+              <T>Welcome back,</T>{" "}
               <span
                 className="text-transparent bg-clip-text"
                 style={{ backgroundImage: hedwigGradient }}
@@ -297,11 +338,9 @@ const BannerUser: React.FC = () => {
               </span>
             </h1>
             <p className="mt-4 text-[#64748B] dark:text-[#94A3B8] text-sm md:text-base max-w-md leading-relaxed">
-              Your digital assets are{" "}
-              {isApproved ? "secure and ready" : "under review"}.{" "}
               {isApproved
-                ? "Manage transfers and track spending in real-time."
-                : "Complete your profile to unlock all features."}
+                ? <T>Your digital assets are secure and ready. Manage transfers and track spending in real-time.</T>
+                : <T>Your digital assets are under review. Complete your profile to unlock all features.</T>}
             </p>
           </div>
 
@@ -315,7 +354,7 @@ const BannerUser: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-[#4DA1FF] to-[#1E50FF]" />
                 <LayoutDashboard size={16} className="relative text-white" />
                 <span className="relative text-white text-sm font-semibold tracking-wide">
-                  Dashboard
+                  <T>Dashboard</T>
                 </span>
                 <ArrowUpRight
                   size={15}
@@ -330,7 +369,7 @@ const BannerUser: React.FC = () => {
               >
                 <Wallet size={15} />
                 <span className="text-sm font-semibold cursor-pointer">
-                  Wallet Account
+                  <T>Wallet Account</T>
                 </span>
               </motion.button>
             </Link>
@@ -348,7 +387,7 @@ const BannerUser: React.FC = () => {
                 <span className={stat.color}>{stat.icon}</span>
                 <div>
                   <p className="text-[10px] text-[#94A3B8] leading-none">
-                    {stat.label}
+                    <T>{stat.label}</T>
                   </p>
                   <p className="text-xs font-bold text-[#0F172A] dark:text-white mt-0.5">
                     {loading ? "..." : stat.value}
@@ -366,9 +405,9 @@ const BannerUser: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.15 }}
         >
-          {/* ক্লিকযোগ্য এলার্ট বাটন */}
+          {/* cleaned comment */}
           <motion.button
-            onClick={() => pendingRequests > 0 && setIsModalOpen(true)}
+            onClick={() => pendingRequests > 0 && setIsListModalOpen(true)}
             whileHover={pendingRequests > 0 ? { scale: 1.05 } : {}}
             whileTap={{ scale: 0.95 }}
             className={`relative flex items-center gap-2 self-end px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-500 cursor-pointer ${pendingRequests > 0 ? "bg-red-50 dark:bg-red-500/10 border-red-500 shadow-lg shadow-red-500/20 active:scale-95" : "bg-white/70 dark:bg-[#0F172A]/70 border-[#4DA1FF]/20"}`}
@@ -385,8 +424,8 @@ const BannerUser: React.FC = () => {
               className={`text-xs font-medium ${pendingRequests > 0 ? "text-red-600 dark:text-red-400" : "text-[#0F172A] dark:text-white"}`}
             >
               {pendingRequests > 0
-                ? `${pendingRequests} New Request`
-                : "No Alerts"}
+                ? <>{pendingRequests} <T>New Request</T></>
+                : <T>No Alerts</T>}
             </span>
             {pendingRequests > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] text-white font-bold animate-pulse">
@@ -408,7 +447,7 @@ const BannerUser: React.FC = () => {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-white/60 text-[10px] uppercase tracking-widest font-medium">
-                    NovaPay Wallet
+                    <T>NovaPay Wallet</T>
                   </p>
                   <p className="text-white font-bold text-base mt-0.5">
                     {firstName}
@@ -422,14 +461,14 @@ const BannerUser: React.FC = () => {
               </div>
               <div>
                 <p className="text-white/60 text-[10px] uppercase tracking-widest">
-                  Available Balance
+                  <T>Available Balance</T>
                 </p>
                 <p className="text-white font-bold text-3xl tracking-tight mt-1">
                   {loading
                     ? "..."
                     : isApproved
                       ? `${currencySymbol}${dbUser?.balance || "0.00"}`
-                      : `${currencySymbol} ••••`}
+                      : `${currencySymbol} ****`}
                 </p>
               </div>
               <div className="flex justify-between items-end">
@@ -449,14 +488,24 @@ const BannerUser: React.FC = () => {
             {cardActions.map((action) => (
               <motion.button
                 key={action.label}
-                whileHover={{ y: -2 }}
+                onClick={action.onClick}
+                whileHover={isApproved ? { y: -2 } : {}}
                 whileTap={{ scale: 0.95 }}
-                className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl bg-white/70 dark:bg-white/[0.04] border border-[#4DA1FF]/15 backdrop-blur-sm hover:bg-[#4DA1FF]/10 text-[#1E50FF] dark:text-[#4DA1FF]"
+                className={`relative flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border border-[#4DA1FF]/15 backdrop-blur-sm text-[#1E50FF] dark:text-[#4DA1FF] transition-opacity ${
+                  isApproved
+                    ? "bg-white/70 dark:bg-white/[0.04] hover:bg-[#4DA1FF]/10"
+                    : "bg-white/50 dark:bg-white/[0.03] opacity-70"
+                }`}
               >
                 <span className="text-current">{action.icon}</span>
                 <span className="text-[10px] font-semibold text-[#0F172A] dark:text-white">
-                  {action.label}
+                  <T>{action.label}</T>
                 </span>
+                {!isApproved && (
+                  <span className="absolute top-2 right-2 text-[#1E50FF] dark:text-[#4DA1FF]">
+                    <Lock size={12} />
+                  </span>
+                )}
               </motion.button>
             ))}
           </div>
@@ -490,6 +539,8 @@ const BannerUser: React.FC = () => {
                 >
                   <X size={18} />
                 </button>
+                <h3 className="text-lg font-bold text-[#0F172A] dark:text-white"><T>Recent Alerts</T></h3>
+                <button onClick={() => setIsListModalOpen(false)} className="p-2 text-gray-500 hover:rotate-90 transition-transform"><X size={18} /></button>
               </div>
 
               <div className="overflow-y-auto p-4 space-y-3 custom-scrollbar">
@@ -593,7 +644,7 @@ const BannerUser: React.FC = () => {
                   {notificationData.note && (
                     <div className="mt-3 pt-3 border-t border-[#4DA1FF]/10">
                       <p className="text-xs italic text-[#64748B] dark:text-[#94A3B8]">
-                        "{notificationData.note}"
+                        &ldquo;{notificationData.note}&rdquo;
                       </p>
                     </div>
                   )}
@@ -638,9 +689,51 @@ const BannerUser: React.FC = () => {
             onClose={() => setShowOnboarding(false)}
           />
         )}
+        {activeModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-200 flex items-center justify-center p-4"
+          >
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setActiveModal(null)}
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-md bg-white dark:bg-[#0F172A] rounded-3xl p-6 shadow-2xl border border-[#4DA1FF]/20"
+            >
+              <button
+                onClick={() => setActiveModal(null)}
+                className="absolute top-5 right-5 p-2 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500 hover:rotate-90 transition-transform"
+              >
+                <X size={16} />
+              </button>
+              <h2 className="text-lg font-bold text-[#0F172A] dark:text-white mb-5">
+                {activeModal === "send"
+                  ? "Send Money"
+                  : activeModal === "add"
+                    ? "Add Money"
+                    : "Request Money"}
+              </h2>
+              {activeModal === "send" && (
+                <SendMoneyForm onSuccess={() => setActiveModal(null)} />
+              )}
+              {activeModal === "add" && <AddMoneyForm />}
+              {activeModal === "request" && (
+                <RequestMoneyForm onSuccess={() => setActiveModal(null)} />
+              )}
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </section>
   );
 };
 
 export default BannerUser;
+
+

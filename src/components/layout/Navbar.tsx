@@ -11,10 +11,14 @@ import { IoLogOut } from "react-icons/io5";
 import { Crown, ShieldCheck, Star, Trophy } from "lucide-react";
 import RankDetailsModal from "../modals/RankDetailsModal";
 import { ThemeToggleButton } from "@/components/ui/skiper-ui/skiper26";
+import { useTranslations } from 'next-intl';
+import LanguageSwitcher from "../LanguageSwitcher";
+import { openAuthModal } from "@/components/auth/authModalEvents";
 
 type FullUser = {
   rank?: string;
   points?: number;
+  image?: string | null;
 };
 
 const Navbar: React.FC = () => {
@@ -25,6 +29,7 @@ const Navbar: React.FC = () => {
   const [isRankModalOpen, setIsRankModalOpen] = useState(false);
   const [activeHash, setActiveHash] = useState("");
   const [unreadTotal, setUnreadTotal] = useState(0);
+  const [failedAvatarSrc, setFailedAvatarSrc] = useState<string | null>(null);
 
   const pathname = usePathname();
   const user = session?.user;
@@ -117,21 +122,39 @@ const Navbar: React.FC = () => {
     return () => clearInterval(interval);
   }, [session]);
 
+  const t = useTranslations("nav");
+
   const navLinks = user
     ? [
-        { name: "Home", path: "/" },
-        { name: "Chat", path: "/chat" },
-        { name: "Review", path: "/review" },
-        { name: "FAQ", path: "/faq" },
-        { name: "Contact", path: "/contact" },
-        { name: "Blog", path: "/blog" },
+        { name: t("home"), path: "/" },
+        { name: t("chat"), path: "/chat" },
+        { name: t("review"), path: "/review" },
+        { name: t("faq"), path: "/faq" },
+        { name: t("contact"), path: "/contact" },
+        { name: t("blog"), path: "/blog" },
       ]
     : [
-        { name: "Home", path: "/#home" },
-        { name: "Offer", path: "/#offers" },
-        { name: "Features", path: "/#features" },
-        { name: "Reviews", path: "/#reviews" },
+        { name: t("home"), path: "/#home" },
+        { name: t("offer"), path: "/#offers" },
+        { name: t("features"), path: "/#features" },
+        { name: t("reviews"), path: "/#reviews" },
       ];
+
+  const normalizeAvatarUrl = (url?: string | null) => {
+    const value = url?.trim();
+    if (!value) return "";
+    // Some providers may return http links; use https to avoid blocked mixed-content images.
+    if (value.startsWith("http://")) return value.replace("http://", "https://");
+    return value;
+  };
+
+  const preferredAvatarSrc =
+    normalizeAvatarUrl(fullUser?.image) ||
+    normalizeAvatarUrl(user?.image) ||
+    "/user.jfif";
+
+  const avatarSrc =
+    failedAvatarSrc === preferredAvatarSrc ? "/user.jfif" : preferredAvatarSrc;
 
   return (
     <>
@@ -147,7 +170,7 @@ const Navbar: React.FC = () => {
         <nav
           className={`pointer-events-auto relative flex items-center justify-between rounded-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             isScrolled
-              ? "w-full max-w-4xl px-5 py-3 bg-white/30 dark:bg-[#0F172A]/30 backdrop-blur-lg border border-white/50 dark:border-white/5 shadow-lg"
+              ? "w-full max-w-5xl px-5 py-3 bg-white/30 dark:bg-[#0F172A]/30 backdrop-blur-lg border border-white/50 dark:border-white/5 shadow-lg"
               : "w-full max-w-6xl px-5 py-3 bg-white/70 dark:bg-[#090F1E]/80 backdrop-blur-2xl border border-gray-200/60 dark:border-white/10 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.15)] dark:shadow-[0_15px_40px_-10px_rgba(0,0,0,0.6)]"
           }`}
         >
@@ -171,10 +194,10 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Desktop Links (Center) */}
-          <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-8 min-w-0 px-">
             {navLinks.map((link) => {
               const isActive = link.path.startsWith("/#")
-                ? activeHash === link.path.replace("/", "")
+                ? activeHash === link.path.replace("/","")
                 : pathname === link.path;
               return (
                 <Link
@@ -194,7 +217,7 @@ const Navbar: React.FC = () => {
                   {link.name}
 
                   {/* Unread badge on Chat link */}
-                  {link.name === "Chat" && unreadTotal > 0 && (
+                  {link.path === "/chat" && unreadTotal > 0 && (
                     <span className="absolute -top-2.5 -right-3.5 bg-red-500 shadow-md text-white text-[10px] font-extrabold rounded-full h-4 min-w-[16px] flex items-center justify-center px-1 border border-white dark:border-slate-900">
                       {unreadTotal > 99 ? "99+" : unreadTotal}
                     </span>
@@ -204,8 +227,14 @@ const Navbar: React.FC = () => {
             })}
           </div>
 
+
           {/* Desktop Right - Theme + Auth/Get Started */}
-          <div className="hidden md:flex shrink-0 items-center gap-4 z-20">
+          <div className="hidden lg:flex shrink-0 items-center gap-4 z-30">
+
+            
+          <div className="relative z-20">
+            <LanguageSwitcher/>
+          </div>
             {/* Theme Toggle */}
             <ThemeToggleButton
               variant="circle"
@@ -260,10 +289,8 @@ const Navbar: React.FC = () => {
                     <img
                       alt="User Avatar"
                       referrerPolicy="no-referrer"
-                      src={
-                        user.image ||
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8oghbsuzggpkknQSSU-Ch_xep_9v3m6EeBQ&s"
-                      }
+                      src={avatarSrc}
+                      onError={() => setFailedAvatarSrc(preferredAvatarSrc)}
                       className="w-full h-full object-cover"
                     />
                     {/* Online Dot */}
@@ -313,8 +340,9 @@ const Navbar: React.FC = () => {
                 )}
               </div>
             ) : (
-              <Link
-                href="/login"
+              <button
+                type="button"
+                onClick={() => openAuthModal("login")}
                 className="group relative flex items-center gap-2 px-6 py-2.5 rounded-full overflow-hidden border border-transparent shadow-[0_4px_14px_0_rgba(59,130,246,0.39)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.23)] hover:-translate-y-0.5 transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 group-hover:from-blue-600 group-hover:to-blue-700 transition-all duration-500"></div>
@@ -327,13 +355,13 @@ const Navbar: React.FC = () => {
                   strokeWidth={3}
                   className="relative text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
                 />
-              </Link>
+              </button>
             )}
           </div>
 
           {/* Mobile Menu Toggle */}
           <button
-            className="md:hidden flex items-center justify-center text-slate-800 dark:text-white z-20 w-10 h-10 bg-white/50 dark:bg-white/10 rounded-full border border-slate-200 dark:border-white/10 shadow-sm"
+            className="lg:hidden flex items-center justify-center text-slate-800 dark:text-white z-20 w-10 h-10 bg-white/50 dark:bg-white/10 rounded-full border border-slate-200 dark:border-white/10 shadow-sm"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -342,7 +370,7 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
-          <div className="absolute top-[110%] left-4 right-4 pointer-events-auto bg-white/95 dark:bg-[#0a101f]/95 backdrop-blur-2xl border border-slate-200 dark:border-white/10 shadow-2xl rounded-[2rem] p-6 flex flex-col gap-2 md:hidden origin-top animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute top-[110%] left-4 right-4 z-40 pointer-events-auto bg-white/95 dark:bg-[#0a101f]/95 backdrop-blur-2xl border border-slate-200 dark:border-white/10 shadow-2xl rounded-[2rem] p-6 flex flex-col gap-2 lg:hidden origin-top animate-in fade-in zoom-in-95 duration-200">
             <div className="flex justify-end mb-2">
               <ThemeToggleButton
                 variant="circle"
@@ -398,13 +426,16 @@ const Navbar: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <Link
-                href="/login"
-                onClick={() => setIsMobileMenuOpen(false)}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  openAuthModal("login");
+                }}
                 className="mt-4 flex justify-center items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-4 rounded-xl text-[15px] font-bold shadow-lg shadow-blue-500/30"
               >
                 Get Started <ArrowUpRight size={20} strokeWidth={3} />
-              </Link>
+              </button>
             )}
           </div>
         )}

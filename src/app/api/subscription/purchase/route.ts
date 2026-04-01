@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { SUBSCRIPTION_PRICES, SUBSCRIPTION_DURATION_DAYS, SubscriptionPlan } from "@/types/subscription";
 
@@ -104,3 +104,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Internal server error." }, { status: 500 });
   }
 }
+

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import clientPromise from "@/lib/mongodb";
@@ -27,7 +27,7 @@ export async function GET() {
     // Sort by time so the last message is accurate
     { $sort: { timestamp: 1 } },
 
-    // Group by channel — keep only the latest message per conversation
+    // Group by channel - keep only the latest message per conversation
     {
       $group: {
         _id: "$channelId",
@@ -52,7 +52,7 @@ export async function GET() {
   ]).toArray();
 
   // Extract the OTHER user's ID from the channelId (format: "dm-{id1}-{id2}")
-  // One of them is the current user — the other one is who we want
+  // One of them is the current user - the other one is who we want
   const enriched = conversations.map((conv) => {
     const parts = conv._id.replace("dm-", "").split("-");
     // channelId = "dm-" + smallerId + "-" + largerId
@@ -63,3 +63,4 @@ export async function GET() {
 
   return NextResponse.json({ conversations: enriched });
 }
+

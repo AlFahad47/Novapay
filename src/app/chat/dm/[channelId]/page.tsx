@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import ChatWindow from "@/components/ui/ChatWindow";
+import T from "@/components/T";
 
 export default function DMChatPage() {
   const { data: session, status } = useSession();
@@ -26,7 +27,7 @@ export default function DMChatPage() {
 
     // channelId format: "dm-{id1}-{id2}"
     const withoutPrefix = channelId.replace(/^dm-/, "");
-    // MongoDB ObjectIds are 24-char hex — split at the hyphen between them
+    // MongoDB ObjectIds are 24-char hex - split at the hyphen between them
     const otherId = withoutPrefix
       .split("-")
       .filter((part) => part !== session.user.id)
@@ -65,11 +66,11 @@ export default function DMChatPage() {
           onClick={() => router.back()}
           className="text-blue-500 hover:text-blue-600 text-sm font-medium"
         >
-          ← Back
+          <T>← Back</T>
         </button>
         <div>
           <h1 className="text-xl font-bold text-gray-800 dark:text-white">
-            {otherUser?.name ?? "Direct Message"}
+            <T>{otherUser?.name ?? "Direct Message"}</T>
           </h1>
         </div>
       </div>
@@ -91,3 +92,4 @@ export default function DMChatPage() {
     </div>
   );
 }
+

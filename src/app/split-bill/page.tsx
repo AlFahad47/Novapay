@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { UserPlus, Search, X, Sun, Moon, Loader2, Send } from 'lucide-react';
 import { useSession } from "next-auth/react";
-import Swal from 'sweetalert2';
+import Swal from "@/lib/brandAlert";
+import T from "@/components/T";
 
 interface User {
   _id: string;
@@ -123,7 +124,7 @@ const SplitBill = () => {
 
   return (
     <div className={`${isDarkMode ? 'dark' : ''}`}>
-      <div className="min-h-screen bg-[#F5F5F7] dark:bg-black py-12 px-4 transition-colors duration-500 font-sans text-[#1D1D1F] dark:text-[#F5F5F7]">
+      <div className="min-h-screen pt-50 bg-[#F5F5F7] dark:bg-black py-12 px-4 transition-colors duration-500 font-sans text-[#1D1D1F] dark:text-[#F5F5F7]">
         
         <button onClick={() => setIsDarkMode(!isDarkMode)} className="fixed top-6 right-6 p-3 rounded-full bg-white dark:bg-[#1C1C1E] shadow-sm border border-gray-100 dark:border-white/10 z-50">
           {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -131,15 +132,15 @@ const SplitBill = () => {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md mx-auto bg-white dark:bg-[#1C1C1E] rounded-[32px] p-8 shadow-2xl border border-gray-100 dark:border-white/5">
           <header className="mb-10">
-            <h1 className="text-3xl font-bold tracking-tight">Split Bill</h1>
-            <p className="text-gray-400 dark:text-gray-500 mt-1 text-sm font-medium">Verified NovaPay Peer-to-Peer</p>
+            <h1 className="text-3xl font-bold tracking-tight"><T>Split Bill</T></h1>
+            <p className="text-gray-400 dark:text-gray-500 mt-1 text-sm font-medium"><T>Verified NovaPay Peer-to-Peer</T></p>
           </header>
 
           <div className="space-y-8">
             {/* Amount & Currency Section */}
             <div className="relative border-b border-gray-100 dark:border-white/10 pb-4">
               <div className="flex justify-between items-center mb-2">
-                <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Total Bill</label>
+                <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400"><T>Total Bill</T></label>
                 <select 
                   value={currency} 
                   onChange={(e) => setCurrency(e.target.value)}
@@ -165,7 +166,7 @@ const SplitBill = () => {
             {/* User Search Input */}
             <div className="relative">
               <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400 flex items-center gap-2 mb-3">
-                <Search size={12} /> Find Verified Friends
+                <Search size={12} /> <T>Find Verified Friends</T>
               </label>
               <div className="relative">
                 <input 
@@ -196,7 +197,7 @@ const SplitBill = () => {
                         <UserPlus size={16} className="text-blue-500" />
                       </button>
                     )) : (
-                      <div className="p-4 text-sm text-gray-400 text-center">No verified users found</div>
+                      <div className="p-4 text-sm text-gray-400 text-center"><T>No verified users found</T></div>
                     )}
                   </motion.div>
                 )}
@@ -224,7 +225,7 @@ const SplitBill = () => {
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-blue-50 dark:bg-blue-500/10 rounded-2xl p-6 border border-blue-100 dark:border-blue-500/20">
                   <div className="flex justify-between items-end">
                     <div>
-                      <p className="text-[10px] uppercase font-bold text-blue-600 dark:text-blue-400 mb-1">Per Person</p>
+                      <p className="text-[10px] uppercase font-bold text-blue-600 dark:text-blue-400 mb-1"><T>Per Person</T></p>
                       <h3 className="text-3xl font-bold text-blue-900 dark:text-blue-50">
                         {currency === 'USD' ? '$' : '৳'}{sharePerPerson}
                       </h3>
@@ -242,7 +243,7 @@ const SplitBill = () => {
               disabled={!amount || selectedFriends.length === 0 || isSubmitting}
               className="w-full py-5 bg-black dark:bg-white text-white dark:text-black rounded-[20px] font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.97] disabled:opacity-20 shadow-xl shadow-black/10"
             >
-              {isSubmitting ? <Loader2 className="animate-spin" /> : <>Send Request <Send size={18} /></>}
+              {isSubmitting ? <Loader2 className="animate-spin" /> : <><T>Send Request</T> <Send size={18} /></>}
             </button>
           </div>
         </motion.div>
@@ -252,3 +253,4 @@ const SplitBill = () => {
 };
 
 export default SplitBill;
+

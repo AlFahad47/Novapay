@@ -1,10 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import T from "@/components/T";
 
 // Shape of each conversation returned from the API
 interface Conversation {
@@ -24,7 +25,7 @@ export default function AdminSupportInbox() {
   const [loading, setLoading] = useState(true);
 
   // Redirect if not logged in or not admin
-  // Note: we check that role is defined before redirecting — avoids false redirect while session is hydrating
+  // Note: we check that role is defined before redirecting - avoids false redirect while session is hydrating
   useEffect(() => {
     if (status === "loading") return;
     if (status === "unauthenticated") {
@@ -63,14 +64,14 @@ export default function AdminSupportInbox() {
       <div className="max-w-3xl mx-auto">
 
         {/* Header */}
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">Support Inbox</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1"><T>Support Inbox</T></h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-          All user support conversations — click to reply.
+          <T>All user support conversations - click to reply.</T>
         </p>
 
         {/* Conversation list */}
         {conversations.length === 0 ? (
-          <p className="text-center text-gray-400 mt-20">No support messages yet.</p>
+          <p className="text-center text-gray-400 mt-20"><T>No support messages yet.</T></p>
         ) : (
           <div className="flex flex-col gap-3">
             {conversations.map((conv) => {
@@ -118,3 +119,4 @@ export default function AdminSupportInbox() {
     </div>
   );
 }
+

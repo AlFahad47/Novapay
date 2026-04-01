@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
-import Swal from "sweetalert2";
+import Swal from "@/lib/brandAlert";
 
 export default function NotificationListener() {
   const { data: session } = useSession();
@@ -43,3 +43,4 @@ export default function NotificationListener() {
 
   return null; 
 }
+

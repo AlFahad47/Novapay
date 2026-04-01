@@ -1,14 +1,15 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
+import T from "@/components/T";
 
 const blogPosts = [
   {
     id: 1,
     title: "How to use AI-Powered Expense Analytics to Save More",
     excerpt: "Discover how NovaPay's new AI features categorize your spending and help you identify where you can cut back this month.",
-    content: "Understanding your spending habits is the first step to financial freedom. With NovaPay's new AI-Powered Expense Analytics, every transaction you make is automatically categorized—whether it's groceries, entertainment, or bills. \n\nOur AI doesn't just stop at categorizing; it analyzes your historical data to predict future spending and alerts you when you're about to exceed your monthly budget. Try setting up a custom alert today and watch your savings grow!",
+    content: "Understanding your spending habits is the first step to financial freedom. With NovaPay's new AI-Powered Expense Analytics, every transaction you make is automatically categorized-whether it's groceries, entertainment, or bills. \n\nOur AI doesn't just stop at categorizing; it analyzes your historical data to predict future spending and alerts you when you're about to exceed your monthly budget. Try setting up a custom alert today and watch your savings grow!",
     category: "Product Updates",
     date: "Oct 12, 2023",
     readTime: "5 min read",
@@ -48,7 +49,7 @@ const blogPosts = [
     id: 6,
     title: "Never Run Out of Balance: Setting Up One-Tap Mobile Recharge",
     excerpt: "Recharge your phone or send balance to family members instantly using your favorite contacts list.",
-    content: "Running out of mobile data in the middle of a meeting or dropping a call because your balance hit zero is incredibly frustrating. With NovaPay's Mobile Recharge feature, you can top up any local operator instantly.\n\nTo make it even faster, you can save your family and friends to your 'Favorite Contacts' list. Next time you need to send your mom mobile balance, you won't need to type out her number—just tap her profile, enter the amount, and the top-up is processed instantly.",
+    content: "Running out of mobile data in the middle of a meeting or dropping a call because your balance hit zero is incredibly frustrating. With NovaPay's Mobile Recharge feature, you can top up any local operator instantly.\n\nTo make it even faster, you can save your family and friends to your 'Favorite Contacts' list. Next time you need to send your mom mobile balance, you won't need to type out her number-just tap her profile, enter the amount, and the top-up is processed instantly.",
     category: "Features",
     date: "Aug 22, 2023",
     readTime: "3 min read",
@@ -102,10 +103,10 @@ export default function BlogPage() {
           className="mb-16 text-center"
         >
           <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl mb-4">
-            The NovaPay Blog
+            <T>The NovaPay Blog</T>
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Insights, updates, and financial tips to help you master your money. Learn how to make the most out of your digital wallet.
+            <T>Insights, updates, and financial tips to help you master your money. Learn how to make the most out of your digital wallet.</T>
           </p>
         </motion.div>
 
@@ -135,13 +136,13 @@ export default function BlogPage() {
                 <span className="text-sm text-gray-500 dark:text-gray-400">{blogPosts[0].date} • {blogPosts[0].readTime}</span>
               </div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                {blogPosts[0].title}
+                <T>{blogPosts[0].title}</T>
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                {blogPosts[0].excerpt}
+                <T>{blogPosts[0].excerpt}</T>
               </p>
               <span className="font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-2 group-hover:gap-3 transition-all">
-                Read Article 
+                <T>Read Article</T>
                 <span aria-hidden="true">&rarr;</span>
               </span>
             </div>
@@ -176,10 +177,10 @@ export default function BlogPage() {
                   </span>
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {post.title}
+                  <T>{post.title}</T>
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4 flex-1 text-sm leading-relaxed">
-                  {post.excerpt}
+                  <T>{post.excerpt}</T>
                 </p>
                 <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-500 mt-auto pt-4 border-t border-gray-200 dark:border-gray-800">
                   <span>{post.date}</span>
@@ -216,7 +217,7 @@ export default function BlogPage() {
                 onClick={closeModal}
                 className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-white backdrop-blur-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors shadow-sm"
               >
-                ✕
+              •
               </button>
 
               {/* Modal Image */}
@@ -238,11 +239,11 @@ export default function BlogPage() {
                 </div>
                 
                 <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-                  {selectedPost.title}
+                  <T>{selectedPost.title}</T>
                 </h2>
-                
+
                 <div className="prose prose-lg dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 whitespace-pre-line">
-                  {selectedPost.content}
+                  <T>{selectedPost.content}</T>
                 </div>
               </div>
             </motion.div>
