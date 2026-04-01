@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-white font-bold text-sm mb-4 uppercase tracking-widest"><T>Product</T></h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/dashboard" className="hover:text-white transition-colors"><T>Send Money</T></Link></li>
+              <li><Link href="/send-money" className="hover:text-white transition-colors"><T>Send Money</T></Link></li>
               <li><Link href="/donation" className="hover:text-white transition-colors"><T>Donate</T></Link></li>
               <li><Link href="/dashboard/international" className="hover:text-white transition-colors"><T>International Pay</T></Link></li>
               <li><Link href="/micro-savings" className="hover:text-white transition-colors"><T>Micro Saving</T></Link></li>
