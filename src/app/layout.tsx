@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google"; // বা তোমার যে ফন্ট আছে
+import { Suspense } from "react";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import { Toaster } from "react-hot-toast"; // Toast notifications
@@ -36,7 +37,9 @@ export default function RootLayout({
           <LocaleProvider>
             <AuthProvider>
               <NavbarWrapper />
-              <AuthModal />
+              <Suspense fallback={null}>
+                <AuthModal />
+              </Suspense>
               <main>               
                 {children}
               </main>
