@@ -21,7 +21,7 @@ const [loanLimit, setLoanLimit] = useState<number | null>(null);
 const [isCalculating, setIsCalculating] = useState(false);
 const [limitReason, setLimitReason] = useState<string | null>(null); 
 const [activeLoan, setActiveLoan] = useState<any>(null);
-
+const [currency, setCurrency] = useState("BDT"); 
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -49,6 +49,7 @@ const [activeLoan, setActiveLoan] = useState<any>(null);
 
       setBalance(data.balance || 0);
       setLoanLimit(data.loanLimit || 0);
+      setCurrency(data.currency || "BDT");
       setPending(data.pendingRequests || 0);
       setNotifications(data.notifications || 0);
       setTransactions(data.transactions || []);
@@ -111,7 +112,7 @@ if (data.limit !== undefined) {
   Swal.fire({
     icon: "success",
     title: "Limit Updated!",
-    text: `Based on your usage, your new limit is ${data.limit} BDT.`,
+    text: `Based on your usage, your new limit is ${data.limit} {currency}.`,
     footer: `Reason: ${data.reason || "High trust score based on account activity"}` 
   });
 }
@@ -167,7 +168,7 @@ const handleInstantRepay = async (loanId: string) => {
 const handleApplyLoan = async () => {
   const { value: amount } = await Swal.fire({
     title: "Instant AI Loan",
-    text: `Apply for up to ${loanLimit} BDT instantly.`,
+    text: `Apply for up to ${loanLimit} ${currency} instantly.`,
     input: "number",
     inputAttributes: { min: "100", max: String(loanLimit), step: "100" },
     showCancelButton: true,
@@ -224,7 +225,7 @@ const handleApplyLoan = async () => {
         Swal.fire({
           icon: "success",
           title: "Limit Updated!",
-          text: `Based on your usage, your new limit is ${data.limit} BDT.`,
+          text: `Based on your usage, your new limit is ${data.limit} {currency}.`,
           footer: `Reason: ${
             data.reason || "High trust score based on account activity"
           }`,
@@ -292,14 +293,14 @@ const handleApplyLoan = async () => {
           <p className="text-gray-500 text-sm">Loading account data...</p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4"> 
-            <SummaryCard title="Wallet Balance" value={`$${balance}`} icon={<CreditCard size={20} />} />
+            <SummaryCard title="Wallet Balance" value={`${balance} ${currency}`} icon={<CreditCard size={20} />} />
 
             {/* AI LOAN CARD */}
             <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-slate-800 p-6 rounded-2xl border border-blue-100 dark:border-slate-700 shadow-sm">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider"><T>AI Credit Line</T></p>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{loanLimit ?? 0} BDT</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{loanLimit ?? 0} {currency}</h3>
                 </div>
                 <div className="p-2 bg-white dark:bg-slate-700 rounded-lg shadow-sm">
                   <DollarSign className="text-indigo-600 dark:text-indigo-400" size={24} />
@@ -360,7 +361,7 @@ const handleApplyLoan = async () => {
           <div className="space-y-4">
             <div className="flex justify-between items-end">
               <span className="text-xs text-gray-500">Debt Remaining</span>
-              <span className="text-xl font-black text-indigo-600">{Number(activeLoan.remainingAmount).toFixed(2)} BDT</span>
+              <span className="text-xl font-black text-indigo-600">{Number(activeLoan.remainingAmount).toFixed(2)} {currency}</span>
             </div>
             <div className="w-full bg-gray-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
               <div className="bg-indigo-600 h-full transition-all duration-1000" style={{ width: `${((activeLoan.totalPayable - activeLoan.remainingAmount) / activeLoan.totalPayable) * 100}%` }} />

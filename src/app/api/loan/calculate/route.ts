@@ -29,6 +29,9 @@ export async function POST(req: Request) {
       });
     }
 
+    const userCurrency = user.currency || "BDT";
+
+
     // 2. CHECK FOR ACTIVE LOANS
     const activeLoan = await db.collection("loans").findOne({ 
       userEmail: email, 
@@ -71,21 +74,16 @@ export async function POST(req: Request) {
     const completion = await groq.chat.completions.create({
       messages: [
         {
-          role: "system",
+         role: "system",
           content: `You are NovaPay's AI Risk Engine. 
-          Analyze user stats and provide a credit limit (1000 - 50000 BDT). 
-          If inflow is 0, provide a small starter limit of 500 BDT.
-          Return ONLY JSON: { "limit": number, "reason": "short explanation" }`
+          Return ONLY JSON: { "limit": number, "reason": "string" }
+          IMPORTANT: The currency for this user is ${userCurrency}. 
+          Adjust the limit values to be realistic for ${userCurrency}.`
         },
-        {
-          role: "user",
-          content: `User: ${user.name}. 
-          Current Balance: ${user.balance} BDT. 
-          Account Points: ${user.points || 0}. 
-          30-Day Inflow Volume: ${stats.inflow} BDT. 
-          30-Day Outflow Volume: ${stats.outflow} BDT. 
-          KYC Status: ${user.kycStatus || 'Pending'}.`
-        }
+       {
+      role: "user",
+      content: `User: ${user.name}. Balance: ${user.balance} ${userCurrency}. Inflow: ${stats.inflow}.`
+    }
       ],
       model: "llama-3.3-70b-versatile",
       response_format: { type: "json_object" },
