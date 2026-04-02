@@ -345,7 +345,7 @@ export default function DonationPage() {
                   </motion.div>
                   <h3 className="font-bold text-gray-800 dark:text-blue-100"><T>Thank you!</T></h3>
                   <p className="text-sm text-gray-500 dark:text-blue-400">
-                    <T>You donated</T> <strong className="text-[#e63b60]">৳{success.amount}</strong> <T>to</T> {success.campaignTitle}
+                    <T>You donated</T> <strong className="text-[#e63b60]">৳{formatAmount(success.amount)}</strong> <T>to</T> {success.campaignTitle}
                   </p>
                   <p className="text-xs text-gray-400 font-mono">{success.transactionId}</p>
                   <motion.button
@@ -437,7 +437,7 @@ export default function DonationPage() {
                     className="w-full flex items-center justify-center gap-2 bg-[#e63b60] hover:bg-[#cf2f52] text-white font-semibold py-3 rounded-xl transition disabled:opacity-60 text-sm"
                   >
                     {loading ? <RefreshCw size={16} className="animate-spin" /> : <Heart size={16} />}
-                    {loading ? <T>Processing...</T> : <><T>Donate</T> ৳{amount || "0"}</>}
+                    {loading ? <T>Processing...</T> : <><T>Donate</T> ৳{formatAmount(amount || "0")}</>}
                   </motion.button>
                 </>
               )}

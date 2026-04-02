@@ -8,6 +8,7 @@ import Image from "next/image";
 import Swal from "@/lib/brandAlert";
 import { motion } from "framer-motion";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -293,14 +294,14 @@ const handleApplyLoan = async () => {
           <p className="text-gray-500 text-sm">Loading account data...</p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4"> 
-            <SummaryCard title="Wallet Balance" value={`${balance} ${currency}`} icon={<CreditCard size={20} />} />
+            <SummaryCard title="Wallet Balance" value={`${formatAmount(balance)} ${currency}`} icon={<CreditCard size={20} />} />
 
             {/* AI LOAN CARD */}
             <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-slate-800 p-6 rounded-2xl border border-blue-100 dark:border-slate-700 shadow-sm">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider"><T>AI Credit Line</T></p>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{loanLimit ?? 0} {currency}</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{formatAmount(loanLimit ?? 0)} {currency}</h3>
                 </div>
                 <div className="p-2 bg-white dark:bg-slate-700 rounded-lg shadow-sm">
                   <DollarSign className="text-indigo-600 dark:text-indigo-400" size={24} />

@@ -243,6 +243,7 @@ body::-webkit-scrollbar-thumb {
     radial-gradient(circle at 85% 100%, rgba(30, 80, 255, 0.2), transparent 50%),
     linear-gradient(135deg, #0a1225 0%, #0f1833 45%, #0a1225 100%);
   padding: 1.7rem 1.5rem 1.3rem;
+  z-index: 99999 !important;
 }
 
 .np-swal-title {
@@ -331,4 +332,13 @@ body::-webkit-scrollbar-thumb {
 
 .dark .np-swal-popup {
   border-color: rgba(120, 170, 255, 0.38);
+}
+
+/* Swal2 Z-Index Override */
+.swal2-container {
+  z-index: 99999 !important;
+}
+
+.swal2-backdrop {
+  z-index: 99998 !important;
 }

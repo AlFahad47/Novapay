@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Swal from "@/lib/brandAlert";
 import { Button } from "@/components/ui/button";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 const BillForm = () => {
   const { data: session } = useSession();
@@ -70,12 +71,15 @@ const BillForm = () => {
           console.error("Point update failed:", pointError);
         }
 
-        Swal.fire({
-          icon: "success",
-          title: "Payment Successful!",
-          text: `${selectedType} bill of ৳${amount} paid successfully. Points added!`,
-          confirmButtonColor: "#1E50FF",
-        });
+        // Show success alert with slight delay to ensure modal closes
+        setTimeout(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Payment Successful!",
+            text: `${selectedType} bill of ৳${formatAmount(amount)} paid successfully. Points added!`,
+            confirmButtonColor: "#1E50FF",
+          });
+        }, 250);
 
         // Form reset
         setConsumerId("");

@@ -13,7 +13,7 @@ interface LinkedBank {
   balance: number; 
 }
 
-export default function AddMoneyForm() { 
+export default function AddMoneyForm({ onSuccess }: { onSuccess?: () => void }) { 
   const { data: session } = useSession();
   const [amount, setAmount] = useState("");
   const [selectedBankId, setSelectedBankId] = useState("");
@@ -98,11 +98,17 @@ export default function AddMoneyForm() {
         }).catch((err) => console.error("Points system unreachable:", err));
         // -------------------------------------
 
-        Swal.fire(
-          "Success",
-          "Money added successfully and you've earned reward points.",
-          "success",
-        );
+        // Close modal first, then show success alert
+        if (onSuccess) onSuccess();
+        
+        setTimeout(() => {
+          Swal.fire(
+            "Success",
+            "Money added successfully and you've earned reward points.",
+            "success",
+          );
+        }, 250);
+        
         setAmount("");
         setSelectedBankId("");
 

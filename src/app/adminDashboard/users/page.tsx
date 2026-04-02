@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 type User = {
   _id: string;
@@ -265,14 +266,14 @@ export default function AdminUsersPage() {
                 <Info label="Role" value={selectedUser.role} />
                 <Info
                   label="Balance"
-                  value={`${selectedUser.balance || 0} ${
+                  value={`${formatAmount(selectedUser.balance || 0)} ${
                     selectedUser.currency || ""
                   }`}
                 />
                 <Info label="Bank" value={selectedUser.bank || "N/A"} />
                 <Info
                   label="Bank Balance"
-                  value={`${selectedUser.bankBalance || 0}`}
+                  value={`${formatAmount(selectedUser.bankBalance || 0)}`}
                 />
                 <Info label="Points" value={`${selectedUser.points || 0}`} />
                 <Info label="Rank" value={selectedUser.rank || "N/A"} />

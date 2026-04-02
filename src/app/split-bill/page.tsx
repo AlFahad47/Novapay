@@ -5,6 +5,7 @@ import { UserPlus, Search, X, Sun, Moon, Loader2, Send } from 'lucide-react';
 import { useSession } from "next-auth/react";
 import Swal from "@/lib/brandAlert";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 interface User {
   _id: string;
@@ -227,7 +228,7 @@ const SplitBill = () => {
                     <div>
                       <p className="text-[10px] uppercase font-bold text-blue-600 dark:text-blue-400 mb-1"><T>Per Person</T></p>
                       <h3 className="text-3xl font-bold text-blue-900 dark:text-blue-50">
-                        {currency === 'USD' ? '$' : '৳'}{sharePerPerson}
+                        {currency === 'USD' ? '$' : '৳'}{formatAmount(sharePerPerson)}
                       </h3>
                     </div>
                     <p className="text-[10px] text-blue-400 italic mb-1">

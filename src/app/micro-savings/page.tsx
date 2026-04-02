@@ -168,7 +168,7 @@ export default function SmartSavingGoal() {
   const handleTransferToWallet = async (goal: any) => {
     const result = await Swal.fire({
       title: "Transfer to Wallet?",
-      text: `Move ${currencySymbol}${goal.currentSaved} to your NovaPay balance?`,
+      text: `Move ${currencySymbol}${formatAmount(goal.currentSaved)} to your NovaPay balance?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Yes, Transfer",
@@ -198,7 +198,7 @@ export default function SmartSavingGoal() {
   // User confirmation check
   const result = await Swal.fire({
     title: "Cashout Rewards?",
-    text: `Your target is reached! Move ${currencySymbol}${goal.currentSaved} to your NovaPay balance.`,
+    text: `Your target is reached! Move ${currencySymbol}${formatAmount(goal.currentSaved)} to your NovaPay balance.`,
     icon: "success",
     showCancelButton: true,
     confirmButtonText: "Yes, Cashout!",
@@ -237,7 +237,7 @@ export default function SmartSavingGoal() {
         // Success Message
         await Swal.fire({
           title: "Successfully Cashed Out!",
-          text: `${currencySymbol}${goal.currentSaved} has been added to your main wallet.`,
+          text: `${currencySymbol}${formatAmount(goal.currentSaved)} has been added to your main wallet.`,
           icon: "success",
           confirmButtonColor: "#2563eb",
         });

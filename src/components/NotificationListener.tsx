@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Swal from "@/lib/brandAlert";
+import { formatAmount } from "@/lib/utils";
 
 export default function NotificationListener() {
   const { data: session } = useSession();
@@ -18,7 +19,7 @@ export default function NotificationListener() {
          
           Swal.fire({
             title: "💰 Money Request!",
-            html: `<b>${data.request.senderEmail}</b> is asking for <b>৳${data.request.amount}</b>.<br/><br/><i>"${data.request.note}"</i>`,
+            html: `<b>${data.request.senderEmail}</b> is asking for <b>৳${formatAmount(data.request.amount)}</b>.<br/><br/><i>"${data.request.note}"</i>`,
             icon: "info",
             showCancelButton: true,
             confirmButtonText: "Pay Now",

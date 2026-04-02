@@ -163,7 +163,7 @@ export default function SubscriptionPage() {
             </p>
             <p className="text-xs text-amber-700 dark:text-amber-400">
               <T>You have foreign currency in your wallet:</T>{" "}
-              {foreignWallets.map(w => `${w.flag} ${w.symbol}${w.amount.toFixed(2)} ${w.currency}`).join(", ")}.{" "}
+              {foreignWallets.map(w => `${w.flag} ${w.symbol}${formatAmount(w.amount)} ${w.currency}`).join(", ")}.{" "}
               <T>Please cash out to BDT first, then subscribe.</T>
             </p>
             <Link

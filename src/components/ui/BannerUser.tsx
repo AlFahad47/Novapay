@@ -30,6 +30,7 @@ import SendMoneyForm from "../modals/sendmoney";
 import AddMoneyForm from "../modals/AddMoneyForm";
 import RequestMoneyForm from "../modals/RequestMoney";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 const BannerUser: React.FC = () => {
   const router = useRouter();
@@ -135,7 +136,7 @@ const BannerUser: React.FC = () => {
     {
       label: "Balance",
       value: isApproved
-        ? `${currencySymbol}${dbUser?.balance || "0.00"}`
+        ? `${currencySymbol}${formatAmount(dbUser?.balance || 0)}`
         : "Locked",
       icon: <Wallet size={15} />,
       color: "text-[#4DA1FF]",
@@ -190,17 +191,19 @@ const BannerUser: React.FC = () => {
     },
   ];
 
-  const hedwigGradient = "linear-gradient(to right, #4DA1FF, #1E50FF)";
+  const hedwigGradient = "linear-gradient(to right, #4DA1FF, #1E50FF)";
+
   const confirmPayment = async (data: any) => {
     Swal.fire({
       title: "Confirm Payment",
-      text: `Send ৳${data.amount} to ${data.from || data.senderEmail}?`,
+      text: `Send ৳${formatAmount(data.amount)} to ${data.from || data.senderEmail}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, Pay Now",
       confirmButtonColor: "#1E50FF",
     }).then(async (result) => {
-      if (result.isConfirmed) {
+      if (result.isConfirmed) {
+
         processPayment(data);
       }
     });
@@ -467,7 +470,7 @@ const BannerUser: React.FC = () => {
                   {loading
                     ? "..."
                     : isApproved
-                      ? `${currencySymbol}${dbUser?.balance || "0.00"}`
+                      ? `${currencySymbol}${formatAmount(dbUser?.balance || 0)}`
                       : `${currencySymbol} ****`}
                 </p>
               </div>
@@ -569,7 +572,7 @@ const BannerUser: React.FC = () => {
                         </p>
                         <p className="text-sm font-black text-[#1E50FF] dark:text-[#4DA1FF]">
                           {currencySymbol}
-                          {item.amount}
+                          {formatAmount(item.amount)}
                         </p>
                       </div>
                     </div>
@@ -639,7 +642,7 @@ const BannerUser: React.FC = () => {
                   </span>
                   <div className="text-3xl font-black text-[#0F172A] dark:text-white mt-1">
                     {currencySymbol}
-                    {notificationData.amount}
+                    {formatAmount(notificationData.amount)}
                   </div>
                   {notificationData.note && (
                     <div className="mt-3 pt-3 border-t border-[#4DA1FF]/10">
@@ -722,7 +725,7 @@ const BannerUser: React.FC = () => {
               {activeModal === "send" && (
                 <SendMoneyForm onSuccess={() => setActiveModal(null)} />
               )}
-              {activeModal === "add" && <AddMoneyForm />}
+              {activeModal === "add" && <AddMoneyForm onSuccess={() => setActiveModal(null)} />}
               {activeModal === "request" && (
                 <RequestMoneyForm onSuccess={() => setActiveModal(null)} />
               )}

@@ -115,15 +115,20 @@ const handleSend = async () => {
         }
         // --- ADD POINTS LOGIC END ---
 
-        Swal.fire({
-          icon: "success",
-          title: "Transfer Successful!",
-          text: `${currencySymbol}${amount} has been sent to ${receiverEmail} and you've earned reward points`,
-          confirmButtonColor: "#2563eb",
-        });
+        // Close modal first, then show success alert to ensure it appears on top
+        if (onSuccess) onSuccess();
+        
+        // Small delay to let modal close animation complete and Swal render on top
+        setTimeout(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Transfer Successful!",
+            text: `${currencySymbol}${Number(amount).toFixed(2)} has been sent to ${receiverEmail} and you've earned reward points`,
+            confirmButtonColor: "#2563eb",
+          });
+        }, 250);
         
         window.dispatchEvent(new Event("balanceUpdated"));
-        if (onSuccess) onSuccess();
       } else {
         Swal.fire("Transfer Failed", data.message, "error");
       }

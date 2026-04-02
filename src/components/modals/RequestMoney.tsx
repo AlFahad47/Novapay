@@ -5,6 +5,7 @@ import { HandHelping, Mail, Banknote, PenLine, Loader2 } from "lucide-react";
 import Swal from "@/lib/brandAlert";
 import { Button } from "@/components/ui/button";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 export default function RequestMoneyForm({
   onSuccess,
@@ -54,12 +55,16 @@ export default function RequestMoneyForm({
         }
         // --- ADD POINTS LOGIC END ---
 
-        Swal.fire(
-          "Request Sent!",
-          `Requested ৳${amount} from ${targetEmail} and you've earned reward points`,
-          "success",
-        );
+        // Close modal first, then show success alert to ensure it appears on top
         if (onSuccess) onSuccess();
+        
+        setTimeout(() => {
+          Swal.fire(
+            "Request Sent!",
+            `Requested ৳${formatAmount(amount)} from ${targetEmail} and you've earned reward points`,
+            "success",
+          );
+        }, 250);
       } else {
         Swal.fire("Error", data.message, "error");
       }

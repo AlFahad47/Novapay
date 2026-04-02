@@ -5,6 +5,7 @@ import { Smartphone, Banknote, CheckCircle2, Loader2 } from "lucide-react";
 import Swal from "@/lib/brandAlert";
 import { Button } from "@/components/ui/button";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 const OPERATORS = [
   { name: "Grameenphone", logo: "GP", color: "bg-blue-500" },
@@ -69,15 +70,19 @@ export default function MobileRecharge({
         }
         // --- ADD POINTS LOGIC END ---
 
-        Swal.fire({
-          icon: "success",
-          title: "Recharge Successful!",
-          text: `৳${amount} sent to ${phone}. Points added!`,
-          showConfirmButton: false,
-          timer: 2000,
-        });
+        // Close modal first, then show success alert
         window.dispatchEvent(new Event("balanceUpdated"));
         if (onSuccess) onSuccess();
+        
+        setTimeout(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Recharge Successful!",
+            text: `৳${formatAmount(amount)} sent to ${phone}. Points added!`,
+            showConfirmButton: false,
+            timer: 2000,
+          });
+        }, 250);
       } else {
         Swal.fire("Failed", data.message, "error");
       }

@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 type Role = "User" | "Agent" | "Admin";
 
@@ -51,6 +52,11 @@ export default function DashboardHome({ role }: { role: Role }) {
 
   const icons = [Users, DollarSign, CreditCard, Activity];
 
+  // Determine if a stat value is monetary (Revenue-related)
+  const isMonetaryStat = (title: string): boolean => {
+    return title.toLowerCase().includes("revenue");
+  };
+
   return (
     <div className="space-y-8">
       {/* Welcome Card */}
@@ -73,12 +79,15 @@ export default function DashboardHome({ role }: { role: Role }) {
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {stats.map((stat, index) => {
             const Icon = icons[index] || Activity;
+            const displayValue = isMonetaryStat(stat.title)
+              ? formatAmount(stat.value)
+              : stat.value.toLocaleString();
 
             return (
               <StatCard
                 key={stat.title}
                 title={stat.title}
-                value={stat.value.toLocaleString()}
+                value={displayValue}
                 icon={<Icon />}
               />
             );

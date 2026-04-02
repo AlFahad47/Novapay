@@ -5,6 +5,7 @@ import DashboardHome from "@/components/dashboard/DashboardHome";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import T from "@/components/T";
+import { formatAmount } from "@/lib/utils";
 
 import {
   ResponsiveContainer,
@@ -217,7 +218,7 @@ export default function AdminDashboard() {
                       </div>
                     </td>
 
-                    <td className="font-semibold">${tx.amount}</td>
+                    <td className="font-semibold">${formatAmount(tx.amount)}</td>
 
                     <td>
                       <span
@@ -270,7 +271,7 @@ export default function AdminDashboard() {
                   <strong>User:</strong> {selectedTx.user}
                 </p>
                 <p>
-                  <strong>Amount:</strong> ${selectedTx.amount}
+                  <strong>Amount:</strong> ${formatAmount(selectedTx.amount)}
                 </p>
                 <p>
                   <strong>Status:</strong> {selectedTx.status}

@@ -407,12 +407,12 @@ export default function InternationalTransferPage() {
 
               <div className="space-y-3 text-sm">
                 <Row label="Recipient" value={recipientEmail} />
-                <Row label="You Send" value={`${CURRENCY_META[preview.fromCurrency].symbol}${preview.amountSent} ${preview.fromCurrency}`} highlight />
+                <Row label="You Send" value={`${CURRENCY_META[preview.fromCurrency].symbol}${Number(preview.amountSent).toFixed(2)} ${preview.fromCurrency}`} highlight />
                 <Row label="Exchange Rate" value={`1 ${preview.fromCurrency} = ${preview.rate} ${preview.toCurrency}`} />
-                <Row label="FX Fee (2%)" value={`${CURRENCY_META[preview.fromCurrency].symbol}${preview.fee} ${preview.fromCurrency}`} />
-                <Row label="Total Deducted" value={`${CURRENCY_META[preview.fromCurrency].symbol}${preview.totalDeducted} ${preview.fromCurrency}`} />
+                <Row label="FX Fee (2%)" value={`${CURRENCY_META[preview.fromCurrency].symbol}${Number(preview.fee).toFixed(2)} ${preview.fromCurrency}`} />
+                <Row label="Total Deducted" value={`${CURRENCY_META[preview.fromCurrency].symbol}${Number(preview.totalDeducted).toFixed(2)} ${preview.fromCurrency}`} />
                 <div className="border-t border-gray-200 dark:border-blue-800 pt-3">
-                  <Row label="Recipient Gets" value={`${CURRENCY_META[preview.toCurrency].symbol}${preview.amountReceived} ${preview.toCurrency}`} highlight />
+                  <Row label="Recipient Gets" value={`${CURRENCY_META[preview.toCurrency].symbol}${Number(preview.amountReceived).toFixed(2)} ${preview.toCurrency}`} highlight />
                 </div>
               </div>
 
@@ -457,8 +457,8 @@ export default function InternationalTransferPage() {
 
               <h2 className="text-xl font-bold text-gray-800 dark:text-blue-100"><T>Transfer Successful!</T></h2>
               <p className="text-gray-500 dark:text-blue-300 text-sm">
-                <T>You sent</T> <strong>{CURRENCY_META[preview.fromCurrency].symbol}{preview.amountSent} {preview.fromCurrency}</strong> →{" "}
-                <strong>{CURRENCY_META[preview.toCurrency].symbol}{preview.amountReceived} {preview.toCurrency}</strong>
+                <T>You sent</T> <strong>{CURRENCY_META[preview.fromCurrency].symbol}{Number(preview.amountSent).toFixed(2)} {preview.fromCurrency}</strong> →{" "}
+                <strong>{CURRENCY_META[preview.toCurrency].symbol}{Number(preview.amountReceived).toFixed(2)} {preview.toCurrency}</strong>
               </p>
 
               <div className="bg-gray-50 dark:bg-[#071120] rounded-xl p-3 text-xs text-gray-400 dark:text-blue-400 font-mono break-all">
