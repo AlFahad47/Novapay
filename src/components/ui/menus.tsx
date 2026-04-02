@@ -223,9 +223,9 @@ const QuickActionsContent = () => {
           icon: "info",
           title: "KYC Required",
           text: `Status: ${kycStatus || "Pending"}`,
-          confirmButtonText: "Check Profile",
+          confirmButtonText: "Complete KYC",
           confirmButtonColor: "#4DA1FF",
-        }).then(() => router.push("/dashboard/profile"));
+        }).then(() => router.push("/dashboard/kyc"));
       }
       return;
     }

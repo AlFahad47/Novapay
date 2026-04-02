@@ -1,0 +1,24 @@
+# NovaPay Robots.txt - SEO & Crawling Guidelines
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /adminDashboard/
+Disallow: /dashboard/
+Disallow: /private/
+Disallow: /*.json$
+Disallow: /.next/
+
+# Specific rules for Googlebot
+User-agent: Googlebot
+Allow: /
+
+# Specific rules for Bingbot
+User-agent: Bingbot
+Allow: /
+
+# Crawl delay and request rate
+Crawl-delay: 1
+
+# Sitemap reference
+Sitemap: https://novapay.com/sitemap.xml

@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Menu, X, Sparkles } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 import { FaUser } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
 import { IoLogOut } from "react-icons/io5";
@@ -23,6 +25,8 @@ type FullUser = {
 
 const Navbar: React.FC = () => {
   const { data: session } = useSession();
+  const { theme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,6 +38,10 @@ const Navbar: React.FC = () => {
   const pathname = usePathname();
   const user = session?.user;
   const profileDropdownRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Fetch total unread messages
   useEffect(() => {
@@ -135,7 +143,7 @@ const Navbar: React.FC = () => {
       ]
     : [
         { name: t("home"), path: "/#home" },
-        { name: t("offer"), path: "/#offers" },
+        { name: "Quick Actions", path: "/#menus" },
         { name: t("features"), path: "/#features" },
         { name: t("reviews"), path: "/#reviews" },
       ];
@@ -178,19 +186,19 @@ const Navbar: React.FC = () => {
           <div className="absolute inset-0 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)] pointer-events-none"></div>
 
           {/* Brand / Logo */}
-          <div className="shrink-0 z-20 flex items-center gap-2.5">
-            <div className="flex items-center justify-center bg-blue-500/10 p-1.5 rounded-full">
-              <Sparkles
-                className="text-blue-600 dark:text-blue-500 w-5 h-5"
-                fill="currentColor"
-              />
-            </div>
-            <Link
-              href="/"
-              className="text-slate-900 dark:text-white font-extrabold text-[1.15rem] tracking-tight hover:opacity-80 transition-opacity"
-            >
-              NovaPay
-            </Link>
+          <div className="shrink-0 z-20">
+            {mounted && (
+              <Link href="/" className="flex items-center justify-center hover:opacity-80 transition-opacity">
+                <div className="relative w-10 h-10">
+                  <Image
+                    src={theme === "dark" || (systemTheme === "dark" && theme === "system") ? "/logo-light.png" : "/logo-dark.png"}
+                    alt="NovaPay Logo"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              </Link>
+            )}
           </div>
 
           {/* Desktop Links (Center) */}
